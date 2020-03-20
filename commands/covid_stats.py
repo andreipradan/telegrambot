@@ -62,10 +62,10 @@ def get_covid_stats():
 
     return f"""
     🦠 Covid Stats
-     ├ Confirmati: {total}           {'H' if total_hit else 'M'}(Last update: {session.get('total_last_modified')})
-     ├ Decedati: {dead}              {'H' if dead_hit else 'M'}(Last update: {session.get('dead_last_modified')})
-     ├ Carantinați: {quarantined}    {'H' if quarantined_hit else 'M'}(Last update: {session.get('quarantined_last_modified')})
-     └ Izolați: {isolated}           {'H' if isolated_hit else 'M'}(Last update: {session.get('isolated_last_modified')})
+     ├ Confirmati: {total}          (Last update: {session.get('total_last_modified')})        {'H' if total_hit else 'M'}
+     ├ Decedati: {dead}             (Last update: {session.get('dead_last_modified')})         {'H' if dead_hit else 'M'}
+     ├ Carantinați: {quarantined}   (Last update: {session.get('quarantined_last_modified')})  {'H' if quarantined_hit else 'M'}
+     └ Izolați: {isolated}          (Last update: {session.get('isolated_last_modified')})     {'H' if isolated_hit else 'M'}
 
     """
 
