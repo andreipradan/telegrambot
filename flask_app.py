@@ -63,19 +63,19 @@ def telegram_webhook():
             )
             return 'Not a command'
 
-        command = message_text.split(' ')[0][1:]
-        if command not in ALLOWED_COMMANDS:
+        command_text = message_text.split(' ')[0][1:]
+        if command_text not in ALLOWED_COMMANDS:
             allowed_text = ''
             for command in ALLOWED_COMMANDS.keys():
                 allowed_text += f'\n• /{command}'
             send_message(
                 bot,
-                f'Unrecognized command: "{command}".\nTry one of these: {allowed_text}',
+                f'Unrecognized command: "{command_text}".\nTry one of these: {allowed_text}',
                 chat_id=chat_id
             )
             return 'Unrecognized command'
 
-        results = ALLOWED_COMMANDS[command](update)
+        results = ALLOWED_COMMANDS[command_text](update)
         try:
             bot.sendMessage(chat_id=chat_id, text=results)
         except telegram.error.BadRequest as err:

@@ -8,7 +8,7 @@ PATH_OF_GIT_REPO = os.getenv('PATH_TO_GIT_FOLDER')
 
 def git_push(commit_message):
     repo = Repo(PATH_OF_GIT_REPO)
-    repo.git.add(update=True)
+    repo.git.add(A=True)
     repo.index.commit(commit_message)
     origin = repo.remote(name='origin')
     origin.push()

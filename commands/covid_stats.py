@@ -62,7 +62,7 @@ def get_county_details(county):
 def get_covid_county_details(update):
     text = ' '.join(update.message.text.split(' ')[1:])
     if not text:
-        return 'County name required'
+        return 'Syntax: /covid_county_details <County name>'
 
     response = requests.get(URLS['per_county'])
     _validate_response(response)
