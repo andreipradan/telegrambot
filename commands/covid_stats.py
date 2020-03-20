@@ -47,7 +47,7 @@ def get_results(field):
     url = URLS[field]
 
     head_response = requests.head(url)
-    db_data = get_db_data()
+    db_data = get_db_data(field)
     if not head_response.headers['ETag'] != db_data['ETag']:
         return db_data[field]
 
