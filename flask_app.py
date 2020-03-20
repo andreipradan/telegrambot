@@ -89,8 +89,8 @@ def telegram_webhook():
     return f"Unexpected method {request.method}"
 
 
-@app.route('/git-webhook/', methods=['GET'])
+@app.route('/git-webhook/', methods=['POST'])
 def git_webhook():
     repo = git.Repo(os.getenv('PATH_TO_GIT_FOLDER'))
-    response = repo.remotes.origin.pull()
-    return 'ok'
+    repo.remotes.origin.pull()
+    return request.get_json()
