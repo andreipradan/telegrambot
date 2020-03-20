@@ -56,13 +56,18 @@ def telegram_webhook():
             bot.sendMessage(chat_id=chat_id, text=results)
         except telegram.error.BadRequest as err:
             text = (
-                'Restrict results (limit=<count>)'
+                f'Restrict results (e.g. /{command_text} 3'
                 if 'Message is too long' in str(err)
                 else str(err)
             )
             bot.sendMessage(chat_id=chat_id, text=text)
         return 'completed'
     return f"Unexpected method {request.method}"
+
+
+@app.route('/debug-sentry')
+def trigger_error():
+    return 1 / 0
 
 
 if __name__ == "__main__":
