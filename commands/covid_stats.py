@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import session
 import requests
 
@@ -43,7 +45,13 @@ def get_results(field):
     validate_response(response)
     value = response.json()['features'][0]['attributes']['value']
 
-    session.update({f'{field}value': value, f'{field}_ETag': etag})
+    session.update(
+        {
+            f'{field}value': value,
+            f'{field}_ETag': etag,
+            f'{field}_last_updated': datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+        }
+    )
     return value
 
 
@@ -54,6 +62,8 @@ def get_covid_stats():
      ├ Decedati: {get_results('dead')}
      ├ Carantinați: {get_results('quarantined')}
      └ Izolați: {get_results('isolated')}
+     
+     Last updated: {session.get('total_last_updated')}
     """
 
 
