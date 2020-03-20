@@ -3,7 +3,6 @@ import os
 from flask import Flask
 from flask import request
 import telegram
-import subprocess
 
 from handlers import ALLOWED_COMMANDS
 from handlers import COMMANDS_WITH_TEXT
@@ -59,15 +58,9 @@ def telegram_webhook():
     return f"Unexpected method {request.method}"
 
 
-@app.route('/git-webhook/', methods=['POST'])
-def git_webhook():
-    try:
-        return subprocess.check_output(
-            ['git', 'pull'],
-            cwd=os.environ['PATH_TO_GIT_FOLDER'],
-            stderr=subprocess.STDOUT
-        )
-    except subprocess.CalledProcessError as e:
-        raise ValueError(
-            "Exception on process, rc=", e.returncode, "output=", e.output
-        )
+if __name__ == "__main__":
+    app.run(
+        debug=os.getenv('DEBUG', False),
+        host='0.0.0.0',
+        port=int(os.environ.get('PORT', 8080))
+    )

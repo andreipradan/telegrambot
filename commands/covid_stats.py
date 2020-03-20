@@ -90,7 +90,12 @@ def get_covid_per_county():
     )
 
 
-def get_covid_global():
+def get_covid_global(count=5):
+
+    try:
+        count = int(count)
+    except ValueError:
+        return 'Syntax: /covid_global <count: int>'
 
     main_stats_id = 'maincounter-wrap'
 
@@ -104,7 +109,7 @@ def get_covid_global():
     ths = [x.text for x in
            soup.select('table#main_table_countries_today > thead > tr > th')][
           :6]
-    rows = soup.select('table#main_table_countries_today > tbody > tr')[:10]
+    rows = soup.select('table#main_table_countries_today > tbody > tr')[:count]
 
     results = []
     for row in rows:
@@ -113,20 +118,21 @@ def get_covid_global():
     per_country = '\n'.join(
         [
             f"""
-            {r[ths[0]]}:
-            {ths[1]}: {results[ths[1]]}
-            {ths[2]}: {results[ths[2]]}
-            {ths[3]}: {results[ths[3]]}
-            {ths[4]}: {results[ths[4]]}
-            {ths[5]}: {results[ths[5]]}
-            """ for r in results]
+🦠 {r[ths[0]]}:
+    {ths[1]}: {r[ths[1]]}
+    {ths[2]}: {r[ths[2]]}
+    {ths[3]}: {r[ths[3]]}
+    {ths[4]}: {r[ths[4]]}
+    {ths[5]}: {r[ths[5]]}
+    """ for r in results
+        ]
     )
 
     return f"""
-    🦠 Covid Global Stats (worldometers.info)
-    {cases[0]}: {cases[1]}
-    {deaths[0]}: {deaths[1]}
-    {recovered[0]}: {recovered[1]}
+    Covid Global Stats (worldometers.info)
+{cases[0]}: {cases[1]}
+{deaths[0]}: {deaths[1]}
+{recovered[0]}: {recovered[1]}
 
-    {per_country}
+{per_country}
     """

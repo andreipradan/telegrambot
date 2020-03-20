@@ -2,7 +2,7 @@ from google.cloud import language_v1
 from google.cloud.language_v1 import enums
 
 
-def analyze_sentiment(update):
+def analyze_sentiment(text_content):
     """
     Analyzing Sentiment in a String
 
@@ -10,7 +10,6 @@ def analyze_sentiment(update):
       text_content The text content to analyze
     """
 
-    text_content = ' '.join(update.message.text.split(' ')[1:])
     if not text_content:
         return 'Syntax: /analyze_sentiment <your text here>'
 

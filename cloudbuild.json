@@ -1,0 +1,35 @@
+{
+   "steps": [{
+      "name": "gcr.io/cloud-builders/docker",
+      "args": [
+         "build",
+         "-t",
+         "gcr.io/glassy-signal-267913/telegrambot-image:$COMMIT_SHA",
+         "."
+      ]
+   },
+   {
+      "name": "gcr.io/cloud-builders/docker",
+      "args": [
+         "push",
+         "gcr.io/glassy-signal-267913/telegrambot-image"
+      ]
+   },
+   {
+      "name": "gcr.io/cloud-builders/gcloud",
+      "args": [
+         "run",
+         "deploy",
+         "pradan-dev-service",
+         "--image",
+         "gcr.io/glassy-signal-267913/telegrambot-image:$COMMIT_SHA",
+         "--region",
+         "europe-west1",
+         "--platform",
+         "managed"
+      ]
+   }],
+   "images": [
+      "gcr.io/glassy-signal-267913/telegrambot-image:$COMMIT_SHA"
+    ]
+}
