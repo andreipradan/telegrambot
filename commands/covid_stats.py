@@ -1,6 +1,3 @@
-from datetime import datetime
-
-from flask import session
 import requests
 
 base_url = (
@@ -34,39 +31,18 @@ def validate_response(response):
 
 def get_results(field):
     url = URLS[field]
-
-    head_response = requests.head(url)
-
-    last_modified = head_response.headers['Last-Modified']
-    if last_modified == session.get(f'{field}_last_modified'):
-        return session[f'{field}_value'], True
-
     response = requests.get(url)
     validate_response(response)
-    value = response.json()['features'][0]['attributes']['value']
-
-    session.update(
-        {
-            f'{field}_value': value,
-            f'{field}_last_modified': last_modified,
-        }
-    )
-    return value, False
+    return response.json()['features'][0]['attributes']['value']
 
 
 def get_covid_stats():
-    total, total_hit = get_results('total')
-    dead, dead_hit = get_results('dead')
-    quarantined, quarantined_hit = get_results('quarantined')
-    isolated, isolated_hit = get_results('isolated')
-
     return f"""
     🦠 Covid Stats
-     ├ Confirmati: {total}          (Last update: {session.get('total_last_modified')})        {'H' if total_hit else 'M'}
-     ├ Decedati: {dead}             (Last update: {session.get('dead_last_modified')})         {'H' if dead_hit else 'M'}
-     ├ Carantinați: {quarantined}   (Last update: {session.get('quarantined_last_modified')})  {'H' if quarantined_hit else 'M'}
-     └ Izolați: {isolated}          (Last update: {session.get('isolated_last_modified')})     {'H' if isolated_hit else 'M'}
-
+     ├ Confirmati: {get_results('total')}
+     ├ Decedati: {get_results('dead')}
+     ├ Carantinați: {get_results('quarantined')}
+     └ Izolați: {get_results('isolated')}
     """
 
 
