@@ -39,7 +39,7 @@ def get_results(field):
 
     last_modified = head_response.headers['Last-Modified']
     if last_modified == session.get(f'{field}_last_modified'):
-        return session[f'{field}_value']
+        return session[f'{field}_value'], True
 
     response = requests.get(url)
     validate_response(response)
@@ -51,16 +51,21 @@ def get_results(field):
             f'{field}_last_modified': last_modified,
         }
     )
-    return value
+    return value, False
 
 
 def get_covid_stats():
+    total, total_hit = get_results('total')
+    dead, dead_hit = get_results('dead')
+    quarantined, quarantined_hit = get_results('quarantined')
+    isolated, isolated_hit = get_results('isolated')
+
     return f"""
     🦠 Covid Stats
-     ├ Confirmati: {get_results('total')}           (Last update: {session.get('total_last_modified')})
-     ├ Decedati: {get_results('dead')}              (Last update: {session.get('dead_last_modified')})
-     ├ Carantinați: {get_results('quarantined')}    (Last update: {session.get('quarantined_last_modified')})
-     └ Izolați: {get_results('isolated')}           (Last update: {session.get('isolated_last_modified')})
+     ├ Confirmati: {total}           {'H' if total_hit else 'M'}(Last update: {session.get('total_last_modified')})
+     ├ Decedati: {dead}              {'H' if dead_hit else 'M'}(Last update: {session.get('dead_last_modified')})
+     ├ Carantinați: {quarantined}    {'H' if quarantined_hit else 'M'}(Last update: {session.get('quarantined_last_modified')})
+     └ Izolați: {isolated}           {'H' if isolated_hit else 'M'}(Last update: {session.get('isolated_last_modified')})
 
     """
 
