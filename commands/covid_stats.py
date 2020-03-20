@@ -36,14 +36,14 @@ def get_results(field):
     head_response = requests.head(url)
 
     etag = head_response.headers['ETag']
-    if etag == session.get('ETag'):
-        return session['value']
+    if etag == session.get(f'{field}_ETag'):
+        return session[f'{field}_value']
 
     response = requests.get(url)
     validate_response(response)
     value = response.json()['features'][0]['attributes']['value']
 
-    session.update({'value': value, 'ETag': etag})
+    session.update({f'{field}value': value, f'{field}_ETag': etag})
     return value
 
 
