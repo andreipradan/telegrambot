@@ -22,14 +22,14 @@ def validate_components(message):
 
     chat_id = message.chat.id
     if not chat_id:
-        return 'No chat ID', 400
+        return 'No chat ID', 404
 
     if not message:
-        return 'No message', 400
+        return 'No message', 404
 
     message_text = message.text
     if not message_text:
-        return 'No message text', 400
+        return 'No message text', 404
 
     if not message_text.startswith('/'):
         return f'Not a command: "{message_text}". Commands start with "/".', 400

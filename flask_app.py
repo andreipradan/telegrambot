@@ -32,8 +32,10 @@ def telegram_webhook():
         chat_id = update.message.chat_id
 
         command_text, status_code = validate_components(update.message)
-        if status_code != 200:
+        if status_code == 404:
             raise ValueError(command_text)
+        elif status_code == 400:
+            return send_message(bot, text=command_text, chat_id=chat_id)
 
         args = []
         if command_text in COMMANDS_WITH_TEXT:
