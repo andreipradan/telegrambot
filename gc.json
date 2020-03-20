@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "glassy-signal-267913",
+  "private_key_id": "00c2c8fda1593b0ca8f2c7ee3831b3767f79edb3",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCuzWR3Vfz5oRdf\n6k0TeMxNVBZMukAyKQhZsFlT0iM8GRIk6dPJBzt2PiNj9m33IlB+dfDbxSO2JQ2R\n0iCDbJebMa1rITnplDyPdVPhuH5aRxyVFiKyUdYuXa9KX/rbaQAe08kyBjBwR71n\nHMpWuw4R3Lsm/UY3eZu1Bz8E6FtJy2rAF0KdkD4xX5t3l7oxIkxc9qJNxCiP5CxP\nsokDn6Iqr2Y2Icb4w56SRuc1ipS3PcR+nWX8lrFoFvoZ0KXpha+20N8N3QxZXWLu\nVbK5m2+ps6s5QJxb6SCpCUWcY8jIzroF2IHApVsL3BO4OX6lS2d4n0f4q2kUnBgE\n1qaGPh25AgMBAAECggEAHWWaTz1tSVfvk+hV5P/sL9cD1wx9jlH7PwYax69v0IQQ\n2pdeUBEAzX5euklvrd+d9N6FzpflTRUHJq5VXHTPPEDK/ti8Ig2Vb7TWEgBSc4FB\nC8uIsz9zCyIjQBlLGUobxJNuYxTKYZ+W+TfMyXA0ygk6ijCO9fZkGroovX0MGSku\nP965z1uIPv9HxTphETtfUkDCZpqbTyPT/LmA8hUhP9a71aif7MkPzra0hbAb6EV0\ng5OrESKVjqTX08Ythjw4sBpulsAyV3IThFSObJasHG1L74XQ4zcBZByX/Zyj+TnG\ny+MRRUIobog5DNnMcnQQn0xWpz9SIWBFALp5KBUJBwKBgQDwv1AO0NOnomwcr1wV\nalE28hUkV8jwxtqkoXHx9RUHwdp8NOp4cMeqoP5JULFPBKRnq+LLjTD/+k7efGWJ\njJB9+PB9r6t4Of+/78xa83fTp9R9a5UMaT7cCCSGVPnihoeVprf05k+DJWzFuntR\nY9RtE3EOSQtbgwRsBdWRQv/PWwKBgQC54IQVMiCsGd+JaJFYe+AKc4f4aCqsYXmZ\nUhMqQgvYCz/KZRU3/bxF5Mx2Erszx9IH2GFrKRWoqrWSuNCecCw1w5xgvI9Gh0B8\nvbUS8rLQF6BXL+SHhvxW4eg9kqHgFWKhkCbOaoJOwvaLOnN1i4BoGeDkHVQXQvVr\nkES8Ph4HewKBgQCUYrarixcJudi9DXDKWk9YeHmDfwABN+/HjSK4KYEe2OMbr1nd\nhlXq23QgKDZBJ/FVXOJa59mNzPATvcSvtQ3SNz+zmDUt00HJQbpJTMtMj6Mu8sJZ\ndf0ijXpFudaTQqwLF0lHDzVu9gBHFxuvHMLvwA3s6iSv8N8m3am28P7PBQKBgCLz\nX4KoyVHzD4BD5EiSCl+Mt71ywMtnDLlSoH3qq1V1UApblXDQyi0OR4/QF9k1sn19\nJ1xB/muXpcqv67JO/1Egte/OpNYrKmoKNdkZP5w3RRP/0mXVcO9ZTRT+1GdRPhmJ\nBHL9vgDXUgp99CXfFEb+zrW1+hDhq0oNd4850uWvAoGABPnK2TXug6DomKWlu1aQ\nz56eWYmbNtBK0Promnan/1GFEutuH0VcV4flhFzyxFF+dRsONB800BEIpp1tKjKe\nsm591dTOcF/slwAKPy1vTd8nHlZgnJ0zP/XZd7zYp9j1feq3voOPux7pvNWQyJp1\nphQzCD8Jk5wA2PzccN5U1sI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "natural-language-account-name@glassy-signal-267913.iam.gserviceaccount.com",
+  "client_id": "111625554946491426505",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/natural-language-account-name%40glassy-signal-267913.iam.gserviceaccount.com"
+}
