@@ -57,4 +57,9 @@ def telegram_webhook():
 
 @app.route('/git-webhook/', methods=['POST'])
 def git_webhook():
-    return subprocess.check_output(['git', 'pull'])
+    try:
+        return subprocess.check_output(['git', 'pull'], stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        raise ValueError(
+            "Exception on process, rc=", e.returncode, "output=", e.output
+        )
