@@ -20,7 +20,7 @@
       "args": [
          "run",
          "deploy",
-         "pradan-dev-service",
+         "telegrambot",
          "--image",
          "gcr.io/glassy-signal-267913/telegrambot-image:$COMMIT_SHA",
          "--region",
