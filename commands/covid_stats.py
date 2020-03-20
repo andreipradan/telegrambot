@@ -37,8 +37,8 @@ def get_results(field):
 
     head_response = requests.head(url)
 
-    etag = head_response.headers['ETag']
-    if etag == session.get(f'{field}_ETag'):
+    last_modified = head_response.headers['Last-Modified']
+    if last_modified == session.get(f'{field}_last_modified'):
         return session[f'{field}_value']
 
     response = requests.get(url)
@@ -47,9 +47,8 @@ def get_results(field):
 
     session.update(
         {
-            f'{field}value': value,
-            f'{field}_ETag': etag,
-            f'{field}_last_updated': datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+            f'{field}_value': value,
+            f'{field}_last_modified': last_modified,
         }
     )
     return value
