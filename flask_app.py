@@ -7,6 +7,7 @@ import subprocess
 
 from handlers import ALLOWED_COMMANDS
 from handlers import COMMANDS_WITH_TEXT
+from handlers import COMMANDS_WITH_UPDATE
 from handlers import validate_components
 
 
@@ -41,6 +42,8 @@ def telegram_webhook():
         args = []
         if command_text in COMMANDS_WITH_TEXT:
             args.append(' '.join(update.message.text.split(' ')[1:]))
+        elif command_text in COMMANDS_WITH_UPDATE:
+            args.append(update)
         results = ALLOWED_COMMANDS[command_text](*args)
 
         try:
