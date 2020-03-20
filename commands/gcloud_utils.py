@@ -2,7 +2,7 @@ from google.cloud import language_v1
 from google.cloud.language_v1 import enums
 
 
-def sample_analyze_sentiment(update):
+def analyze_sentiment(update):
     """
     Analyzing Sentiment in a String
 

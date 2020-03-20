@@ -1,49 +1,51 @@
-import requests
+from commands.gcloud_utils import analyze_sentiment
+from commands.say_hi import say_hi
+from commands.covid_stats import get_covid_county_details
+from commands.covid_stats import get_covid_per_county
+from commands.covid_stats import get_covid_stats
 
 
-base_url = (
-    'https://services7.arcgis.com/I8e17MZtXFDX9vvT/arcgis/rest/services/'
-    'Coronavirus_romania/FeatureServer/0/query?f=json&where=1%3D1&'
-    'returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*'
-)
-count_base_url = (
-    f'{base_url}&outStatistics=%5B%7B%22statisticType%22%3A%22sum%22%2C%22'
-    'onStatisticField%22%3A%22'
-)
-suffix = '%22%2C%22outStatisticFieldName%22%3A%22value%22%7D%5D&cacheHint=true'
-
-URLS = {
-    'total': f'{count_base_url}Cazuri_confirmate{suffix}',
-    'per_county': (
-        f'{base_url}&orderByFields=Cazuri_confirmate%20desc&resultOffset=0&'
-        'resultRecordCount=42&cacheHint=true'
-    ),
-    'dead': f'{count_base_url}Persoane_decedate{suffix}',
-    'quarantined': f'{count_base_url}Persoane_in_carantina{suffix}',
-    'isolated': f'{count_base_url}Persoane_izolate{suffix}',
+ALLOWED_COMMANDS = {
+    'analyze_sentiment': analyze_sentiment,
+    'covid': get_covid_stats,
+    'covid_counties': get_covid_per_county,
+    'covid_county_details': get_covid_county_details,
+    'say_hi': say_hi,
 }
+COMMANDS_WITH_TEXT = [
+    'analyze_sentiment',
+    'covid_county_details',
+]
 
 
-def _validate_response(response):
+def validate_components(message):
+
+    chat_id = message.chat.id
+    if not chat_id:
+        return 'No chat ID', 400
+
+    if not message:
+        return 'No message', 400
+
+    message_text = message.text
+    if not message_text:
+        return 'No message text', 400
+
+    if not message_text.startswith('/'):
+        return f'Not a command: "{message_text}". Commands start with "/".', 400
+
+    command_text = message_text.split(' ')[0][1:]
+    if command_text not in ALLOWED_COMMANDS:
+        allowed_text = ''
+        for command in ALLOWED_COMMANDS.keys():
+            allowed_text += f'\n• /{command}'
+        return f'Unrecognized command: "{command_text}".\n' \
+               f'Try one of these: {allowed_text}', 400
+
+    return command_text, 200
+
+
+def validate_response(response):
     status_code = response.status_code
     if not status_code == 200:
         raise ValueError(f'Got an unexpected status code: {status_code}')
-
-
-def get_results(url):
-    response = requests.get(url)
-    _validate_response(response)
-    return response.json()['features'][0]['attributes']['value']
-
-
-def no_message_handler(update):
-    if update.inline_query and update.inline_query.query == 'covid-all-stats':
-        return f"""
-    🦠 Covid Stats
-     ├ Total cazuri confirmate: {get_results(URLS['total'])}
-     ├ Cazuri confirmate la nivel de județ: {get_results(URLS['per_county'])}
-     ├ Persoane decedate: {get_results(URLS['dead'])}
-     ├ Persoane în carantină: {get_results(URLS['quarantined'])}
-     └ Persoane izolate: {get_results(URLS['isolated'])}
-    """
-    return 'No message'

@@ -1,5 +1,6 @@
 import requests
 
+from handlers import validate_response
 
 base_url = (
     'https://services7.arcgis.com/I8e17MZtXFDX9vvT/arcgis/rest/services/'
@@ -24,19 +25,13 @@ URLS = {
 }
 
 
-def _validate_response(response):
-    status_code = response.status_code
-    if not status_code == 200:
-        raise ValueError(f'Got an unexpected status code: {status_code}')
-
-
 def get_results(url):
     response = requests.get(url)
-    _validate_response(response)
+    validate_response(response)
     return response.json()['features'][0]['attributes']['value']
 
 
-def get_covid_stats(update):
+def get_covid_stats():
     return f"""
     🦠 Covid Stats
      ├ Confirmati: {get_results(URLS['total'])}
@@ -46,7 +41,25 @@ def get_covid_stats(update):
     """
 
 
-def get_county_details(county):
+def get_covid_county_details(text):
+    if not text:
+        return 'Syntax: /covid_county_details <County name>'
+
+    response = requests.get(URLS['per_county'])
+    validate_response(response)
+
+    counties = response.json()['features']
+    county = None
+    for feature in counties:
+        county_details = feature['attributes']
+        if county_details['Judete'] == text:
+            county = county_details
+    if not county:
+        available_counties = ' | '.join(
+            county['attributes']['Judete'] for county in counties
+        )
+        return f"Available counties: {available_counties}"
+
     return f"""
     🦠 {county['Judete']}
      ├ Populatie: {county['Populatie']}
@@ -59,38 +72,11 @@ def get_county_details(county):
     """
 
 
-def get_covid_county_details(update):
-    text = ' '.join(update.message.text.split(' ')[1:])
-    if not text:
-        return 'Syntax: /covid_county_details <County name>'
-
+def get_covid_per_county():
     response = requests.get(URLS['per_county'])
-    _validate_response(response)
-
-    counties = response.json()['features']
-    county = ''
-    for feature in counties:
-        county_details = feature['attributes']
-        if county_details['Judete'] == text:
-            county = county_details
-    if not county:
-        available_counties = ' | '.join(
-            county['attributes']['Judete'] for county in counties
-        )
-        return f"Available counties: {available_counties}"
-
-    return get_county_details(county)
-
-
-def get_county_confirmed(county):
-    return f"{county['Judete']}: {county['Cazuri_confirmate']}"
-
-
-def get_covid_per_county(update):
-    response = requests.get(URLS['per_county'])
-    _validate_response(response)
+    validate_response(response)
     counties = response.json()['features']
     return '\t 🦠 '.join(
-        get_county_confirmed(county['attributes'])
+        f"{county['Judete']}: {county['Cazuri_confirmate']}"
         for county in counties
     )
