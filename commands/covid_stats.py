@@ -95,7 +95,10 @@ def get_covid_global(count='5'):
     try:
         count = int(count.strip())
     except ValueError:
-        return 'Syntax: /covid_global <count: int>'
+        return f"""
+        Invalid count: {count}.
+        Syntax: /covid_global <count: Optional[int]>
+        """
 
     main_stats_id = 'maincounter-wrap'
 
