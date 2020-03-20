@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import requests
 
 base_url = (
@@ -20,6 +21,7 @@ URLS = {
     'dead': f'{count_base_url}Persoane_decedate{suffix}',
     'quarantined': f'{count_base_url}Persoane_in_carantina{suffix}',
     'isolated': f'{count_base_url}Persoane_izolate{suffix}',
+    'global': 'https://www.worldometers.info/coronavirus/#countries',
 }
 
 
@@ -86,3 +88,45 @@ def get_covid_per_county():
         f"{county['attributes']['Cazuri_confirmate']}"
         for county in counties
     )
+
+
+def get_covid_global():
+
+    main_stats_id = 'maincounter-wrap'
+
+    soup = BeautifulSoup(requests.get(URLS['global']).text)
+
+    cases, deaths, recovered = [
+        (x.h1.text, x.div.span.text.strip())
+        for x in soup.find_all(id=main_stats_id)
+    ]
+
+    ths = [x.text for x in
+           soup.select('table#main_table_countries_today > thead > tr > th')][
+          :6]
+    rows = soup.select('table#main_table_countries_today > tbody > tr')[:10]
+
+    results = []
+    for row in rows:
+        data = [x.text for x in row.select('td')]
+        results.append({ths[i]: data[i] for i in range(len(ths))})
+    per_country = '\n'.join(
+        [
+            f"""
+            {r[ths[0]]}:
+            {ths[1]}: {results[ths[1]]}
+            {ths[2]}: {results[ths[2]]}
+            {ths[3]}: {results[ths[3]]}
+            {ths[4]}: {results[ths[4]]}
+            {ths[5]}: {results[ths[5]]}
+            """ for r in results]
+    )
+
+    return f"""
+    🦠 Covid Global Stats (worldometers.info)
+    {cases[0]}: {cases[1]}
+    {deaths[0]}: {deaths[1]}
+    {recovered[0]}: {recovered[1]}
+
+    {per_country}
+    """
