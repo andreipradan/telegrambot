@@ -1,7 +1,5 @@
 import requests
 
-from handlers import validate_response
-
 base_url = (
     'https://services7.arcgis.com/I8e17MZtXFDX9vvT/arcgis/rest/services/'
     'Coronavirus_romania/FeatureServer/0/query?f=json&where=1%3D1&'
@@ -23,6 +21,12 @@ URLS = {
     'quarantined': f'{count_base_url}Persoane_in_carantina{suffix}',
     'isolated': f'{count_base_url}Persoane_izolate{suffix}',
 }
+
+
+def validate_response(response):
+    status_code = response.status_code
+    if not status_code == 200:
+        raise ValueError(f'Got an unexpected status code: {status_code}')
 
 
 def get_results(url):

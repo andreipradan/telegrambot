@@ -43,9 +43,3 @@ def validate_components(message):
                f'Try one of these: {allowed_text}', 400
 
     return command_text, 200
-
-
-def validate_response(response):
-    status_code = response.status_code
-    if not status_code == 200:
-        raise ValueError(f'Got an unexpected status code: {status_code}')
