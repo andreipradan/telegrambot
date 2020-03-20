@@ -44,7 +44,8 @@ def store_data_to_db(value, **kwargs):
 
 
 def get_results(field):
-    url = URLS['field']
+    url = URLS[field]
+
     head_response = requests.head(url)
     db_data = get_db_data()
     if not head_response.headers['ETag'] != db_data['ETag']:
