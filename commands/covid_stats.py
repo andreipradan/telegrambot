@@ -90,10 +90,10 @@ def get_covid_per_county():
     )
 
 
-def get_covid_global(count=5):
+def get_covid_global(count='5'):
 
     try:
-        count = int(count)
+        count = int(count.strip())
     except ValueError:
         return 'Syntax: /covid_global <count: int>'
 
