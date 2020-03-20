@@ -39,8 +39,9 @@ def validate_components(message):
         for command in ALLOWED_COMMANDS.keys():
             allowed_text += f'\n• /{command}'
         return (
-            'Unrecognized command: '
-            f'"{command_text}".\n Try one of these: {allowed_text}',
+            f"""Unrecognized command: "{command_text}".
+            Available commands: {allowed_text}
+            """,
             400
         )
 
