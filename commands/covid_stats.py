@@ -1,3 +1,4 @@
+import re
 from bs4 import BeautifulSoup
 import requests
 
@@ -124,19 +125,19 @@ def get_covid_global(count=None):
             f"""
 🦠 {r[ths[0]]}:
     {ths[1]}: {r[ths[1]]}
-    {ths[2]}: {r[ths[2]]}
     {ths[3]}: {r[ths[3]]}
+    {ths[2]}: {r[ths[2]]}
     {ths[4]}: {r[ths[4]]}
     {ths[5]}: {r[ths[5]]}
     """ for r in results
         ]
     )
-
+    last_updated = soup.find(string=re.compile("Last updated: "))
     return f"""
-    Covid Global Stats (worldometers.info)
-{cases[0]}: {cases[1]}
-{deaths[0]}: {deaths[1]}
-{recovered[0]}: {recovered[1]}
+    Covid Global Stats (last updated: {last_updated})
+{cases[0]}      {cases[1]}
+{deaths[0]}     {deaths[1]}
+{recovered[0]}  {recovered[1]}
 
 {per_country}
     """

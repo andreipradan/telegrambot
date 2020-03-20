@@ -25,12 +25,15 @@ COMMANDS_WITH_UPDATE = [
 
 
 def validate_components(message):
+    if not message:
+        return 'No message', 404
+
+    if not message.chat:
+        return 'No chat', 404
+
     chat_id = message.chat.id
     if not chat_id:
         return 'No chat ID', 404
-
-    if not message:
-        return 'No message', 404
 
     message_text = message.text
     if not message_text:
