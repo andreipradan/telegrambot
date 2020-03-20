@@ -76,7 +76,7 @@ def session_view():
 
 
 @app.route('/session/clear/')
-def session_view():
+def session_clear_view():
     session.pop('ETag')
     session.pop('value')
     return redirect('/session/')
