@@ -70,7 +70,8 @@ def telegram_webhook():
                 allowed_text += f'\n• /{command}'
             send_message(
                 bot,
-                f'Unrecognized command: "{command_text}".\nTry one of these: {allowed_text}',
+                f'Unrecognized command: "{command_text}".\n'
+                f'Try one of these: {allowed_text}',
                 chat_id=chat_id
             )
             return 'Unrecognized command'
