@@ -1,16 +1,22 @@
 import os
 
-from flask import Flask, redirect
+from flask import Flask
+from flask import redirect
 from flask import request
 from flask import session
 import telegram
 import subprocess
 
-from handlers import ALLOWED_COMMANDS, COMMANDS_WITH_TEXT
+from handlers import ALLOWED_COMMANDS
+from handlers import COMMANDS_WITH_TEXT
 from handlers import validate_components
 
 
 app = Flask(__name__)
+app.secret_key = os.environ['SECRET_KEY']
+app.config['SESSION_TYPE'] = 'filesystem'
+
+
 token = os.environ['TOKEN']
 
 
@@ -77,6 +83,13 @@ def session_view():
 
 @app.route('/session/clear/')
 def session_clear_view():
-    session.pop('ETag')
-    session.pop('value')
+    session.pop('ETag', '')
+    session.pop('value', '')
+    return redirect('/session/')
+
+
+@app.route('/session/add/')
+def session_add():
+    for key, value in request.args.items():
+        session[key] = value
     return redirect('/session/')
