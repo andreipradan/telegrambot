@@ -55,6 +55,4 @@ def telegram_webhook():
 
 @app.route('/git-webhook/', methods=['POST'])
 def git_webhook():
-    p = subprocess.Popen(['git', 'pull'], cwd=os.environ['PATH_TO_GIT_FOLDER'])
-    p.wait()
-    return 'completed'
+    return subprocess.check_output(['git', 'pull'])

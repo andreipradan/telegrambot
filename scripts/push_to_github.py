@@ -15,5 +15,5 @@ def git_push(commit_message):
 
 
 if __name__ == '__main__':
-    message = sys.argv[1] if len(sys.argv) == 2 else 'Auto commit'
+    message = sys.argv[1]
     git_push(message)
