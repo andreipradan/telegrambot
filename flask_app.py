@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 from flask import request
+import git
 import telegram
 
 from commands.gcloud_utils import sample_analyze_sentiment
@@ -9,7 +10,6 @@ from commands.say_hi import say_hi
 from commands.covid_stats import get_covid_county_details
 from commands.covid_stats import get_covid_per_county
 from commands.covid_stats import get_covid_stats
-
 
 
 ALLOWED_COMMANDS = {
@@ -32,7 +32,7 @@ def send_message(bot, text, chat_id=None):
     ).to_json()
 
 
-@app.route(f'/{token}', methods=['GET', 'POST'])
+@app.route(f'/{token}', methods=['POST'])
 def telegram_webhook():
     if request.method == "POST":
         bot = telegram.Bot(token=os.environ['TOKEN'])
@@ -87,3 +87,10 @@ def telegram_webhook():
             bot.sendMessage(chat_id=chat_id, text=text)
         return 'completed'
     return f"Unexpected method {request.method}"
+
+
+@app.route('/git-webhook/', methods=['GET'])
+def git_webhook():
+    repo = git.Repo(os.getenv('PATH_TO_GIT_FOLDER'))
+    response = repo.remotes.origin.pull()
+    return 'ok'
