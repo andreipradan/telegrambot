@@ -81,6 +81,7 @@ def get_covid_per_county():
     validate_response(response)
     counties = response.json()['features']
     return '\t 🦠 '.join(
-        f"{county['Judete']}: {county['Cazuri_confirmate']}"
+        f"{county['attributes']['Judete']}: "
+        f"{county['attributes']['Cazuri_confirmate']}"
         for county in counties
     )
