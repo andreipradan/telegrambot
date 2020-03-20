@@ -57,12 +57,11 @@ def get_results(field):
 def get_covid_stats():
     return f"""
     🦠 Covid Stats
-     ├ Confirmati: {get_results('total')}
-     ├ Decedati: {get_results('dead')}
-     ├ Carantinați: {get_results('quarantined')}
-     └ Izolați: {get_results('isolated')}
-     
-     Last updated: {session.get('total_last_updated')}
+     ├ Confirmati: {get_results('total')}           (Last update: {session.get('total_last_modified')})
+     ├ Decedati: {get_results('dead')}              (Last update: {session.get('dead_last_modified')})
+     ├ Carantinați: {get_results('quarantined')}    (Last update: {session.get('quarantined_last_modified')})
+     └ Izolați: {get_results('isolated')}           (Last update: {session.get('isolated_last_modified')})
+
     """
 
 
