@@ -33,7 +33,7 @@ def telegram_webhook():
 
         command_text, status_code = validate_components(update.message)
         if status_code != 200:
-            return command_text, status_code
+            raise ValueError(command_text)
 
         args = []
         if command_text in COMMANDS_WITH_TEXT:
