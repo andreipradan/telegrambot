@@ -37,9 +37,11 @@ def telegram_webhook():
 
         bot = telegram.Bot(token=os.environ['TOKEN'])
         update = telegram.Update.de_json(json, bot)
-        chat_id = update.message.chat_id
 
         command_text, status_code = validate_components(update.message)
+
+        chat_id = update.message.chat_id
+
         if status_code == 404:
             raise ValueError(command_text)
         elif status_code == 400:
