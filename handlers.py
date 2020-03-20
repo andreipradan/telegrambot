@@ -15,6 +15,7 @@ ALLOWED_COMMANDS = {
 COMMANDS_WITH_TEXT = [
     'analyze_sentiment',
     'covid_county_details',
+    'say_hi',
 ]
 
 
