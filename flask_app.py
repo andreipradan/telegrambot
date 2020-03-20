@@ -1,7 +1,8 @@
 import os
 
-from flask import Flask
+from flask import Flask, redirect
 from flask import request
+from flask import session
 import telegram
 import subprocess
 
@@ -67,3 +68,15 @@ def git_webhook():
         raise ValueError(
             "Exception on process, rc=", e.returncode, "output=", e.output
         )
+
+
+@app.route('/session/')
+def session_view():
+    return dict(session)
+
+
+@app.route('/session/clear/')
+def session_view():
+    session.pop('ETag')
+    session.pop('value')
+    return redirect('/session/')

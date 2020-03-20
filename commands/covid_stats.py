@@ -1,6 +1,4 @@
-import os
-
-from pymongo import MongoClient
+from flask import session
 import requests
 
 base_url = (
@@ -32,33 +30,20 @@ def validate_response(response):
         raise ValueError(f'Got an unexpected status code: {status_code}')
 
 
-def get_db_data(field):
-    client = MongoClient(os.environ['MONGO_DB_HOST'])
-    return client['telegrambot_db'].last_updated.find_one({'name': field})
-
-
-def store_data_to_db(value, **kwargs):
-    value.update(kwargs)
-    client = MongoClient(os.environ['MONGO_DB_HOST'])
-    return client['telegrambot_db'].last_updated.insert_ony(value)
-
-
 def get_results(field):
     url = URLS[field]
 
     head_response = requests.head(url)
-    db_data = get_db_data(field)
-    if not head_response.headers['ETag'] != db_data['ETag']:
-        return db_data[field]
+
+    etag = head_response.headers['ETag']
+    if etag == session.get('ETag'):
+        return session['value']
 
     response = requests.get(url)
     validate_response(response)
     value = response.json()['features'][0]['attributes']['value']
-    store_data_to_db(
-        value,
-        last_updated=response.headers['Last-Modified'],
-        ETag=response.headers['ETag'],
-    )
+
+    session.update({'value': value, 'ETag': etag})
     return value
 
 
