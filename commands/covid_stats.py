@@ -73,7 +73,14 @@ def get_covid_county_details(update):
         county_details = feature['attributes']
         if county_details['Judete'] == text:
             county = county_details
-    return get_county_details(county) if county else f"Available counties: {' | '.join(c['attributes']['Judete'] for c in counties)}"
+    if not county:
+        available_counties = ' | '.join(
+            county['attributes']['Judete'] for county in counties
+        )
+        return f"Available counties: {available_counties}"
+
+    return get_county_details(county)
+
 
 def get_county_confirmed(county):
     return f"{county['Judete']}: {county['Cazuri_confirmate']}"
