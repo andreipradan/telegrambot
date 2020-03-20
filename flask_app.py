@@ -3,12 +3,19 @@ import os
 from flask import Flask
 from flask import request
 import telegram
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 from handlers import ALLOWED_COMMANDS
 from handlers import COMMANDS_WITH_TEXT
 from handlers import COMMANDS_WITH_UPDATE
 from handlers import validate_components
 
+
+sentry_sdk.init(
+    dsn=os.environ['SENTRY_DSN'],
+    integrations=[FlaskIntegration()]
+)
 
 app = Flask(__name__)
 token = os.environ['TOKEN']
