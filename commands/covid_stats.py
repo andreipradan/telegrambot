@@ -136,14 +136,13 @@ def get_covid_global(count=None):
     }
     get_collection('top_stats').update_one(
         {'id': 1},
-        update={'$set': top_stats}
+        update={'$set': top_stats},
+        upsert=True,
     )
 
-    ths = [x.text for x in
-           soup.select('table#main_table_countries_today > thead > tr > th')][
-          1:6
-          ]
-    rows = soup.select('table#main_table_countries_today > tbody > tr')[:count]
+    selector = 'table#main_table_countries_today'
+    ths = [x.text for x in soup.select(f'{selector} > thead > tr > th')][1:6]
+    rows = soup.select(f'{selector} > tbody > tr')[:count]
 
     countries = OrderedDict()
     for row in rows:
@@ -153,7 +152,12 @@ def get_covid_global(count=None):
         for i, value in enumerate(ths):
             countries[country][ths[i]] = data[i]
 
+    countries_collection = get_collection('countries')
     for country_name, data in countries.items():
-        collection.insert_one({'name': country_name, **data})
+        countries_collection.update_one(
+            {'slug': country_name},
+            update={'$set': data},
+            upsert=True
+        )
 
     return parse_global(last_updated_string, top_stats, countries)
