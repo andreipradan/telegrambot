@@ -146,7 +146,6 @@ def get_covid_global(count=None):
         countries[country] = {}
         for i, value in enumerate(ths):
             countries[country][ths[i]] = data[i]
-        # results.append({ths[i]: data[i] for i in range(len(ths))})
     per_country = '\n'.join(
         [
             f"""
