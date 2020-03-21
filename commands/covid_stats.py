@@ -1,28 +1,20 @@
-from datetime import datetime
-import pytz
+
 import re
 from collections import OrderedDict
 
 from bs4 import BeautifulSoup
 import requests
 
-from commands.constants import URLS
+from core.constants import ROMANIA_STATS_SLUG, COUNTY_SLUG
+from core.constants import URLS
 from commands.parsers import parse_details
 from commands.parsers import parse_global
+from commands.utils import get_db_stats, get_date
+from commands.utils import get_last_updated
+from commands.utils import validate_response
 from core import database
 
 delimiter = '=========================='
-
-
-def check_etag(url):
-    head = requests.head(url)
-    if head.status_code != 200:
-        return f'Failed to pull data. Status code: {head.status_code}'
-    head_etag = head.headers.get('ETag')
-    db_etag = database.get_etag().get('value')
-    if not all([head_etag, db_etag]):
-        return False
-    return head_etag == db_etag
 
 
 def request_romania():
@@ -37,7 +29,8 @@ def request_romania():
 
     last_updated = get_last_updated(data)
     database.set_etag(response.headers.get('ETag'))
-    database.set_romania_stats(
+    database.set_stats_for_slug(
+        ROMANIA_STATS_SLUG,
         **ro,
         last_updated=last_updated,
     )
@@ -53,27 +46,10 @@ def request_romania():
 """
 
 
-def validate_response(response):
-    status_code = response.status_code
-    if not status_code == 200:
-        raise ValueError(f'Got an unexpected status code: {status_code}')
-
-
-def get_last_updated(data):
-    try:
-        latest = int(max([r['attributes']['EditDate'] for r in data])) / 1000
-    except (ValueError, TypeError):
-        return '<could not extract last updated>'
-
-    utc_datetime = datetime.utcfromtimestamp(latest).replace(tzinfo=pytz.utc)
-    dt = utc_datetime.astimezone(pytz.timezone('Europe/Bucharest'))
-    return dt.strftime('%H:%M:%S %d-%m-%Y')
-
-
 def get_romania_stats():
     db_stats = (
-        database.get_romania_stats()
-        if check_etag(URLS['ROMANIA'])
+        database.get_stats_by_slug(ROMANIA_STATS_SLUG)
+        if get_db_stats(URLS['ROMANIA'])
         else None
     )
 
@@ -91,9 +67,21 @@ def get_romania_stats():
     return request_romania()
 
 
-def get_covid_county_details(text):
+def get_county_details(text):
     if not text:
         return 'Syntax: /covid_county_details <County name>'
+
+    db_stats = get_db_stats(URLS['ROMANIA'])
+    if db_stats:
+        last_updated = db_stats.pop('last_updated')
+        db_stats.pop('_id', None)
+        db_stats.pop('slug', None)
+        return parse_global(
+            title=f'{delimiter}\n🦠 {db_stats["Judete"]}',
+            top_stats=db_stats,
+            items={},
+            footer=f'Last updated: {last_updated}\n[Source: DB]\n{delimiter}'
+        )
 
     response = requests.get(URLS['ROMANIA'])
     validate_response(response)
@@ -111,7 +99,16 @@ def get_covid_county_details(text):
         )
         return f"Available counties: {available_counties}"
 
+    last_updated = get_date(county['EditDate'])
+    database.set_etag(response.headers.get('ETag'))
+    database.set_stats_for_slug(
+        COUNTY_SLUG,
+        **county,
+        last_updated=last_updated,
+    )
+
     return f"""
+{delimiter}
 🦠 {county['Judete']}
  ├ Populatie: {county['Populatie']}
  ├ Confirmați: {county['Cazuri_confirmate']}
@@ -120,7 +117,9 @@ def get_covid_county_details(text):
  ├ Izolați: {county['Persoane_in_carantina']}
  └ Vindecați: {county['Persoane_vindecate']}
 
-Last updated: {get_last_updated(counties)}
+Last updated: {last_updated}
+[Source: API]
+{delimiter}
     """
 
 

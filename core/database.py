@@ -13,13 +13,13 @@ def get_collection(name, client=get_client()):
     return client[DEFAULT_DB][name]
 
 
-def get_romania_stats():
-    return get_collection('top_stats').find_one({'slug': 'romania-stats'})
+def get_stats_by_slug(slug):
+    return get_collection('top_stats').find_one({'slug': slug})
 
 
-def set_romania_stats(**stats):
+def set_stats_for_slug(slug, **stats):
     get_collection('top_stats').update_one(
-        {'slug': 'romania-stats'},
+        {'slug': slug},
         update={'$set': stats},
         upsert=True,
     )

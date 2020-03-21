@@ -23,3 +23,7 @@ URLS = {
     'ROMANIA': f'{RO_URL}',
     'GLOBAL': 'https://www.worldometers.info/coronavirus/#countries',
 }
+
+
+ROMANIA_STATS_SLUG = 'romania-stats'
+COUNTY_SLUG = 'county-slug'
