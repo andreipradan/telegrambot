@@ -42,7 +42,7 @@ def validate_components(update):
         if getattr(message, 'new_chat_members', None):
             user = message.new_chat_member
             name = f'{user.first_name} {user.last_name}' or user.username
-            return f'Welcome {name}'
+            return f'Welcome {name}!'
         raise ValueError(f'No message text. Update: {update.to_dict()}')
 
     if not message_text.startswith('/'):
