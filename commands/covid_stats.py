@@ -128,12 +128,12 @@ def get_covid_global(count=None):
     main_stats_id = 'maincounter-wrap'
 
     soup = BeautifulSoup(requests.get(url).text)
-    last_updated_string = soup.find(string=re.compile('Last updated: '))
 
     top_stats = {
         x.h1.text: x.div.span.text.strip()
         for x in soup.find_all(id=main_stats_id)
     }
+    top_stats['last_updated'] = soup.find(string=re.compile('Last updated: '))
     get_collection('top_stats').update_one(
         {'id': 1},
         update={'$set': top_stats},
@@ -159,4 +159,4 @@ def get_covid_global(count=None):
             upsert=True
         )
 
-    return parse_global(last_updated_string, top_stats, countries)
+    return parse_global(top_stats, countries)
