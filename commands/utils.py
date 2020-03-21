@@ -12,8 +12,7 @@ def parse_country(data):
 def parse_countries(countries):
     return '\n'.join(
         [
-            f"""
-🦠 {country}
+            f"""🦠 {country}
 ├{parse_country(stats)}
 """ for country, stats in countries.items()
         ]
