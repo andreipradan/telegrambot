@@ -1,8 +1,8 @@
 FIELDS = [
     "Judete",
     "Cazuri_confirmate",
-    # "Regiune_dezvoltare",
-    # "Populatie",
+    "Regiune_dezvoltare",
+    "Populatie",
     "Persoane_in_carantina",
     "Persoane_izolate",
     "Persoane_decedate",

@@ -2,25 +2,24 @@ def get_records_from_db(collection):
     return collection.find().sort({'TotalCases': -1})
 
 
-def parse_country(data):
+def parse_details(data):
     items = list(data.items())
-    return '\n├ '.join(
+    return f'├ ' + '\n├ '.join(
         [f'{key}: {value}' for key, value in items[:-1]]
-    ) + f'\n└{items[-1][0]}: {items[-1][1]}'
+    ) + f'\n└ {items[-1][0]}: {items[-1][1]}'
 
 
-def parse_countries(countries):
-    return '\n'.join([f"🦠 {country}\n├{parse_country(stats)}"
-                      for country, stats in countries.items()])
+def parse_list_details(data, item_emoji='➡️'):
+    return '\n'.join([f"{item_emoji} {title}\n{parse_details(stats)}"
+                      for title, stats in data.items()])
 
 
-def parse_global(top_stats, countries, from_db=False):
-    last_updated = top_stats.pop('last_updated')
+def parse_global(title, top_stats, items, item_emoji='➡️', footer=''):
     return f"""
-Covid Global Stats
-├{parse_country(top_stats)}
+{title}
+{parse_details(top_stats)}
 
-{parse_countries(countries)}
+{parse_list_details(items, item_emoji=item_emoji)}
 
-({last_updated}) [Source: {'DB' if from_db else 'worldometers.info'}]
+{footer}
 """

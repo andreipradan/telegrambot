@@ -2,14 +2,14 @@ from commands.gcloud_utils import analyze_sentiment
 from commands.say_hi import say_hi
 from commands.covid_stats import get_covid_county_details
 from commands.covid_stats import get_covid_global
-from commands.covid_stats import get_covid_per_county
+from commands.covid_stats import get_covid_counties
 from commands.covid_stats import get_romania_stats
 
 
 ALLOWED_COMMANDS = {
     'analyze_sentiment': analyze_sentiment,
     'covid': get_romania_stats,
-    'covid_counties': get_covid_per_county,
+    'covid_counties': get_covid_counties,
     'covid_county_details': get_covid_county_details,
     'covid_global': get_covid_global,
     'say_hi': say_hi,

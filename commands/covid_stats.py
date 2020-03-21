@@ -1,5 +1,4 @@
 from datetime import datetime
-from datetime import timezone
 import pytz
 import re
 from collections import OrderedDict
@@ -8,7 +7,7 @@ from bs4 import BeautifulSoup
 import requests
 
 from commands.constants import URLS
-from commands.utils import parse_country
+from commands.utils import parse_details
 from commands.utils import parse_global
 from core.database import get_collection
 
@@ -27,7 +26,7 @@ def get_last_updated(data):
 
     utc_datetime = datetime.utcfromtimestamp(latest).replace(tzinfo=pytz.utc)
     dt = utc_datetime.astimezone(pytz.timezone('Europe/Bucharest'))
-    return dt.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+    return dt.strftime('%H:%M:%S %d-%m-%Y')
 
 
 def get_romania_stats():
@@ -40,11 +39,11 @@ def get_romania_stats():
     ro['Carantinati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
     ro['Izolati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
     return f"""
-    🦠 Romania Stats
-     {parse_country(ro)}
+🦠 Romania Stats
+{parse_details(ro)}
 
-     Last updated: {get_last_updated(data)}
-    """
+ Last updated: {get_last_updated(data)}
+"""
 
 
 def get_covid_county_details(text):
@@ -60,6 +59,7 @@ def get_covid_county_details(text):
         county_details = feature['attributes']
         if county_details['Judete'] == text:
             county = county_details
+
     if not county:
         available_counties = ' | '.join(
             county['attributes']['Judete'] for county in counties
@@ -67,18 +67,19 @@ def get_covid_county_details(text):
         return f"Available counties: {available_counties}"
 
     return f"""
-    🦠 {county['Judete']}
-     ├ Populatie: {county['Populatie']}
-     ├ Confirmați: {county['Cazuri_confirmate']}
-     ├ Decedați: {county['Persoane_decedate']}
-     ├ Carantinați: {county['Persoane_in_carantina']}
-     ├ Izolați: {county['Persoane_in_carantina']}
-     └ Vindecați: {county['Persoane_vindecate']}
+🦠 {county['Judete']}
+ ├ Populatie: {county['Populatie']}
+ ├ Confirmați: {county['Cazuri_confirmate']}
+ ├ Decedați: {county['Persoane_decedate']}
+ ├ Carantinați: {county['Persoane_in_carantina']}
+ ├ Izolați: {county['Persoane_in_carantina']}
+ └ Vindecați: {county['Persoane_vindecate']}
 
+Last updated: {get_last_updated(counties)}
     """
 
 
-def get_covid_per_county():
+def get_covid_counties():
     response = requests.get(URLS['ROMANIA'])
     validate_response(response)
     counties = response.json()['features']
@@ -90,7 +91,7 @@ def get_covid_per_county():
 
 
 def get_covid_global(count=None):
-    count = count.strip() or 5
+    count = count.strip() if count else 5
 
     try:
         count = int(count)
@@ -111,7 +112,7 @@ def get_covid_global(count=None):
     if db_etag and etag == db_etag['ETag']:
         top_stats = get_collection('top_stats').find_one({'id': 1})
         countries = get_collection('countries').find().sort({'TotalCases': -1})
-        return parse_global(top_stats, countries, from_db=True)
+        return parse_global(top_stats, countries)
 
     collection.update_one(
         {'id': 1},
@@ -127,7 +128,6 @@ def get_covid_global(count=None):
         x.h1.text: x.div.span.text.strip()
         for x in soup.find_all(id=main_stats_id)
     }
-    top_stats['last_updated'] = soup.find(string=re.compile('Last updated: '))
     get_collection('top_stats').update_one(
         {'id': 1},
         update={'$set': top_stats},
@@ -138,11 +138,11 @@ def get_covid_global(count=None):
     ths = [x.text for x in soup.select(f'{selector} > thead > tr > th')][1:6]
     rows = soup.select(f'{selector} > tbody > tr')[:count]
 
-    countries = OrderedDict()
+    countries = {}
     for row in rows:
         data = [x.text for x in row.select('td')]
         country = data.pop(0)
-        countries[country] = {}
+        countries[country] = OrderedDict()
         for i, value in enumerate(ths):
             countries[country][ths[i]] = data[i]
 
@@ -153,4 +153,11 @@ def get_covid_global(count=None):
             upsert=True
         )
 
-    return parse_global(top_stats, countries)
+    last_updated = soup.find(string=re.compile('Last updated: '))
+    return parse_global(
+        title='🌎 Global Stats',
+        top_stats=top_stats,
+        items=countries,
+        item_emoji='🦠',
+        footer=f"({last_updated}) [Source: worldometers.info]"
+    )
