@@ -20,6 +20,6 @@ RO_URL = ('https://services7.arcgis.com/I8e17MZtXFDX9vvT/arcgis/rest/'
           '&resultRecordCount=42&cacheHint=true')
 
 URLS = {
-    'romania': f'{RO_URL}',
-    'global': 'https://www.worldometers.info/coronavirus/#countries',
+    'ROMANIA': f'{RO_URL}',
+    'GLOBAL': 'https://www.worldometers.info/coronavirus/#countries',
 }

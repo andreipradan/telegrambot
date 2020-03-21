@@ -16,7 +16,7 @@ def validate_response(response):
 
 
 def get_covid_stats():
-    response = requests.get(URLS['RO_URL'])
+    response = requests.get(URLS['ROMANIA'])
     validate_response(response)
     data = response.json()['features']
     return f"""
@@ -32,7 +32,7 @@ def get_covid_county_details(text):
     if not text:
         return 'Syntax: /covid_county_details <County name>'
 
-    response = requests.get(URLS['RO_URL'])
+    response = requests.get(URLS['ROMANIA'])
     validate_response(response)
 
     counties = response.json()['features']
@@ -81,7 +81,7 @@ def get_covid_global(count=None):
         Syntax: /covid_global <count: Optional[int]>
         """
 
-    url = URLS['global']
+    url = URLS['GLOBAL']
     head_response = requests.head(url)
     if not head_response.status_code == 200:
         return f'Bad Status code: {head_response.status_code}'
