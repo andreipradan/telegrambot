@@ -4,17 +4,17 @@ from google.cloud import language_v1
 from google.cloud.language_v1 import enums
 from google.api_core.exceptions import InvalidArgument
 
-from commands.utils import parse_global
+from commands.parsers import parse_global
 
 
 def get_footer():
     return """===================================
-    Clearly Positive:   "score": 0.8,  "magnitude": 3.0
-    Clearly Negative: "score": -0.6, "magnitude": 4.0
-    Neutral:                 "score": 0.1,  "magnitude": 0.0
-    Mixed:                   "score": 0.0,  "magnitude": 4.0
-    ===================================
-    """
+Clearly Positive:   "score": 0.8,  "magnitude": 3.0
+Clearly Negative: "score": -0.6, "magnitude": 4.0
+Neutral:                 "score": 0.1,  "magnitude": 0.0
+Mixed:                   "score": 0.0,  "magnitude": 4.0
+===================================
+"""
 
 
 def analyze_sentiment(text):
@@ -50,7 +50,7 @@ def analyze_sentiment(text):
         sentences[title]['Score'] = sentence.sentiment.score
         sentences[title]['Magnitute'] = sentence.sentiment.magnitude
     return parse_global(
-        '💔 Sentiment analysis',
+        '===================================\n💔 Sentiment analysis',
         top_stats=top_stats,
         items=sentences,
         footer=get_footer(),

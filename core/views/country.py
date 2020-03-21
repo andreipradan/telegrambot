@@ -1,10 +1,8 @@
 from flask import Blueprint
 from flask import abort
-from flask import redirect
 from flask import request
 
 from core.database import get_collection
-from core.database import update_or_create
 from core.handlers import parse_result
 from core.views.base import make_json_response
 
@@ -20,14 +18,6 @@ def country_list():
         'TotalCases', -1
     )[:limit]))
     return make_json_response(home_view_name=home_view_name, data=results)
-
-
-@country_views.route('/countries/add/')
-def country_add():
-    if not request.args:
-        return 'Invalid data. Retry using URL parameters'
-    update_or_create(**request.args.to_dict())
-    return redirect('/collections')
 
 
 @country_views.route('/countries/<slug>/')

@@ -1,5 +1,19 @@
+from functools import wraps
+
+from flask import g
 from flask import jsonify
+from flask import redirect
+from flask import request
 from flask import url_for
+
+
+def login_required(func):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        if g.user is None:
+            return redirect(url_for('login', next=request.url))
+        return func(*args, **kwargs)
+    return decorated_function
 
 
 def make_json_response(home_view_name, data=None, errors=None):

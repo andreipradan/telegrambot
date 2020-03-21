@@ -7,9 +7,11 @@ from bs4 import BeautifulSoup
 import requests
 
 from commands.constants import URLS
-from commands.utils import parse_details
-from commands.utils import parse_global
-from core.database import get_collection
+from commands.parsers import parse_details
+from commands.parsers import parse_global
+from core import database
+
+delimiter = '=========================='
 
 
 def validate_response(response):
@@ -30,7 +32,28 @@ def get_last_updated(data):
 
 
 def get_romania_stats():
-    response = requests.get(URLS['ROMANIA'])
+    url = URLS['ROMANIA']
+    head = requests.head(url)
+    if head.status_code != 200:
+        return f'Failed to pull data. Status code: {head.status_code}'
+
+    db_stats = database.get_romania_stats()
+
+    head_etag = head.headers.get('ETag')
+    db_etag = db_stats.get('ETag')
+    if head_etag and db_etag and head_etag == db_etag:
+        last_updated = db_stats.pop('last_updated')
+        db_stats.pop('ETag', None)
+        db_stats.pop('_id', None)
+        db_stats.pop('slug', None)
+        return parse_global(
+            title=f'{delimiter}\n🦠 Romania Stats',
+            top_stats=db_stats,
+            items={},
+            footer=f'Last updated: {last_updated}\n[Source: DB]\n{delimiter}'
+        )
+
+    response = requests.get(url)
     validate_response(response)
     data = response.json()['features']
     ro = OrderedDict()
@@ -38,11 +61,18 @@ def get_romania_stats():
     ro['Decedati'] = sum([r['attributes']['Persoane_decedate'] for r in data])
     ro['Carantinati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
     ro['Izolati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
+
+    last_updated = get_last_updated(data)
+    database.set_romania_stats(**ro, last_updated=last_updated, ETag=head_etag)
+
     return f"""
+{delimiter}
 🦠 Romania Stats
 {parse_details(ro)}
-
- Last updated: {get_last_updated(data)}
+{delimiter}
+ Last updated: {last_updated}
+ [Source: API]
+{delimiter}
 """
 
 
@@ -101,38 +131,14 @@ def get_covid_global(count=None):
         Syntax: /covid_global <count: Optional[int]>
         """
 
-    url = URLS['GLOBAL']
-    head_response = requests.head(url)
-    if not head_response.status_code == 200:
-        return f'Bad Status code: {head_response.status_code}'
-
-    collection = get_collection('etags')
-    etag = head_response.headers['ETag']
-    db_etag = collection.find_one({'id': 1})
-    if db_etag and etag == db_etag['ETag']:
-        top_stats = get_collection('top_stats').find_one({'id': 1})
-        countries = get_collection('countries').find().sort({'TotalCases': -1})
-        return parse_global(top_stats, countries)
-
-    collection.update_one(
-        {'id': 1},
-        update={'$set': {'ETag': etag}},
-        upsert=True,
-    )
-
     main_stats_id = 'maincounter-wrap'
 
-    soup = BeautifulSoup(requests.get(url).text)
+    soup = BeautifulSoup(requests.get(URLS['GLOBAL']).text)
 
     top_stats = {
         x.h1.text: x.div.span.text.strip()
         for x in soup.find_all(id=main_stats_id)
     }
-    get_collection('top_stats').update_one(
-        {'id': 1},
-        update={'$set': top_stats},
-        upsert=True,
-    )
 
     selector = 'table#main_table_countries_today'
     ths = [x.text for x in soup.select(f'{selector} > thead > tr > th')][1:6]
@@ -146,18 +152,12 @@ def get_covid_global(count=None):
         for i, value in enumerate(ths):
             countries[country][ths[i]] = data[i]
 
-    for country_name, data in countries.items():
-        get_collection('countries').update_one(
-            {'slug': country_name},
-            update={'$set': data},
-            upsert=True
-        )
-
     last_updated = soup.find(string=re.compile('Last updated: '))
     return parse_global(
-        title='🌎 Global Stats',
+        title=f'{delimiter}======\n🌎 Global Stats',
         top_stats=top_stats,
         items=countries,
         item_emoji='🦠',
-        footer=f"({last_updated}) [Source: worldometers.info]"
+        footer=f"({last_updated})\n[Source: worldometers.info]"
+               f"\n{delimiter}======"
     )
