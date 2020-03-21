@@ -30,15 +30,13 @@ def telegram_webhook():
         bot = telegram.Bot(token=os.environ['TOKEN'])
         update = telegram.Update.de_json(json, bot)
 
-        command_text, error_code = validate_components(update.message)
+        command_text, status_code = validate_components(update)
 
-        chat_id = update.message.chat_id
+        chat_id = update.message.chat.id
 
-        if error_code == 404:
-            raise ValueError(f'{command_text}. Update: {update.to_dict()}')
-        elif error_code == 400:
+        if status_code != 200:
             return send_message(bot, text=command_text, chat_id=chat_id)
-        elif error_code == 1337:
+        elif status_code == 1337:
             return send_message(
                 bot,
                 f'{command_text}.\nUpdate: {update.to_dict()}',

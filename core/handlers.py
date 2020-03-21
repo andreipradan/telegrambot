@@ -24,25 +24,24 @@ COMMANDS_WITH_UPDATE = [
 ]
 
 
-def validate_components(message):
-    if not message:
-        return 'No message', 404
-
-    if not message.chat:
-        return 'No chat', 404
-
-    chat_id = message.chat.id
-    if not chat_id:
-        return 'No chat ID', 404
+def validate_components(update):
+    message = update.message
+    if not message or not message.chat or not message.chat.id:
+        raise ValueError(
+            f'Missing message, chat or chat ID. Update: {update.to_dict()}'
+        )
 
     message_text = message.text
     if not message_text:
         if getattr(message, 'left_chat_member', None):
-            return '😢', 1337
-        return 'No message text', 404
+            return '😢', 'send-message'
+        raise ValueError(f'No message text. Update: {update.to_dict()}')
 
     if not message_text.startswith('/'):
-        return f'Not a command: "{message_text}". Commands start with "/".', 400
+        return (
+           f'Invalid command: "{message_text}".\nCommands start with "/".',
+           'send-message'
+        )
 
     command_text = message_text.split(' ')[0][1:]
     if command_text not in ALLOWED_COMMANDS:
