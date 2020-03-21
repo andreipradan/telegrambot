@@ -1,3 +1,6 @@
+from datetime import datetime
+from datetime import timezone
+import pytz
 import re
 from collections import OrderedDict
 
@@ -5,6 +8,7 @@ from bs4 import BeautifulSoup
 import requests
 
 from commands.constants import URLS
+from commands.utils import parse_country
 from commands.utils import parse_global
 from core.database import get_collection
 
@@ -15,16 +19,31 @@ def validate_response(response):
         raise ValueError(f'Got an unexpected status code: {status_code}')
 
 
-def get_covid_stats():
+def get_last_updated(data):
+    try:
+        latest = int(max([r['attributes']['EditDate'] for r in data])) / 1000
+    except (ValueError, TypeError):
+        return '<could not extract last updated>'
+
+    utc_datetime = datetime.utcfromtimestamp(latest).replace(tzinfo=pytz.utc)
+    dt = utc_datetime.astimezone(pytz.timezone('Europe/Bucharest'))
+    return dt.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+
+def get_romania_stats():
     response = requests.get(URLS['ROMANIA'])
     validate_response(response)
     data = response.json()['features']
+    ro = OrderedDict()
+    ro['Confirmati'] = sum([r['attributes']['Cazuri_confirmate'] for r in data])
+    ro['Decedati'] = sum([r['attributes']['Persoane_decedate'] for r in data])
+    ro['Carantinati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
+    ro['Izolati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
     return f"""
-    🦠 Covid Stats
-     ├ Confirmati: {sum([r['attributes']['Cazuri_confirmate'] for r in data])}
-     ├ Decedati: {sum([r['attributes']['Persoane_decedate'] for r in data])}
-     ├ Carantinați: {sum([r['attributes']['Persoane_izolate'] for r in data])}
-     └ Izolați: {sum([r['attributes']['Persoane_izolate'] for r in data])}
+    🦠 Romania Stats
+     {parse_country(ro)}
+
+     Last updated: {get_last_updated(data)}
     """
 
 

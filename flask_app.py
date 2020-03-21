@@ -100,6 +100,11 @@ def country(slug):
     return abort(404)
 
 
+@app.route('/ro-stats/')
+def romania_stats():
+    return ALLOWED_COMMANDS['covid']()
+
+
 if __name__ == "__main__":
     app.run(
         debug=os.getenv('DEBUG', False),
