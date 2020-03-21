@@ -27,5 +27,5 @@ Covid Global Stats
 ├{parse_country(top_stats)}
 {parse_countries(countries)}
 
-({last_updated}) [Source: {'DB' if from_db else 'https://www.worldometers.info/'}]
+({last_updated}) [Source: {'DB' if from_db else 'worldometers.info/'}]
 """

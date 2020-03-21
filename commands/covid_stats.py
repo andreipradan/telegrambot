@@ -4,7 +4,6 @@ from collections import OrderedDict
 from bs4 import BeautifulSoup
 import requests
 
-from commands.utils import get_records_from_db
 from commands.utils import parse_global
 from core.database import get_collection
 
