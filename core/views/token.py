@@ -32,16 +32,12 @@ def telegram_webhook():
 
         command_text, status_code = validate_components(update)
 
-        chat_id = update.message.chat.id
+        if status_code == 500:
+            return send_message(bot, f'{command_text}.\nUpdate: {update.to_dict()}', chat_id=412945234)
 
+        chat_id = update.message.chat.id
         if status_code != 200:
             return send_message(bot, text=command_text, chat_id=chat_id)
-        elif status_code == 1337:  # debug
-            return send_message(
-                bot,
-                f'{command_text}.\nUpdate: {update.to_dict()}',
-                chat_id=412945234
-            )
 
         args = []
         if command_text in COMMANDS_WITH_TEXT:
@@ -51,13 +47,13 @@ def telegram_webhook():
         results = ALLOWED_COMMANDS[command_text](*args)
 
         try:
-            bot.sendMessage(chat_id=chat_id, text=results)
+            send_message(bot, text=results, chat_id=chat_id)
         except telegram.error.BadRequest as err:
             text = (
                 f'Restrict results (e.g. /{command_text} 3'
                 if 'Message is too long' in str(err)
                 else str(err)
             )
-            bot.sendMessage(chat_id=chat_id, text=text)
+            send_message(bot, text=text, chat_id=chat_id)
         return 'completed'
     return f"Unexpected method {request.method}"

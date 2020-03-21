@@ -28,7 +28,7 @@ def validate_components(update):
     message = update.message
     if not message or not message.chat or not message.chat.id:
         if getattr(update, 'edited_message', None):
-            return '✂️', 200
+            return f'✂️', 500
         raise ValueError(
             f'Missing message, chat or chat ID. Update: {update.to_dict()}'
         )
