@@ -60,7 +60,7 @@ def get_covid_county_details(text):
 
 
 def get_covid_per_county():
-    response = requests.get(URLS['per_county'])
+    response = requests.get(URLS['ROMANIA'])
     validate_response(response)
     counties = response.json()['features']
     return '\t 🦠 '.join(
