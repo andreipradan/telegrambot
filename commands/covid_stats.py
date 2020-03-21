@@ -108,20 +108,20 @@ def get_covid_global(count=None):
         """
 
     url = URLS['global']
-    # head_response = requests.head(url)
-    # if not head_response.status_code == 200:
-    #     return f'Bad Status code: {head_response.status_code}'
-    #
-    # collection = get_collection('etags')
-    # etag = head_response.headers['ETag']
-    # if etag == collection.find_one({'id': 1})['ETag']:
-    #     return get_records_from_db(collection)
-    #
-    # collection.update_one(
-    #     {'id': 1},
-    #     update={'$set': {'ETag': etag}},
-    #     upsert=True,
-    # )
+    head_response = requests.head(url)
+    if not head_response.status_code == 200:
+        return f'Bad Status code: {head_response.status_code}'
+
+    collection = get_collection('etags')
+    etag = head_response.headers['ETag']
+    if etag == collection.find_one({'id': 1})['ETag']:
+        return get_records_from_db(collection)
+
+    collection.update_one(
+        {'id': 1},
+        update={'$set': {'ETag': etag}},
+        upsert=True,
+    )
 
     main_stats_id = 'maincounter-wrap'
 
@@ -156,8 +156,7 @@ def get_covid_global(count=None):
     return f"""
     Covid Global Stats ({last_updated_string})
 {cases[0]}  {cases[1]}
-{deaths[0]}                 {deaths[1]}
-{recovered[0]}          {recovered[1]}
-
+{deaths[0]}                     {deaths[1]}
+{recovered[0]}              {recovered[1]}
 {per_country}
     """
