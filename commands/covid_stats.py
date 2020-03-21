@@ -117,7 +117,7 @@ def get_covid_global(count=None):
     etag = head_response.headers['ETag']
     db_etag = collection.find_one({'id': 1})
     if db_etag and etag == db_etag['ETag']:
-        return get_records_from_db(collection)
+        return get_records_from_db()
 
     collection.update_one(
         {'id': 1},
