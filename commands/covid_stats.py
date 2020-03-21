@@ -139,20 +139,20 @@ def get_covid_global(count=None):
           ]
     rows = soup.select('table#main_table_countries_today > tbody > tr')[:count]
 
-    results = OrderedDict()
+    countries = OrderedDict()
     for row in rows:
         data = [x.text for x in row.select('td')]
         country = data.pop(0)
-        results[country] = {}
-        for i, value in enumerate(data):
-            results[country][ths[i]] = data[i]
+        countries[country] = {}
+        for i, value in enumerate(ths):
+            countries[country][ths[i]] = data[i]
         # results.append({ths[i]: data[i] for i in range(len(ths))})
     per_country = '\n'.join(
         [
             f"""
 🦠 {country}:
     {parse_country(stats)}
-    """ for country, stats in results.items()
+    """ for country, stats in countries.items()
         ]
     )
     return f"""
