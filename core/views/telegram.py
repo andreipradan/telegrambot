@@ -32,11 +32,12 @@ def webhook():
 
         command_text, status_code = validate_components(update)
 
-        if status_code == 500:
-            return send_message(bot, f'{command_text}.\nUpdate: {update.to_dict()}', chat_id=412945234)
+        if status_code == 1337:
+            text = f'{command_text}.\nUpdate: {update.to_dict()}'
+            return send_message(bot, text=text, chat_id=412945234)
 
         chat_id = update.message.chat.id
-        if status_code != 200:
+        if status_code != 'valid-command':
             return send_message(bot, text=command_text, chat_id=chat_id)
 
         args = []

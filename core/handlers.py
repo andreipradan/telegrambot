@@ -28,7 +28,7 @@ def validate_components(update):
     message = update.message
     if not message or not message.chat or not message.chat.id:
         if getattr(update, 'edited_message', None):
-            return f'✂️', 500
+            return f'✂️', 1337
         raise ValueError(
             f'Missing message, chat or chat ID. Update: {update.to_dict()}'
         )
@@ -36,9 +36,9 @@ def validate_components(update):
     message_text = message.text
     if not message_text:
         if getattr(message, 'left_chat_member', None):
-            return '😢', 200
+            return '😢',
         if getattr(message, 'new_chat_title', None):
-            return '🎉', 200
+            return '🎉',
         raise ValueError(f'No message text. Update: {update.to_dict()}')
 
     if not message_text.startswith('/'):
@@ -58,7 +58,7 @@ def validate_components(update):
             400
         )
 
-    return command_text, 200
+    return command_text, 'valid-command'
 
 
 def parse_result(result):
