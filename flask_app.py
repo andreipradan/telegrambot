@@ -87,7 +87,7 @@ def collections():
     url_params = request.args.to_dict()
     limit = url_params.get('limit', 10)
     results = list(map(parse_result, get_collection().find()[:limit]))
-    get_collection('etags').create_index('ETag', unique=True)
+    # get_collection('top_stats').create_index('id', unique=True)
     return jsonify(results)
 
 

@@ -4,7 +4,8 @@ from collections import OrderedDict
 from bs4 import BeautifulSoup
 import requests
 
-from commands.utils import get_records_from_db, parse_country
+from commands.utils import get_records_from_db
+from commands.utils import parse_global
 from core.database import get_collection
 
 base_url = (
@@ -133,6 +134,16 @@ def get_covid_global(count=None):
         (x.h1.text, x.div.span.text.strip())
         for x in soup.find_all(id=main_stats_id)
     ]
+    get_collection('top_stats').update_one(
+        {'id': 1},
+        update={
+            '$set': {
+                cases[0]: cases[1],
+                deaths[0]: deaths[1],
+                recovered[0]: recovered[1],
+            }
+        }
+    )
 
     ths = [x.text for x in
            soup.select('table#main_table_countries_today > thead > tr > th')][
@@ -147,17 +158,8 @@ def get_covid_global(count=None):
         countries[country] = {}
         for i, value in enumerate(ths):
             countries[country][ths[i]] = data[i]
-    per_country = '\n'.join(
-        [
-            f"""
-🦠 {country}:
-├ {parse_country(stats)}""" for country, stats in countries.items()
-        ]
-    )
-    return f"""
-    Covid Global Stats ({last_updated_string})
-{cases[0]}  {cases[1]}
-{deaths[0]}                     {deaths[1]}
-{recovered[0]}              {recovered[1]}
-{per_country}
-    """
+
+    for country_name, data in countries:
+        collection.insert_one({'name': country_name, **data})
+
+    return parse_global(last_updated_string, cases, deaths, recovered, countries)
