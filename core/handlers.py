@@ -37,6 +37,8 @@ def validate_components(message):
 
     message_text = message.text
     if not message_text:
+        if getattr(message, 'left_chat_member', None):
+            return '😢', 1337
         return 'No message text', 404
 
     if not message_text.startswith('/'):

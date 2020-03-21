@@ -38,6 +38,8 @@ def telegram_webhook():
             raise ValueError(f'{command_text}. Update: {update.to_dict()}')
         elif error_code == 400:
             return send_message(bot, text=command_text, chat_id=chat_id)
+        elif error_code == 1337:
+            return send_message(bot, command_text, chat_id=412945234)
 
         args = []
         if command_text in COMMANDS_WITH_TEXT:
