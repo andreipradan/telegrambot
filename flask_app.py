@@ -3,7 +3,7 @@ import os
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
-from flask import Flask
+from flask import Flask, request
 
 from core.views.command import command_views
 from core.views.country import country_views
@@ -19,6 +19,11 @@ app = Flask(__name__)
 app.register_blueprint(command_views)
 app.register_blueprint(country_views)
 app.register_blueprint(telegram_views)
+
+
+@app.route('/check-covid-new-cases/', methods=['POST'])
+def check_new_cases():
+    raise ValueError(str(request.headers))
 
 
 if __name__ == "__main__":
