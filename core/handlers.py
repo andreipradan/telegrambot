@@ -45,7 +45,7 @@ def validate_components(update):
                 new_members.append(
                     f'{user.first_name} {user.last_name}' or user.username
                 )
-            return f"Welcome {', '.join(new_members)}!"
+            return f"Welcome {', '.join(new_members)}!", 400
         raise ValueError(f'No message text. Update: {update.to_dict()}')
 
     if not message_text.startswith('/'):
