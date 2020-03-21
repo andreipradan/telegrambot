@@ -9,21 +9,23 @@ def parse_country(data):
     ) + f'\n└{items[-1][0]}: {items[-1][1]}'
 
 
-def parse_global_countries(countries):
+def parse_countries(countries):
     return '\n'.join(
         [
             f"""
-🦠 {country}:
+🦠 {country}
 ├{parse_country(stats)}
 """ for country, stats in countries.items()
         ]
     )
 
 
-def parse_global(top_stats, countries):
+def parse_global(top_stats, countries, from_db=False):
     last_updated = top_stats.pop('last_updated')
     return f"""
-Covid Global Stats ({last_updated})
-{parse_country(top_stats)}
-{parse_global_countries(countries)}
-    """
+Covid Global Stats
+├{parse_country(top_stats)}
+{parse_countries(countries)}
+
+({last_updated}) [Source: {'DB' if from_db else 'https://www.worldometers.info/'}]
+"""

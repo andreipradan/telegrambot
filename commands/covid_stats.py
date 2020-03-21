@@ -117,7 +117,9 @@ def get_covid_global(count=None):
     etag = head_response.headers['ETag']
     db_etag = collection.find_one({'id': 1})
     if db_etag and etag == db_etag['ETag']:
-        return get_records_from_db()
+        top_stats = get_collection('top_stats').find_one({'id': 1})
+        countries = get_collection('countries').find().sort({'TotalCases': -1})
+        return parse_global(top_stats, countries, from_db=True)
 
     collection.update_one(
         {'id': 1},
