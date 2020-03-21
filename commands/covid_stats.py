@@ -1,6 +1,7 @@
 
 import re
 from collections import OrderedDict
+from copy import deepcopy
 
 from bs4 import BeautifulSoup
 import requests
@@ -28,6 +29,17 @@ def request_romania():
     ro['Izolati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
 
     last_updated = get_last_updated(data)
+    new_last_updated = last_updated
+    new = deepcopy(ro)
+    old_version = database.get_stats_by_slug(ROMANIA_STATS_SLUG)
+    if last_updated != old_version['last_updated']:
+        new_last_updated = (f"{last_updated}\n"
+                            f"({old_version['last_updated']})")
+    for key in ro:
+        if ro[key] != old_version[key]:
+            diff = ro[key] - old_version.get(key)
+            new[key] = f"{ro[key]} ({'+' if diff >= 0 else ''}{diff})"
+
     database.set_etag(response.headers.get('ETag'))
     database.set_stats_for_slug(
         ROMANIA_STATS_SLUG,
@@ -37,11 +49,11 @@ def request_romania():
 
     return f"""
 {delimiter}
-🦠 Romania Covid Updates
-{parse_details(ro)}
+🦠 Romania
+{parse_details(new)}
 {delimiter}
- Last updated: {last_updated}
- [Source: API]
+Last updated: {new_last_updated}
+[Source: API]
 {delimiter}
 """
 
@@ -49,7 +61,7 @@ def request_romania():
 def get_romania_stats():
     db_stats = (
         database.get_stats_by_slug(ROMANIA_STATS_SLUG)
-        if get_db_stats(URLS['ROMANIA'])
+        if get_db_stats(URLS['ROMANIA'], ROMANIA_STATS_SLUG)
         else None
     )
 
@@ -58,7 +70,7 @@ def get_romania_stats():
         db_stats.pop('_id', None)
         db_stats.pop('slug', None)
         return parse_global(
-            title=f'{delimiter}\n🦠 Romania Stats',
+            title=f'{delimiter}\n🦠 Romania',
             top_stats=db_stats,
             items={},
             footer=f'Last updated: {last_updated}\n[Source: DB]\n{delimiter}'

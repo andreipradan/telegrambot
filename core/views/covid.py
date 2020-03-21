@@ -30,6 +30,7 @@ def check_new_cases(token):
         return 'No changes'
 
     bot = telegram.Bot(token=os.environ['TOKEN'])
+
     return bot.sendMessage(
         chat_id=412945234,
         text=request_romania()

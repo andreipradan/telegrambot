@@ -6,7 +6,7 @@ import requests
 from core import database
 
 
-def get_db_stats(url):
+def get_db_stats(url, slug=None):
     head = requests.head(url)
     validate_response(head)
     head_etag = head.headers.get('ETag')
@@ -14,7 +14,7 @@ def get_db_stats(url):
     if not all([head_etag, db_etag]):
         return False
     if head_etag == db_etag:
-        return database.get_stats_by_slug(db_etag)
+        return database.get_stats_by_slug(slug or db_etag)
 
 
 def get_date(date):
