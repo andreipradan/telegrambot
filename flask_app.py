@@ -7,7 +7,7 @@ from flask import Flask
 
 from core.views.command import command_views
 from core.views.country import country_views
-from core.views.token import token_views
+from core.views.telegram import telegram_views
 
 if not os.getenv('FLASK_DEBUG', False):
     sentry_sdk.init(
@@ -18,7 +18,7 @@ if not os.getenv('FLASK_DEBUG', False):
 app = Flask(__name__)
 app.register_blueprint(command_views)
 app.register_blueprint(country_views)
-app.register_blueprint(token_views)
+app.register_blueprint(telegram_views)
 
 
 if __name__ == "__main__":

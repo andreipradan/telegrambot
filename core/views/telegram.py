@@ -10,7 +10,7 @@ from core.handlers import COMMANDS_WITH_TEXT
 from core.handlers import COMMANDS_WITH_UPDATE
 from core.handlers import validate_components
 
-token_views = Blueprint('token_views', __name__)
+telegram_views = Blueprint('token_views', __name__)
 
 
 def send_message(bot, text, chat_id=None):
@@ -20,8 +20,8 @@ def send_message(bot, text, chat_id=None):
     ).to_json()
 
 
-@token_views.route(f"/{os.environ['TOKEN']}", methods=['POST'])
-def telegram_webhook():
+@telegram_views.route(f"/{os.environ['TOKEN']}", methods=['POST'])
+def webhook():
     if request.method == "POST":
         json = request.get_json()
         if not json:

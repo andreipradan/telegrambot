@@ -36,7 +36,9 @@ def validate_components(update):
     message_text = message.text
     if not message_text:
         if getattr(message, 'left_chat_member', None):
-            return '😢', 'send-message'
+            return '😢', 200
+        if getattr(message, 'new_chat_title', None):
+            return '🎉', 200
         raise ValueError(f'No message text. Update: {update.to_dict()}')
 
     if not message_text.startswith('/'):
