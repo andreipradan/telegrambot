@@ -152,9 +152,8 @@ def get_covid_global(count=None):
         for i, value in enumerate(ths):
             countries[country][ths[i]] = data[i]
 
-    countries_collection = get_collection('countries')
     for country_name, data in countries.items():
-        countries_collection.update_one(
+        get_collection('countries').update_one(
             {'slug': country_name},
             update={'$set': data},
             upsert=True
