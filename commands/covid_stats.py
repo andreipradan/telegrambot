@@ -25,7 +25,7 @@ def request_romania():
     ro = OrderedDict()
     ro['Confirmati'] = sum([r['attributes']['Cazuri_confirmate'] for r in data])
     ro['Decedati'] = sum([r['attributes']['Persoane_decedate'] for r in data])
-    ro['Carantinati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
+    ro['Carantinati'] = sum([r['attributes']['Persoane_in_carantina'] for r in data])
     ro['Izolati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
 
     last_updated = get_last_updated(data)

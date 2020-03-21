@@ -22,10 +22,8 @@ def check_new_cases(token):
     head = requests.head(url)
     head.raise_for_status()
 
-    db_stats = database.get_stats_by_slug(ROMANIA_STATS_SLUG)
-
     head_etag = head.headers.get('ETag')
-    db_etag = db_stats.get('ETag')
+    db_etag = database.get_etag().get('value')
     if head_etag and db_etag and head_etag == db_etag:
         return 'No changes'
 
