@@ -151,8 +151,7 @@ def get_covid_global(count=None):
         [
             f"""
 🦠 {country}:
-    {parse_country(stats)}
-    """ for country, stats in countries.items()
+├ {parse_country(stats)}""" for country, stats in countries.items()
         ]
     )
     return f"""
