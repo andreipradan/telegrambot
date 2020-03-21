@@ -40,11 +40,10 @@ def validate_components(update):
         if getattr(message, 'new_chat_title', None):
             return '🎉', 400
         if getattr(message, 'new_chat_members', None):
-            new_members = []
-            for user in message.new_chat_members:
-                new_members.append(
-                    f'{user.first_name} {user.last_name}' or user.username
-                )
+            new_members = [
+                f'{user.first_name} {user.last_name}' or user.username
+                for user in message.new_chat_members
+            ]
             return f"Welcome {', '.join(new_members)}!", 400
         raise ValueError(f'No message text. Update: {update.to_dict()}')
 
