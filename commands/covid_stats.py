@@ -4,31 +4,9 @@ from collections import OrderedDict
 from bs4 import BeautifulSoup
 import requests
 
+from commands.constants import URLS
 from commands.utils import parse_global
 from core.database import get_collection
-
-base_url = (
-    'https://services7.arcgis.com/I8e17MZtXFDX9vvT/arcgis/rest/services/'
-    'Coronavirus_romania/FeatureServer/0/query?f=json&where=1%3D1&'
-    'returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*'
-)
-count_base_url = (
-    f'{base_url}&outStatistics=%5B%7B%22statisticType%22%3A%22sum%22%2C%22'
-    'onStatisticField%22%3A%22'
-)
-suffix = '%22%2C%22outStatisticFieldName%22%3A%22value%22%7D%5D&cacheHint=true'
-
-URLS = {
-    'total': f'{count_base_url}Cazuri_confirmate{suffix}',
-    'per_county': (
-        f'{base_url}&orderByFields=Cazuri_confirmate%20desc&resultOffset=0&'
-        'resultRecordCount=42&cacheHint=true'
-    ),
-    'dead': f'{count_base_url}Persoane_decedate{suffix}',
-    'quarantined': f'{count_base_url}Persoane_in_carantina{suffix}',
-    'isolated': f'{count_base_url}Persoane_izolate{suffix}',
-    'global': 'https://www.worldometers.info/coronavirus/#countries',
-}
 
 
 def validate_response(response):
@@ -37,20 +15,16 @@ def validate_response(response):
         raise ValueError(f'Got an unexpected status code: {status_code}')
 
 
-def get_results(field):
-    url = URLS[field]
-    response = requests.get(url)
-    validate_response(response)
-    return response.json()['features'][0]['attributes']['value']
-
-
 def get_covid_stats():
+    response = requests.get(URLS['RO_URL'])
+    validate_response(response)
+    data = response.json()['features']
     return f"""
     🦠 Covid Stats
-     ├ Confirmati: {get_results('total')}
-     ├ Decedati: {get_results('dead')}
-     ├ Carantinați: {get_results('quarantined')}
-     └ Izolați: {get_results('isolated')}
+     ├ Confirmati: {sum([r['attributes']['Cazuri_confirmate'] for r in data])}
+     ├ Decedati: {sum([r['attributes']['Persoane_decedate'] for r in data])}
+     ├ Carantinați: {sum([r['attributes']['Persoane_izolate'] for r in data])}
+     └ Izolați: {sum([r['attributes']['Persoane_izolate'] for r in data])}
     """
 
 
@@ -58,7 +32,7 @@ def get_covid_county_details(text):
     if not text:
         return 'Syntax: /covid_county_details <County name>'
 
-    response = requests.get(URLS['per_county'])
+    response = requests.get(URLS['RO_URL'])
     validate_response(response)
 
     counties = response.json()['features']
