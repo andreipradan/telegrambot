@@ -54,3 +54,8 @@ def validate_components(message):
         )
 
     return command_text, 200
+
+
+def parse_result(result):
+    result['_id'] = str(result['_id'])
+    return result

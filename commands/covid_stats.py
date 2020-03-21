@@ -1,6 +1,11 @@
 import re
+from collections import OrderedDict
+
 from bs4 import BeautifulSoup
 import requests
+
+from commands.utils import get_records_from_db, parse_country
+from core.database import get_collection
 
 base_url = (
     'https://services7.arcgis.com/I8e17MZtXFDX9vvT/arcgis/rest/services/'
@@ -92,7 +97,7 @@ def get_covid_per_county():
 
 
 def get_covid_global(count=None):
-    count = count.strip() or 3
+    count = count.strip() or 5
 
     try:
         count = int(count)
@@ -102,9 +107,26 @@ def get_covid_global(count=None):
         Syntax: /covid_global <count: Optional[int]>
         """
 
+    url = URLS['global']
+    # head_response = requests.head(url)
+    # if not head_response.status_code == 200:
+    #     return f'Bad Status code: {head_response.status_code}'
+    #
+    # collection = get_collection('etags')
+    # etag = head_response.headers['ETag']
+    # if etag == collection.find_one({'id': 1})['ETag']:
+    #     return get_records_from_db(collection)
+    #
+    # collection.update_one(
+    #     {'id': 1},
+    #     update={'$set': {'ETag': etag}},
+    #     upsert=True,
+    # )
+
     main_stats_id = 'maincounter-wrap'
 
-    soup = BeautifulSoup(requests.get(URLS['global']).text)
+    soup = BeautifulSoup(requests.get(url).text)
+    last_updated_string = soup.find(string=re.compile('Last updated: '))
 
     cases, deaths, recovered = [
         (x.h1.text, x.div.span.text.strip())
@@ -113,31 +135,31 @@ def get_covid_global(count=None):
 
     ths = [x.text for x in
            soup.select('table#main_table_countries_today > thead > tr > th')][
-          :6]
+          1:6
+          ]
     rows = soup.select('table#main_table_countries_today > tbody > tr')[:count]
 
-    results = []
+    results = OrderedDict()
     for row in rows:
         data = [x.text for x in row.select('td')]
-        results.append({ths[i]: data[i] for i in range(len(ths))})
+        country = data.pop(0)
+        results[country] = {}
+        for i, value in enumerate(data):
+            results[country][ths[i]] = data[i]
+        # results.append({ths[i]: data[i] for i in range(len(ths))})
     per_country = '\n'.join(
         [
             f"""
-🦠 {r[ths[0]]}:
-    {ths[1]}: {r[ths[1]]}
-    {ths[3]}: {r[ths[3]]}
-    {ths[2]}: {r[ths[2]]}
-    {ths[4]}: {r[ths[4]]}
-    {ths[5]}: {r[ths[5]]}
-    """ for r in results
+🦠 {country}:
+    {parse_country(stats)}
+    """ for country, stats in results.items()
         ]
     )
-    last_updated = soup.find(string=re.compile("Last updated: "))
     return f"""
-    Covid Global Stats (last updated: {last_updated})
-{cases[0]}      {cases[1]}
-{deaths[0]}     {deaths[1]}
-{recovered[0]}  {recovered[1]}
+    Covid Global Stats ({last_updated_string})
+{cases[0]}  {cases[1]}
+{deaths[0]}                 {deaths[1]}
+{recovered[0]}          {recovered[1]}
 
 {per_country}
     """

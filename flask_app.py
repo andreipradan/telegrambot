@@ -1,24 +1,31 @@
 import os
 
 from flask import Flask
+from flask import abort
+from flask import jsonify
+from flask import redirect
 from flask import request
 import telegram
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
-from handlers import ALLOWED_COMMANDS
-from handlers import COMMANDS_WITH_TEXT
-from handlers import COMMANDS_WITH_UPDATE
-from handlers import validate_components
+from core.database import update_or_create
+from core.database import get_collection
+from core.handlers import ALLOWED_COMMANDS
+from core.handlers import COMMANDS_WITH_TEXT
+from core.handlers import COMMANDS_WITH_UPDATE
+from core.handlers import parse_result
+from core.handlers import validate_components
 
 
-sentry_sdk.init(
-    dsn=os.environ['SENTRY_DSN'],
-    integrations=[FlaskIntegration()]
-)
+if not os.getenv('FLASK_DEBUG', False):
+    sentry_sdk.init(
+        dsn=os.environ['SENTRY_DSN'],
+        integrations=[FlaskIntegration()]
+    )
+token = os.environ['TOKEN']
 
 app = Flask(__name__)
-token = os.environ['TOKEN']
 
 
 def send_message(bot, text, chat_id=None):
@@ -67,9 +74,29 @@ def telegram_webhook():
     return f"Unexpected method {request.method}"
 
 
-@app.route('/debug-sentry')
-def trigger_error():
-    return 1 / 0
+@app.route('/countries/add')
+def add():
+    if not request.args:
+        return 'Invalid data. Retry using URL parameters'
+    update_or_create(**request.args.to_dict())
+    return redirect('/collections')
+
+
+@app.route('/countries/')
+def collections():
+    url_params = request.args.to_dict()
+    limit = url_params.get('limit', 10)
+    results = list(map(parse_result, get_collection().find()[:limit]))
+    get_collection('etags').create_index('ETag', unique=True)
+    return jsonify(results)
+
+
+@app.route('/countries/<slug>/')
+def country(slug):
+    result = get_collection().find_one({'slug': slug})
+    if result:
+        return jsonify(parse_result(result))
+    return abort(404)
 
 
 if __name__ == "__main__":
