@@ -36,7 +36,7 @@ def telegram_webhook():
 
         if status_code != 200:
             return send_message(bot, text=command_text, chat_id=chat_id)
-        elif status_code == 1337:
+        elif status_code == 1337:  # debug
             return send_message(
                 bot,
                 f'{command_text}.\nUpdate: {update.to_dict()}',
