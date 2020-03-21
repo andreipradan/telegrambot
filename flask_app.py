@@ -3,7 +3,7 @@ import os
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
-from flask import Flask, request
+from flask import Flask
 
 from core.views.command import command_views
 from core.views.country import country_views

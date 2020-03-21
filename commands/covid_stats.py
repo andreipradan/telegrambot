@@ -14,6 +14,17 @@ from core import database
 delimiter = '=========================='
 
 
+def check_etag(url):
+    head = requests.head(url)
+    if head.status_code != 200:
+        return f'Failed to pull data. Status code: {head.status_code}'
+    head_etag = head.headers.get('ETag')
+    db_etag = database.get_etag().get('value')
+    if not all([head_etag, db_etag]):
+        return False
+    return head_etag == db_etag
+
+
 def request_romania():
     response = requests.get(URLS['ROMANIA'])
     validate_response(response)
@@ -25,10 +36,10 @@ def request_romania():
     ro['Izolati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
 
     last_updated = get_last_updated(data)
+    database.set_etag(response.headers.get('ETag'))
     database.set_romania_stats(
         **ro,
         last_updated=last_updated,
-        ETag=response.headers.get('ETag')
     )
 
     return f"""
@@ -60,18 +71,14 @@ def get_last_updated(data):
 
 
 def get_romania_stats():
-    url = URLS['ROMANIA']
-    head = requests.head(url)
-    if head.status_code != 200:
-        return f'Failed to pull data. Status code: {head.status_code}'
+    db_stats = (
+        database.get_romania_stats()
+        if check_etag(URLS['ROMANIA'])
+        else None
+    )
 
-    db_stats = database.get_romania_stats()
-
-    head_etag = head.headers.get('ETag')
-    db_etag = db_stats.get('ETag')
-    if head_etag and db_etag and head_etag == db_etag:
+    if db_stats:
         last_updated = db_stats.pop('last_updated')
-        db_stats.pop('ETag', None)
         db_stats.pop('_id', None)
         db_stats.pop('slug', None)
         return parse_global(

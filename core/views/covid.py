@@ -13,10 +13,9 @@ from core import database
 covid_views = Blueprint('covid_views', __name__)
 
 
-@covid_views.route('/check-covid-new-cases/', methods=['POST'])
-def check_new_cases():
-    bearer = request.headers.get('Authorization')
-    if not database.get_collection('oicd_auth').find_one({'bearer': bearer}):
+@covid_views.route('/check-covid-new-cases/<token>/', methods=['POST'])
+def check_new_cases(token):
+    if not database.get_collection('oicd_auth').find_one({'bearer': token}):
         raise abort(403)
 
     url = URLS['ROMANIA']
