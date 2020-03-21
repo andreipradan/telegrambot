@@ -14,6 +14,34 @@ from core import database
 delimiter = '=========================='
 
 
+def request_romania():
+    response = requests.get(URLS['ROMANIA'])
+    validate_response(response)
+    data = response.json()['features']
+    ro = OrderedDict()
+    ro['Confirmati'] = sum([r['attributes']['Cazuri_confirmate'] for r in data])
+    ro['Decedati'] = sum([r['attributes']['Persoane_decedate'] for r in data])
+    ro['Carantinati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
+    ro['Izolati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
+
+    last_updated = get_last_updated(data)
+    database.set_romania_stats(
+        **ro,
+        last_updated=last_updated,
+        ETag=response.headers.get('ETag')
+    )
+
+    return f"""
+{delimiter}
+🦠 Romania Covid Updates
+{parse_details(ro)}
+{delimiter}
+ Last updated: {last_updated}
+ [Source: API]
+{delimiter}
+"""
+
+
 def validate_response(response):
     status_code = response.status_code
     if not status_code == 200:
@@ -53,27 +81,7 @@ def get_romania_stats():
             footer=f'Last updated: {last_updated}\n[Source: DB]\n{delimiter}'
         )
 
-    response = requests.get(url)
-    validate_response(response)
-    data = response.json()['features']
-    ro = OrderedDict()
-    ro['Confirmati'] = sum([r['attributes']['Cazuri_confirmate'] for r in data])
-    ro['Decedati'] = sum([r['attributes']['Persoane_decedate'] for r in data])
-    ro['Carantinati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
-    ro['Izolati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
-
-    last_updated = get_last_updated(data)
-    database.set_romania_stats(**ro, last_updated=last_updated, ETag=head_etag)
-
-    return f"""
-{delimiter}
-🦠 Romania Stats
-{parse_details(ro)}
-{delimiter}
- Last updated: {last_updated}
- [Source: API]
-{delimiter}
-"""
+    return request_romania()
 
 
 def get_covid_county_details(text):
