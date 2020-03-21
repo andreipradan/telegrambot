@@ -19,11 +19,9 @@ def parse_global_countries(countries):
     )
 
 
-def parse_global(last_updated_string, cases, deaths, recovered, countries):
+def parse_global(last_updated_string, top_stats, countries):
     return f"""
         Covid Global Stats ({last_updated_string})
-    {cases[0]}  {cases[1]}
-    {deaths[0]}                     {deaths[1]}
-    {recovered[0]}              {recovered[1]}
+    {parse_country(top_stats)}
     {parse_global_countries(countries)}
     """

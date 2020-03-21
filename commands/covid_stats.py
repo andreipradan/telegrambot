@@ -130,19 +130,13 @@ def get_covid_global(count=None):
     soup = BeautifulSoup(requests.get(url).text)
     last_updated_string = soup.find(string=re.compile('Last updated: '))
 
-    cases, deaths, recovered = [
-        (x.h1.text, x.div.span.text.strip())
+    top_stats = {
+        x.h1.text: x.div.span.text.strip()
         for x in soup.find_all(id=main_stats_id)
-    ]
+    }
     get_collection('top_stats').update_one(
         {'id': 1},
-        update={
-            '$set': {
-                cases[0]: cases[1],
-                deaths[0]: deaths[1],
-                recovered[0]: recovered[1],
-            }
-        }
+        update={'$set': top_stats}
     )
 
     ths = [x.text for x in
@@ -159,7 +153,7 @@ def get_covid_global(count=None):
         for i, value in enumerate(ths):
             countries[country][ths[i]] = data[i]
 
-    for country_name, data in countries:
+    for country_name, data in countries.items():
         collection.insert_one({'name': country_name, **data})
 
-    return parse_global(last_updated_string, cases, deaths, recovered, countries)
+    return parse_global(last_updated_string, top_stats, countries)
