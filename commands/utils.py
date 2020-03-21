@@ -10,13 +10,8 @@ def parse_country(data):
 
 
 def parse_countries(countries):
-    return '\n'.join(
-        [
-            f"""🦠 {country}
-├{parse_country(stats)}
-""" for country, stats in countries.items()
-        ]
-    )
+    return '\n'.join([f"🦠 {country}\n├{parse_country(stats)}"
+                      for country, stats in countries.items()])
 
 
 def parse_global(top_stats, countries, from_db=False):
@@ -24,6 +19,7 @@ def parse_global(top_stats, countries, from_db=False):
     return f"""
 Covid Global Stats
 ├{parse_country(top_stats)}
+
 {parse_countries(countries)}
 
 ({last_updated}) [Source: {'DB' if from_db else 'worldometers.info'}]

@@ -86,8 +86,9 @@ def add():
 def collections():
     url_params = request.args.to_dict()
     limit = url_params.get('limit', 10)
-    results = list(map(parse_result, get_collection().find()[:limit]))
-    # get_collection('top_stats').create_index('id', unique=True)
+    results = list(map(parse_result, get_collection().find().sort(
+        {'TotalCases': -1}
+    )[:limit]))
     return jsonify(results)
 
 
