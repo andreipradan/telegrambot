@@ -87,9 +87,10 @@ def get_county_details(text):
     if db_stats:
         last_updated = db_stats.pop('last_updated')
         db_stats.pop('_id', None)
+        db_stats.pop('OBJECTID', None)
         db_stats.pop('slug', None)
         return parse_global(
-            title=f'{delimiter}\n🦠 {db_stats["Judete"]}',
+            title=f'{delimiter}\n🦠 {db_stats.pop("Judete")}',
             top_stats=db_stats,
             items={},
             footer=f'Last updated: {last_updated}\n[Source: DB]\n{delimiter}'
@@ -111,10 +112,10 @@ def get_county_details(text):
         )
         return f"Available counties: {available_counties}"
 
-    last_updated = get_date(county['EditDate'])
+    last_updated = get_date(county.pop('EditDate'))
     database.set_etag(response.headers.get('ETag'))
     database.set_stats_for_slug(
-        COUNTY_SLUG,
+        response.headers['ETag'],
         **county,
         last_updated=last_updated,
     )
