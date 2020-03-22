@@ -28,6 +28,8 @@ def counties():
 
     if 'drop' in url_params:
         get_collection(COLLECTION['counties']).drop()
+        get_collection(COLLECTION['etag']).drop()
+        get_collection(COLLECTION['romania']).drop()
         return redirect('/counties/')
 
     skip = url_params.pop('start', 0)
