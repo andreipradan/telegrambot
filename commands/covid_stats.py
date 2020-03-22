@@ -54,7 +54,7 @@ def get_romania_stats(request_func=utils.request_romania, **kwargs):
 
 def get_county_details(request_func=utils.request_judet, **kwargs):
     if not kwargs.get('text'):
-        return 'Syntax: /covid_county_details <County name>'
+        return 'Syntax: /judetul <County name>'
     return get_stats(CountySerializer, request_func, **kwargs)
 
 
@@ -74,7 +74,7 @@ def get_covid_global(count=None):
     except ValueError:
         return f"""
         Invalid count: "{count}".
-        Syntax: /covid_global <count: Optional[int]>
+        Syntax: /global <count: Optional[int]>
         """
 
     main_stats_id = 'maincounter-wrap'
