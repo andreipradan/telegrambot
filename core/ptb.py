@@ -21,6 +21,8 @@ from telegram.ext import ConversationHandler
 from telegram.ext import Updater
 
 # Enable logging
+from commands.covid_stats import get_romania_stats
+
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
@@ -42,7 +44,7 @@ def start(update):
     # The keyboard is a list of button rows, where each row is in turn
     # a list (hence `[[...]]`).
     keyboard = [
-        [InlineKeyboardButton("covid", callback_data=str(ONE)),
+        [InlineKeyboardButton("covid", callback_data=get_romania_stats()),
          InlineKeyboardButton("judete", callback_data=str(TWO))]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
