@@ -18,7 +18,7 @@ def get_stats(serializer, request_func=None, **kwargs):
 
     county = kwargs.pop('text', None)
     stats = utils.get_db_stats(
-        constants.URLS[constants.RO_SLUG],
+        constants.URLS['ROMANIA'],
         county=county
     )
     if stats:

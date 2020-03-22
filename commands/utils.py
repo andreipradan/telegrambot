@@ -25,9 +25,9 @@ def get_db_stats(url, county=None):
         return False
     if head_etag == db_etag:
         get_stats_kwargs = {
-            'slug': constants.RO_SLUG
+            'slug': constants.SLUG['ro']
         } if county else {
-            'collection': constants.COUNTY_COLLECTION,
+            'collection': constants.COLLECTION['counties'],
             'slug': county
         }
         return database.get_stats(**get_stats_kwargs)

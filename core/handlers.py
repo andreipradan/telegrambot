@@ -65,4 +65,3 @@ def validate_components(update):
         )
 
     return command_text, 'valid-command'
-
