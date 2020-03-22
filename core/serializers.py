@@ -7,16 +7,25 @@ class BaseSerializer:
     fields = NotImplemented
     ignore_fields = ['_id', 'OBJECTID']
 
-    def __init__(self, data):
+    def serialize(self, data):
         result = OrderedDict()
         for field in self.fields:
             if field not in self.ignore_fields:
                 result[field] = data[field]
-        self.data = result
+        return result
+
+    def __init__(self, data):
+        self.data = self.serialize(data) if not isinstance(data, list) else [
+            self.serialize(item) for item in data
+        ]
 
 
 class CountySerializer(BaseSerializer):
-    fields = COUNTY_FIELDS
+    fields = [item for item in COUNTY_FIELDS if item != 'Judete'] + ['slug']
+
+
+class CountyConfirmedSerializer(BaseSerializer):
+    fields = 'slug', 'Cazuri_confirmate'
 
 
 class CountrySerializer(BaseSerializer):

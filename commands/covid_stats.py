@@ -1,4 +1,3 @@
-
 import re
 from collections import OrderedDict
 
@@ -8,6 +7,7 @@ import requests
 from core import constants
 from commands import parsers
 from commands import utils
+from core.serializers import CountyConfirmedSerializer
 from core.serializers import CountrySerializer
 from core.serializers import CountySerializer
 
@@ -19,7 +19,8 @@ def get_stats(serializer, request_func=None, **kwargs):
     county = kwargs.pop('text', None)
     stats = utils.get_db_stats(
         constants.URLS['ROMANIA'],
-        county=county
+        county=county,
+        many=kwargs.pop('many', False),
     )
     if stats:
         stats = serializer(data=stats).data
@@ -30,8 +31,13 @@ def get_stats(serializer, request_func=None, **kwargs):
         source = 'API'
 
     if 'json' in kwargs:
-        stats['Source'] = source
+        if isinstance(stats, dict):
+            stats['Source'] = source
         return stats
+
+    if not isinstance(stats, dict):
+        confirmed = '├ ' + '\n├ '.join(f"{item['slug']}: {item['Cazuri_confirmate']}" for item in stats)
+        return f"🦠 Cazuri confirmate\n{confirmed}"
 
     last_updated = utils.get_date(stats.pop('EditDate'))
     return parsers.parse_global(
@@ -42,22 +48,19 @@ def get_stats(serializer, request_func=None, **kwargs):
     )
 
 
-def get_romania_stats(**kwargs):
-    return get_stats(CountrySerializer, utils.request_romania, **kwargs)
+def get_romania_stats(request_func=utils.request_romania, **kwargs):
+    return get_stats(CountrySerializer, request_func, **kwargs)
 
 
-def get_county_details(**kwargs):
-    return get_stats(CountySerializer, utils.request_judet, **kwargs)
+def get_county_details(serializer=None, request_func=utils.request_judet, **kwargs):
+    return get_stats(serializer or CountySerializer, request_func, **kwargs)
 
 
-def get_covid_counties():
-    response = requests.get(constants.URLS['ROMANIA'])
-    utils.validate_response(response)
-    counties = response.json()['features']
-    return '\t 🦠 '.join(
-        f"{county['attributes']['Judete']}: "
-        f"{county['attributes']['Cazuri_confirmate']}"
-        for county in counties
+def get_covid_counties(**kwargs):
+    return get_county_details(
+        request_func=utils.request_counties,
+        many=True,
+        serializer=CountyConfirmedSerializer
     )
 
 

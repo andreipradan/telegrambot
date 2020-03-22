@@ -9,12 +9,15 @@ def get_client():
 
 
 def get_collection(name, client=get_client()):
-    client[DEFAULT_DB][name].create_index('slug', unique=True)
     return client[DEFAULT_DB][name]
 
 
 def get_etag():
     return get_collection(COLLECTION['etag']).find_one({'slug': SLUG['etag']})
+
+
+def get_all(collection):
+    return list(get_collection(collection).find())
 
 
 def get_stats(collection, slug):
@@ -33,15 +36,15 @@ def set_multiple(data, collection=COLLECTION['counties']):
     return get_collection(collection).bulk_write(
         [
             UpdateOne(
-                {'slug': item['attributes'].pop('Judete')},
-                update={'$set': item['attributes']},
+                {'slug': item.pop('Judete')},
+                update={'$set': item},
                 upsert=True
             ) for item in data
         ]
     )
 
 
-def set_stats(slug, collection=COLLECTION['romania'], **stats):
+def set_stats(slug, stats, collection=COLLECTION['romania']):
     get_collection(collection).update_one(
         {'slug': slug},
         update={'$set': stats},

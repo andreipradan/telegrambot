@@ -1,6 +1,6 @@
 def parse_details(data):
     items = list(data.items())
-    return f'├ ' + '\n├ '.join(
+    return '├ ' + '\n├ '.join(
         [f'{" ".join(key.split("_"))}: {value}' for key, value in items[:-1]]
     ) + f'\n└ {items[-1][0]}: {items[-1][1]}'
 

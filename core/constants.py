@@ -32,5 +32,5 @@ COLLECTION = {
 }
 SLUG = {
     'etag': 'etag_slug',
-    'ro': 'Romania'
+    'romania': 'Romania',
 }
