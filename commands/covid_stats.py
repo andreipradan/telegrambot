@@ -55,7 +55,7 @@ def get_romania_stats(request_func=utils.request_romania, **kwargs):
 def get_county_details(text, request_func=utils.request_judet, **kwargs):
     if not text:
         return 'Syntax: /judetul <nume judet>'
-    return get_stats(CountySerializer, request_func, **kwargs)
+    return get_stats(CountySerializer, request_func, text=text, **kwargs)
 
 
 def get_covid_counties(**kwargs):
