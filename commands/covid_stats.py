@@ -33,8 +33,9 @@ def get_stats(serializer, request_func=None, **kwargs):
         return stats
 
     if isinstance(stats, list):
-        confirmed = '├ ' + '\n├ '.join(f"{item['slug']}: {item['Cazuri_confirmate']}" for item in stats)
-        return f"🦠 Cazuri confirmate\n{confirmed}"
+        return '🦠 '.join(
+            f"{item['slug']}: {item['Cazuri_confirmate']}" for item in stats
+        )
     elif isinstance(stats, str):
         return stats
 
