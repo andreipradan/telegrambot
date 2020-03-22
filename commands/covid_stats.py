@@ -52,9 +52,9 @@ def get_romania_stats(request_func=utils.request_romania, **kwargs):
     return get_stats(CountrySerializer, request_func, **kwargs)
 
 
-def get_county_details(request_func=utils.request_judet, **kwargs):
-    if not kwargs.get('text'):
-        return 'Syntax: /judetul <County name>'
+def get_county_details(text, request_func=utils.request_judet, **kwargs):
+    if not text:
+        return 'Syntax: /judetul <nume judet>'
     return get_stats(CountySerializer, request_func, **kwargs)
 
 
