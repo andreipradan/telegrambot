@@ -96,11 +96,7 @@ def request_judet(judet):
         return f"Available counties: {available_counties}"
 
     database.set_etag(etag)
-    database.set_stats(
-        collection=constants.COLLECTION['counties'],
-        slug=f"{county['Judete']}",
-        stats=county,
-    )
+    database.set_multiple(counties, constants.COLLECTION['counties'])
     return county
 
 

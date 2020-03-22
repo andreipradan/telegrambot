@@ -13,9 +13,6 @@ from core.serializers import CountySerializer
 
 
 def get_stats(serializer, request_func=None, **kwargs):
-    if 'text' in kwargs and not kwargs['text']:
-        return 'Syntax: /covid_county_details <County name>'
-
     county = kwargs.pop('text', None)
     stats = utils.get_db_stats(
         constants.URLS['ROMANIA'],
@@ -35,9 +32,11 @@ def get_stats(serializer, request_func=None, **kwargs):
             stats['Source'] = source
         return stats
 
-    if not isinstance(stats, dict):
+    if isinstance(stats, list):
         confirmed = '├ ' + '\n├ '.join(f"{item['slug']}: {item['Cazuri_confirmate']}" for item in stats)
         return f"🦠 Cazuri confirmate\n{confirmed}"
+    elif isinstance(stats, str):
+        return stats
 
     last_updated = utils.get_date(stats.pop('EditDate'))
     return parsers.parse_global(
@@ -52,14 +51,16 @@ def get_romania_stats(request_func=utils.request_romania, **kwargs):
     return get_stats(CountrySerializer, request_func, **kwargs)
 
 
-def get_county_details(serializer=None, request_func=utils.request_judet, **kwargs):
-    return get_stats(serializer or CountySerializer, request_func, **kwargs)
+def get_county_details(request_func=utils.request_judet, **kwargs):
+    if not kwargs.get('text'):
+        return 'Syntax: /covid_county_details <County name>'
+    return get_stats(CountySerializer, request_func, **kwargs)
 
 
 def get_covid_counties(**kwargs):
-    return get_county_details(
-        request_func=utils.request_counties,
+    return get_stats(
         many=True,
+        request_func=utils.request_counties,
         serializer=CountyConfirmedSerializer
     )
 

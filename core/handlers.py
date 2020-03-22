@@ -9,9 +9,9 @@ from commands.covid_stats import get_romania_stats
 ALLOWED_COMMANDS = {
     'analyze_sentiment': analyze_sentiment,
     'covid': get_romania_stats,
-    'covid_counties': get_covid_counties,
-    'covid_county_details': get_county_details,
-    'covid_global': get_covid_global,
+    'global': get_covid_global,
+    'judete': get_covid_counties,
+    'judetul': get_county_details,
     'say_hi': say_hi,
 }
 COMMANDS_WITH_TEXT = [
