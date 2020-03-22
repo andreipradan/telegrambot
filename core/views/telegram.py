@@ -37,11 +37,11 @@ def webhook():
             return send_message(bot, text=text, chat_id=412945234)
         if status_code == 1338:
             query = update.callback_query
-            bot.edit_message_text(
+            return bot.edit_message_text(
                 chat_id=query.message.chat_id,
                 message_id=query.message.message_id,
                 text=query.message.text,
-            )
+            ).to_json()
 
         chat_id = update.message.chat.id
         if status_code != 'valid-command':
