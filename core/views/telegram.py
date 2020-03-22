@@ -5,7 +5,7 @@ import telegram
 from flask import Blueprint
 from flask import request
 
-from core.handlers import ALLOWED_COMMANDS
+from core.handlers import ALLOWED_COMMANDS, COMMANDS_WITH_UPDATE_AND_BOT
 from core.handlers import COMMANDS_WITH_TEXT
 from core.handlers import COMMANDS_WITH_UPDATE
 from core.handlers import validate_components
@@ -45,6 +45,8 @@ def webhook():
             args.append(' '.join(update.message.text.split(' ')[1:]))
         elif command_text in COMMANDS_WITH_UPDATE:
             args.append(update)
+        elif command_text in COMMANDS_WITH_UPDATE_AND_BOT:
+            args += [update, bot]
         results = ALLOWED_COMMANDS[command_text](*args)
 
         try:

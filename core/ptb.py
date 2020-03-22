@@ -151,7 +151,7 @@ def four(update, context):
     return FIRST
 
 
-def end(update, context):
+def end(update, bot):
     """Returns `ConversationHandler.END`, which tells the
     ConversationHandler that the conversation is over"""
     query = update.callback_query

@@ -24,7 +24,10 @@ COMMANDS_WITH_TEXT = [
 ]
 COMMANDS_WITH_UPDATE = [
     'say_hi',
-    'test',
+    'start',
+]
+COMMANDS_WITH_UPDATE_AND_BOT = [
+    'end'
 ]
 
 
