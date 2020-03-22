@@ -36,6 +36,8 @@ def validate_components(update):
     if not message or not message.chat or not message.chat.id:
         if getattr(update, 'edited_message', None):
             return f'✂️', 1337
+        if getattr(update, 'callback_query', None):
+            return ':tada:', 1338
         raise ValueError(
             f'Missing message, chat or chat ID. Update: {update.to_dict()}'
         )
