@@ -26,10 +26,9 @@ def parse_item(result):
 def counties():
     url_params = request.args.to_dict()
 
-    if 'drop' in url_params:
-        get_collection(COLLECTION['counties']).drop()
-        get_collection(COLLECTION['etag']).drop()
-        get_collection(COLLECTION['romania']).drop()
+    drop = url_params.get('drop')
+    if drop:
+        get_collection(COLLECTION[drop]).drop()
         return redirect('/counties/')
 
     skip = url_params.pop('start', 0)
