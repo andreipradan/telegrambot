@@ -4,7 +4,8 @@ from commands.covid_stats import get_county_details
 from commands.covid_stats import get_covid_global
 from commands.covid_stats import get_covid_counties
 from commands.covid_stats import get_romania_stats
-
+from core.ptb import start
+from core.ptb import end
 
 ALLOWED_COMMANDS = {
     'analyze_sentiment': analyze_sentiment,
@@ -13,6 +14,8 @@ ALLOWED_COMMANDS = {
     'judete': get_covid_counties,
     'judetul': get_county_details,
     'say_hi': say_hi,
+    'start': start,
+    'end': end,
 }
 COMMANDS_WITH_TEXT = [
     'analyze_sentiment',
@@ -21,6 +24,7 @@ COMMANDS_WITH_TEXT = [
 ]
 COMMANDS_WITH_UPDATE = [
     'say_hi',
+    'test',
 ]
 
 
