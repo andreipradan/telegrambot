@@ -31,7 +31,7 @@ def counties():
         return redirect('/counties/')
 
     skip = url_params.pop('start', 0)
-    limit = url_params.pop('limit', 10)
+    limit = url_params.pop('limit', 45)
 
     results = get_collection(COLLECTION['counties']).find(
         url_params
