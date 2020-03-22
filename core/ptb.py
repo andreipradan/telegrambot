@@ -154,10 +154,10 @@ def four(update, context):
 def end(update, bot):
     """Returns `ConversationHandler.END`, which tells the
     ConversationHandler that the conversation is over"""
-    query = update.callback_query
+    query = update.message
     bot.edit_message_text(
-        chat_id=query.message.chat_id,
-        message_id=query.message.message_id,
+        chat_id=query.chat_id,
+        message_id=query.message_id,
         text="See you next time!"
     )
 
