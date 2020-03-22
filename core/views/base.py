@@ -16,14 +16,14 @@ def login_required(func):
     return decorated_function
 
 
-def make_json_response(home_view_name, data=None, errors=None):
+def make_json_response(data=None, errors=None, links=None, home='site_map'):
+    links = links or {}
+    links.update({'home': url_for(home, _external=True)})
     return jsonify(
         {
             'count': len(data) if data else 0,
             'data': data or {},
-            'errors': errors,
-            'links': {
-                'home': url_for(home_view_name, _external=True),
-            }
+            'errors': errors or [],
+            'links': links,
         }
     ), 200 if not errors else 400

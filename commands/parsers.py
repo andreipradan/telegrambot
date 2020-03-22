@@ -10,11 +10,12 @@ def parse_list_details(data, item_emoji='➡️'):
                       for title, stats in data.items()])
 
 
-def parse_global(title, top_stats, items, item_emoji='➡️', footer=''):
+def parse_global(title, stats, items, emoji='➡️', footer='', bar_length=26):
     return f"""
 {title}
-{parse_details(top_stats)}
+{parse_details(stats)}
 
-{parse_list_details(items, item_emoji=item_emoji)}
+{parse_list_details(items, item_emoji=emoji)}
 {footer}
+{'=' * bar_length}
 """

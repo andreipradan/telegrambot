@@ -1,7 +1,7 @@
 import os
-from pymongo import MongoClient
+from pymongo import MongoClient, UpdateOne
 
-DEFAULT_DB = 'telegrambot_db'
+from core.constants import COLLECTION, DEFAULT_DB, SLUG
 
 
 def get_client():
@@ -13,25 +13,37 @@ def get_collection(name, client=get_client()):
     return client[DEFAULT_DB][name]
 
 
-def get_stats_by_slug(slug):
-    return get_collection('top_stats').find_one({'slug': slug})
+def get_etag():
+    return get_collection(COLLECTION['etag']).find_one({'slug': SLUG['etag']})
 
 
-def set_stats_for_slug(slug, **stats):
-    get_collection('top_stats').update_one(
-        {'slug': slug},
-        update={'$set': stats},
+def get_stats(collection, slug):
+    return get_collection(collection).find_one({'slug': slug})
+
+
+def set_etag(etag):
+    return get_collection(COLLECTION['etag']).update_one(
+        filter={'slug': SLUG['etag']},
+        update={'$set': {'value': etag}},
         upsert=True,
     )
 
 
-def get_etag():
-    return get_collection('etag').find_one({'slug': 'global_etag'})
+def set_multiple(data, collection=COLLECTION['counties']):
+    return get_collection(collection).bulk_write(
+        [
+            UpdateOne(
+                {'slug': item['attributes'].pop('Judete')},
+                update={'$set': item['attributes']},
+                upsert=True
+            ) for item in data
+        ]
+    )
 
 
-def set_etag(etag):
-    return get_collection('etag').update_one(
-        filter={'slug': 'global_etag'},
-        update={'$set': {'value': etag}},
+def set_stats(slug, collection=COLLECTION['romania'], **stats):
+    get_collection(collection).update_one(
+        {'slug': slug},
+        update={'$set': stats},
         upsert=True,
     )

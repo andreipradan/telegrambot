@@ -13,7 +13,6 @@ Clearly Positive:   "score": 0.8,  "magnitude": 3.0
 Clearly Negative: "score": -0.6, "magnitude": 4.0
 Neutral:                 "score": 0.1,  "magnitude": 0.0
 Mixed:                   "score": 0.0,  "magnitude": 4.0
-===================================
 """
 
 
@@ -38,10 +37,10 @@ def analyze_sentiment(text):
     except InvalidArgument as error:
         return error.message
 
-    top_stats = OrderedDict()
-    top_stats['Overall score'] = response.document_sentiment.score
-    top_stats['Overall magnitude'] = response.document_sentiment.magnitude
-    top_stats['Language'] = response.language
+    stats = OrderedDict()
+    stats['Overall score'] = response.document_sentiment.score
+    stats['Overall magnitude'] = response.document_sentiment.magnitude
+    stats['Language'] = response.language
 
     sentences = {}
     for sentence in response.sentences:
@@ -50,8 +49,9 @@ def analyze_sentiment(text):
         sentences[title]['Score'] = sentence.sentiment.score
         sentences[title]['Magnitute'] = sentence.sentiment.magnitude
     return parse_global(
-        '===================================\n💔 Sentiment analysis',
-        top_stats=top_stats,
+        '💔 Sentiment analysis',
+        stats=stats,
         items=sentences,
         footer=get_footer(),
+        bar_length=35
     )

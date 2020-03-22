@@ -5,9 +5,8 @@ import telegram
 from flask import Blueprint
 from flask import abort
 
-from core.constants import ROMANIA_STATS_SLUG
 from core.constants import URLS
-from commands.covid_stats import request_romania
+from commands.utils import request_romania
 from core import database
 
 covid_views = Blueprint('covid_views', __name__)

@@ -1,144 +1,58 @@
 
 import re
 from collections import OrderedDict
-from copy import deepcopy
 
 from bs4 import BeautifulSoup
 import requests
 
-from core.constants import ROMANIA_STATS_SLUG, COUNTY_SLUG
-from core.constants import URLS
-from commands.parsers import parse_details
-from commands.parsers import parse_global
-from commands.utils import get_db_stats, get_date
-from commands.utils import get_last_updated
-from commands.utils import validate_response
-from core import database
-
-delimiter = '=========================='
+from core import constants
+from commands import parsers
+from commands import utils
+from core.serializers import CountrySerializer
+from core.serializers import CountySerializer
 
 
-def request_romania():
-    response = requests.get(URLS['ROMANIA'])
-    validate_response(response)
-    data = response.json()['features']
-    ro = OrderedDict()
-    ro['Confirmati'] = sum([r['attributes']['Cazuri_confirmate'] for r in data])
-    ro['Decedati'] = sum([r['attributes']['Persoane_decedate'] for r in data])
-    ro['Carantinati'] = sum([r['attributes']['Persoane_in_carantina'] for r in data])
-    ro['Izolati'] = sum([r['attributes']['Persoane_izolate'] for r in data])
-
-    last_updated = get_last_updated(data)
-    new_last_updated = last_updated
-    new = deepcopy(ro)
-    old_version = database.get_stats_by_slug(ROMANIA_STATS_SLUG)
-    if last_updated != old_version['last_updated']:
-        new_last_updated = (f"{last_updated}\n"
-                            f"({old_version['last_updated']})")
-    for key in ro:
-        if ro[key] != old_version[key]:
-            diff = ro[key] - old_version.get(key)
-            new[key] = f"{ro[key]} ({'+' if diff >= 0 else ''}{diff})"
-
-    database.set_etag(response.headers.get('ETag'))
-    database.set_stats_for_slug(
-        ROMANIA_STATS_SLUG,
-        **ro,
-        last_updated=last_updated,
-    )
-
-    return f"""
-{delimiter}
-🦠 Romania
-{parse_details(new)}
-{delimiter}
-Last updated: {new_last_updated}
-[Source: API]
-{delimiter}
-"""
-
-
-def get_romania_stats():
-    db_stats = (
-        database.get_stats_by_slug(ROMANIA_STATS_SLUG)
-        if get_db_stats(URLS['ROMANIA'], ROMANIA_STATS_SLUG)
-        else None
-    )
-
-    if db_stats:
-        last_updated = db_stats.pop('last_updated')
-        db_stats.pop('_id', None)
-        db_stats.pop('slug', None)
-        return parse_global(
-            title=f'{delimiter}\n🦠 Romania',
-            top_stats=db_stats,
-            items={},
-            footer=f'Last updated: {last_updated}\n[Source: DB]\n{delimiter}'
-        )
-
-    return request_romania()
-
-
-def get_county_details(text):
-    if not text:
+def get_stats(serializer, request_func=None, **kwargs):
+    if 'text' in kwargs and not kwargs['text']:
         return 'Syntax: /covid_county_details <County name>'
 
-    db_stats = get_db_stats(URLS['ROMANIA'])
-    if db_stats:
-        last_updated = db_stats.pop('last_updated')
-        db_stats.pop('_id', None)
-        db_stats.pop('OBJECTID', None)
-        db_stats.pop('slug', None)
-        return parse_global(
-            title=f'{delimiter}\n🦠 {db_stats.pop("Judete")}',
-            top_stats=db_stats,
-            items={},
-            footer=f'Last updated: {last_updated}\n[Source: DB]\n{delimiter}'
-        )
+    county = kwargs.pop('text', None)
+    stats = utils.get_db_stats(
+        constants.URLS[constants.RO_SLUG],
+        county=county
+    )
+    if stats:
+        stats = serializer(data=stats).data
+        source = 'DB'
+    else:
+        county_kwargs = {'judet': county} if county else {}
+        stats = request_func(**county_kwargs)
+        source = 'API'
 
-    response = requests.get(URLS['ROMANIA'])
-    validate_response(response)
+    if 'json' in kwargs:
+        stats['Source'] = source
+        return stats
 
-    counties = response.json()['features']
-    county = None
-    for feature in counties:
-        county_details = feature['attributes']
-        if county_details['Judete'] == text:
-            county = county_details
-
-    if not county:
-        available_counties = ' | '.join(
-            county['attributes']['Judete'] for county in counties
-        )
-        return f"Available counties: {available_counties}"
-
-    last_updated = get_date(county.pop('EditDate'))
-    database.set_etag(response.headers.get('ETag'))
-    database.set_stats_for_slug(
-        response.headers['ETag'],
-        **county,
-        last_updated=last_updated,
+    last_updated = utils.get_date(stats.pop('EditDate'))
+    return parsers.parse_global(
+        title=f"🦠 {'Romania' if not county else 'Judetul ' + county}",
+        stats=stats,
+        items={},
+        footer=f'Last updated: {last_updated}\n[Source {source}]'
     )
 
-    return f"""
-{delimiter}
-🦠 {county['Judete']}
- ├ Populatie: {county['Populatie']}
- ├ Confirmați: {county['Cazuri_confirmate']}
- ├ Decedați: {county['Persoane_decedate']}
- ├ Carantinați: {county['Persoane_in_carantina']}
- ├ Izolați: {county['Persoane_in_carantina']}
- └ Vindecați: {county['Persoane_vindecate']}
 
-Last updated: {last_updated}
-[Source: API]
-{delimiter}
-    """
+def get_romania_stats(**kwargs):
+    return get_stats(CountrySerializer, utils.request_romania, **kwargs)
+
+
+def get_county_details(**kwargs):
+    return get_stats(CountySerializer, utils.request_judet, **kwargs)
 
 
 def get_covid_counties():
-    response = requests.get(URLS['ROMANIA'])
-    validate_response(response)
+    response = requests.get(constants.URLS['ROMANIA'])
+    utils.validate_response(response)
     counties = response.json()['features']
     return '\t 🦠 '.join(
         f"{county['attributes']['Judete']}: "
@@ -160,7 +74,7 @@ def get_covid_global(count=None):
 
     main_stats_id = 'maincounter-wrap'
 
-    soup = BeautifulSoup(requests.get(URLS['GLOBAL']).text)
+    soup = BeautifulSoup(requests.get(constants.URLS['GLOBAL']).text)
 
     top_stats = {
         x.h1.text: x.div.span.text.strip()
@@ -180,11 +94,11 @@ def get_covid_global(count=None):
             countries[country][ths[i]] = data[i]
 
     last_updated = soup.find(string=re.compile('Last updated: '))
-    return parse_global(
-        title=f'{delimiter}======\n🌎 Global Stats',
-        top_stats=top_stats,
+    return parsers.parse_global(
+        title=f'🌎 Global Stats',
+        stats=top_stats,
         items=countries,
-        item_emoji='🦠',
-        footer=f"({last_updated})\n[Source: worldometers.info]"
-               f"\n{delimiter}======"
+        emoji='🦠',
+        footer=f"({last_updated})\n[Source: worldometers.info]",
+        bar_length=32
     )

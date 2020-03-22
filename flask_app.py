@@ -4,9 +4,11 @@ import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 from flask import Flask
+from flask import url_for
 
+from core.views.base import make_json_response
 from core.views.command import command_views
-from core.views.country import country_views
+from core.views.county import county_views
 from core.views.covid import covid_views
 from core.views.telegram import telegram_views
 
@@ -18,14 +20,30 @@ if not os.getenv('FLASK_DEBUG', False):
 
 app = Flask(__name__)
 app.register_blueprint(command_views)
-app.register_blueprint(country_views)
+app.register_blueprint(county_views)
 app.register_blueprint(covid_views)
 app.register_blueprint(telegram_views)
+
+
+def has_no_empty_params(rule):
+    defaults = rule.defaults if rule.defaults is not None else ()
+    arguments = rule.arguments if rule.arguments is not None else ()
+    return len(defaults) >= len(arguments)
+
+
+@app.route("/")
+def site_map():
+    links = [
+        url_for(rule.endpoint, **(rule.defaults or {}), _external=True)
+        for rule in app.url_map.iter_rules()
+        if 'GET' in rule.methods and has_no_empty_params(rule)
+    ]
+    return make_json_response(links)
 
 
 if __name__ == "__main__":
     app.run(
         host='0.0.0.0',
         port=int(os.environ.get('PORT', 8080)),
-        debug=os.getenv('DEBUG', False),
+        debug=os.getenv('DEBUG', True),
     )
