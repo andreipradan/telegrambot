@@ -54,7 +54,7 @@ def command(command_name):
 
     result = ALLOWED_COMMANDS[command_name](**request.args.to_dict())
 
-    if 'json' not in request.args:
+    if 'telegram' in request.args:
         bot = telegram.Bot(token=os.environ['TOKEN'])
         bot.send_message(chat_id=412945234, text=result)
 

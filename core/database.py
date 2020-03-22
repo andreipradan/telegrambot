@@ -17,7 +17,7 @@ def get_etag():
 
 
 def get_all(collection):
-    return list(get_collection(collection).find())
+    return list(get_collection(collection).find().sort('Cazuri_confirmate', -1))
 
 
 def get_stats(collection, slug):
