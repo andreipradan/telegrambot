@@ -14,8 +14,8 @@ ALLOWED_COMMANDS = {
     'judete': get_covid_counties,
     'judetul': get_county_details,
     'say_hi': say_hi,
-    'start': start,
-    'end': end,
+    # 'start': start,
+    # 'end': end,
 }
 COMMANDS_WITH_TEXT = [
     'analyze_sentiment',
@@ -24,10 +24,10 @@ COMMANDS_WITH_TEXT = [
 ]
 COMMANDS_WITH_UPDATE = [
     'say_hi',
-    'start',
+    # 'start',
 ]
 COMMANDS_WITH_UPDATE_AND_BOT = [
-    'end'
+    # 'end'
 ]
 
 
