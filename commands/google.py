@@ -49,7 +49,7 @@ def analyze_sentiment(text):
         sentences[title]['Score'] = sentence.sentiment.score
         sentences[title]['Magnitute'] = sentence.sentiment.magnitude
     return parse_global(
-        '💔 Sentiment analysis',
+        title='💔 Sentiment analysis',
         stats=stats,
         items=sentences,
         footer=get_footer(),

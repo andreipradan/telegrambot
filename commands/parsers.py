@@ -10,7 +10,7 @@ def parse_list_details(data, item_emoji='➡️'):
                       for title, stats in data.items()])
 
 
-def parse_global(title, stats, items, emoji='➡️', footer='', bar_length=26):
+def parse_global(stats, items, title='🦠 Romania', emoji='➡️', footer='', bar_length=26):
     return f"""
 {title}
 {parse_details(stats)}

@@ -1,11 +1,11 @@
-from commands.gcloud_utils import analyze_sentiment
+from commands.google import analyze_sentiment
 from commands.say_hi import say_hi
-from commands.covid_stats import get_county_details
-from commands.covid_stats import get_covid_global
-from commands.covid_stats import get_covid_counties
-from commands.covid_stats import get_romania_stats
-from core.ptb import start
-from core.ptb import end
+from commands.covid import get_county_details
+from commands.covid import get_covid_global
+from commands.covid import get_covid_counties
+from commands.covid import get_romania_stats
+from core.inline import start
+from core.inline import end
 
 ALLOWED_COMMANDS = {
     'analyze_sentiment': analyze_sentiment,
@@ -14,8 +14,7 @@ ALLOWED_COMMANDS = {
     'judete': get_covid_counties,
     'judetul': get_county_details,
     'say_hi': say_hi,
-    # 'start': start,
-    # 'end': end,
+    'start': start,
 }
 COMMANDS_WITH_TEXT = [
     'analyze_sentiment',
@@ -24,10 +23,7 @@ COMMANDS_WITH_TEXT = [
 ]
 COMMANDS_WITH_UPDATE = [
     'say_hi',
-    # 'start',
-]
-COMMANDS_WITH_UPDATE_AND_BOT = [
-    # 'end'
+    'start',
 ]
 
 
@@ -36,8 +32,6 @@ def validate_components(update):
     if not message or not message.chat or not message.chat.id:
         if getattr(update, 'edited_message', None):
             return f'✂️', 1337
-        if getattr(update, 'callback_query', None):
-            return ':tada:', 1338
         raise ValueError(
             f'Missing message, chat or chat ID. Update: {update.to_dict()}'
         )

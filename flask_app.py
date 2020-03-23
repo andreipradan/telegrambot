@@ -8,9 +8,8 @@ from flask import url_for
 
 from core.views.base import make_json_response
 from core.views.command import command_views
-from core.views.county import county_views
-from core.views.covid import covid_views
-from core.views.telegram import telegram_views
+from core.views.counties import county_views
+from core.views.new_cases import new_cases_views
 
 if not os.getenv('FLASK_DEBUG', False):
     sentry_sdk.init(
@@ -21,8 +20,7 @@ if not os.getenv('FLASK_DEBUG', False):
 app = Flask(__name__)
 app.register_blueprint(command_views)
 app.register_blueprint(county_views)
-app.register_blueprint(covid_views)
-app.register_blueprint(telegram_views)
+app.register_blueprint(new_cases_views)
 
 
 def has_no_empty_params(rule):
