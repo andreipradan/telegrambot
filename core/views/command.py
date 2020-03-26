@@ -6,10 +6,11 @@ from flask import Blueprint
 from flask import request
 from flask import url_for
 
+import commands
 from core import inline
-from core.handlers import ALLOWED_COMMANDS
-from core.handlers import COMMANDS_WITH_TEXT
-from core.handlers import COMMANDS_WITH_UPDATE
+from core.constants import ALLOWED_COMMANDS
+from core.constants import COMMANDS_WITH_TEXT
+from core.constants import COMMANDS_WITH_UPDATE
 from core.handlers import validate_components
 from core.views.base import make_json_response
 
@@ -55,7 +56,7 @@ def command(command_name):
         )
         return make_json_response(home=home_view_name, errors=[error])
 
-    result = ALLOWED_COMMANDS[command_name](**request.args.to_dict())
+    result = getattr(commands, command_name)(**request.args.to_dict())
 
     if 'telegram' in request.args:
         bot = telegram.Bot(token=os.environ['TOKEN'])
@@ -83,15 +84,13 @@ def webhook():
 
         if update.callback_query:
             data = update.callback_query.data
-            message = update.callback_query.message
             if data == 'end':
-                return inline.end(update.callback_query)
-            return bot.edit_message_text(
-                chat_id=message.chat_id,
-                message_id=message.message_id,
-                text=data,
-                reply_markup=message.reply_markup
-            ).to_json()
+                return inline.end(update)
+            elif data == 'more':
+                return inline.more(update)
+            elif data == 'back':
+                return inline.restart(update)
+            return inline.refresh_data(update, getattr(commands, data)())
 
         command_text, status_code = validate_components(update)
 
@@ -110,10 +109,9 @@ def webhook():
             args.append(update)
 
         if command_text == 'start':
-            ALLOWED_COMMANDS[command_text](update)
-            return 'started'
+            return inline.start(update)
 
-        results = ALLOWED_COMMANDS[command_text](*args)
+        results = getattr(commands, command_text)(*args)
 
         try:
             send_message(bot, text=results, chat_id=chat_id)
@@ -126,3 +124,11 @@ def webhook():
             send_message(bot, text=text, chat_id=chat_id)
         return 'completed'
     return f"Unexpected method {request.method}"
+
+
+@command_views.route(f"/{os.environ['TOKEN']}/reset/", methods=['POST'])
+def reset_webhook():
+    bot = telegram.Bot(token=os.environ['TOKEN'])
+    url = request.args.get('url', bot.get_webhook_info()['url'])
+    bot.deleteWebhook()
+    return f'URL: {url} | Result: {bot.setWebhook(url)}'

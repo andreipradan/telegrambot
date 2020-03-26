@@ -1,7 +1,5 @@
 from collections import OrderedDict
 
-from core.constants import COUNTY_FIELDS, RO_FIELDS
-
 
 class BaseSerializer:
     fields = NotImplemented
@@ -20,14 +18,6 @@ class BaseSerializer:
         ]
 
 
-class CountySerializer(BaseSerializer):
-    fields = [item for item in COUNTY_FIELDS if item != 'Judete'] + ['slug']
-
-
-class CountyConfirmedSerializer(BaseSerializer):
-    fields = 'slug', 'Cazuri_confirmate'
-
-
-class CountrySerializer(BaseSerializer):
-    fields = RO_FIELDS
-    ignore_fields = BaseSerializer.ignore_fields + ['slug']
+class TotalSerializer(BaseSerializer):
+    fields = ('Cazuri_confirmate', 'Decedati', 'Last_updated')
+    ignore_fields = ('FID', 'column0')

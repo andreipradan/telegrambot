@@ -8,7 +8,6 @@ from flask import url_for
 
 from core.views.base import make_json_response
 from core.views.command import command_views
-from core.views.counties import county_views
 from core.views.new_cases import new_cases_views
 
 if not os.getenv('FLASK_DEBUG', False):
@@ -19,7 +18,6 @@ if not os.getenv('FLASK_DEBUG', False):
 
 app = Flask(__name__)
 app.register_blueprint(command_views)
-app.register_blueprint(county_views)
 app.register_blueprint(new_cases_views)
 
 

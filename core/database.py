@@ -1,5 +1,5 @@
 import os
-from pymongo import MongoClient, UpdateOne
+from pymongo import MongoClient  # , UpdateOne
 
 from core.constants import COLLECTION, DEFAULT_DB, SLUG
 
@@ -32,16 +32,16 @@ def set_etag(etag):
     )
 
 
-def set_multiple(data, collection=COLLECTION['counties']):
-    return get_collection(collection).bulk_write(
-        [
-            UpdateOne(
-                {'slug': item.pop('Judete')},
-                update={'$set': item},
-                upsert=True
-            ) for item in data
-        ]
-    )
+# def set_multiple(data, collection=COLLECTION['romania']):
+#     return get_collection(collection).bulk_write(
+#         [
+#             UpdateOne(
+#                 {'slug': item.pop('Judete')},
+#                 update={'$set': item},
+#                 upsert=True
+#             ) for item in data
+#         ]
+#     )
 
 
 def set_stats(slug, stats, collection=COLLECTION['romania']):

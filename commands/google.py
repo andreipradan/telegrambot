@@ -53,5 +53,4 @@ def analyze_sentiment(text):
         stats=stats,
         items=sentences,
         footer=get_footer(),
-        bar_length=35
     )

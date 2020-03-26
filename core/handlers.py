@@ -1,30 +1,4 @@
-from commands.google import analyze_sentiment
-from commands.say_hi import say_hi
-from commands.covid import get_county_details
-from commands.covid import get_covid_global
-from commands.covid import get_covid_counties
-from commands.covid import get_romania_stats
-from core.inline import start
-from core.inline import end
-
-ALLOWED_COMMANDS = {
-    'analyze_sentiment': analyze_sentiment,
-    'covid': get_romania_stats,
-    'global': get_covid_global,
-    'judete': get_covid_counties,
-    'judetul': get_county_details,
-    'say_hi': say_hi,
-    'start': start,
-}
-COMMANDS_WITH_TEXT = [
-    'analyze_sentiment',
-    'judetul',
-    'global',
-]
-COMMANDS_WITH_UPDATE = [
-    'say_hi',
-    'start',
-]
+from core.constants import ALLOWED_COMMANDS
 
 
 def validate_components(update):
@@ -59,7 +33,7 @@ def validate_components(update):
     command_text = message_text.split(' ')[0][1:]
     if command_text not in ALLOWED_COMMANDS:
         allowed_text = ''
-        for command in ALLOWED_COMMANDS.keys():
+        for command in ALLOWED_COMMANDS:
             allowed_text += f'\n• /{command}'
         return (
             f'Unknown command: "{command_text}".\n'

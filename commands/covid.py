@@ -4,27 +4,28 @@ from collections import OrderedDict
 from bs4 import BeautifulSoup
 import requests
 
-from core import constants
+from core import constants, database
 from commands import parsers
 from commands import utils
-from core.serializers import CountyConfirmedSerializer
-from core.serializers import CountrySerializer
-from core.serializers import CountySerializer
+from core.constants import COLLECTION, SLUG
+from core.serializers import TotalSerializer
+from core.utils import check_etag
 
 
-def get_stats(serializer, request_func=None, **kwargs):
-    county = kwargs.pop('text', None)
-    stats = utils.get_db_stats(
-        constants.URLS['ROMANIA'],
-        county=county,
-        many=kwargs.pop('many', False),
-    )
-    if stats:
-        stats = serializer(data=stats).data
-        source = 'DB'
-    else:
-        county_kwargs = {'judet': county} if county else {}
-        stats = request_func(**county_kwargs)
+def get_stats(url, serializer, **kwargs):
+    source, stats = None, None
+    if check_etag(url):
+        db_stats = database.get_stats(
+            collection=COLLECTION['romania'],
+            slug=SLUG['romania']
+        )
+        if db_stats:
+            stats = serializer(data=db_stats).data
+            source = 'DB'
+
+    # external request
+    if not stats:
+        stats = utils.request_total(url)
         source = 'API'
 
     if 'json' in kwargs:
@@ -32,41 +33,26 @@ def get_stats(serializer, request_func=None, **kwargs):
             stats['Source'] = source
         return stats
 
-    if isinstance(stats, list):
-        return '🦠 '.join(
-            f"{item['slug']}: {item['Cazuri_confirmate']}" for item in stats
-        )
-    elif isinstance(stats, str):
-        return stats
-
-    last_updated = utils.get_date(stats.pop('EditDate'))
     return parsers.parse_global(
-        title=f"🦠 {'Romania' if not county else 'Judetul ' + county}",
+        title=f'🦠 Romania',
         stats=stats,
         items={},
-        footer=f'Last updated: {last_updated}\n[Source {source}]'
+        footer=f'[Source {source}]'
     )
 
 
-def get_romania_stats(request_func=utils.request_romania, **kwargs):
-    return get_stats(CountrySerializer, request_func, **kwargs)
-
-
-def get_county_details(text, request_func=utils.request_judet, **kwargs):
-    if not text:
-        return 'Syntax: /judetul <nume judet>'
-    return get_stats(CountySerializer, request_func, text=text, **kwargs)
-
-
-def get_covid_counties(**kwargs):
+def total(**kwargs):
     return get_stats(
-        many=True,
-        request_func=utils.request_counties,
-        serializer=CountyConfirmedSerializer
+        url=constants.URLS['romania'],
+        serializer=TotalSerializer,
+        collection='romania',
+        slug='romania',
+        request_func=utils.request_total,
+        **kwargs
     )
 
 
-def get_covid_global(count=None):
+def global_(count=None):
     count = count.strip() if count else 5
 
     try:
@@ -105,5 +91,4 @@ def get_covid_global(count=None):
         items=countries,
         emoji='🦠',
         footer=f"({last_updated})\n[Source: worldometers.info]",
-        bar_length=32
     )

@@ -1,8 +1,12 @@
+def get_verbose(string):
+    return ' '.join(string.split('_')).capitalize()
+
+
 def parse_details(data):
     items = list(data.items())
     return '├ ' + '\n├ '.join(
-        [f'{" ".join(key.split("_"))}: {value}' for key, value in items[:-1]]
-    ) + f'\n└ {items[-1][0]}: {items[-1][1]}'
+        [f'{get_verbose(key)}: {value}' for key, value in items[:-1]]
+    ) + f'\n└ {get_verbose(items[-1][0])}: {items[-1][1]}'
 
 
 def parse_list_details(data, item_emoji='➡️'):
@@ -10,12 +14,11 @@ def parse_list_details(data, item_emoji='➡️'):
                       for title, stats in data.items()])
 
 
-def parse_global(stats, items, title='🦠 Romania', emoji='➡️', footer='', bar_length=26):
+def parse_global(stats, items, title='🦠 Romania', emoji='➡️', footer=''):
     return f"""
 {title}
 {parse_details(stats)}
 
 {parse_list_details(items, item_emoji=emoji)}
 {footer}
-{'=' * bar_length}
 """
