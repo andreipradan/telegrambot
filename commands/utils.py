@@ -36,13 +36,13 @@ def request_total(url):
     data = {
         'Cazuri_confirmate': data['Cazuri_confirmate'],
         'Decedati': data['Decedati'],
-        'Last updated': datetime.utcnow().astimezone(
+        'Last_updated': datetime.utcnow().astimezone(
             pytz.timezone('Europe/Bucharest')
         ).strftime('%H:%M:%S %d-%m-%Y %Z'),
     }
     new = deepcopy(data)
     if old_version:
-        for key in data:
+        for key in [key for key in data if key != 'Last_updated']:
             new_value, old_value = data[key], old_version.get(key)
             if new_value != old_value:
                 diff = new_value - old_value if old_value else 0

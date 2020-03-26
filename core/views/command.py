@@ -3,6 +3,7 @@ import os
 import telegram
 
 from flask import Blueprint
+from flask import abort
 from flask import request
 from flask import url_for
 
@@ -126,9 +127,11 @@ def webhook():
     return f"Unexpected method {request.method}"
 
 
-@command_views.route(f"/{os.environ['TOKEN']}/reset/", methods=['POST'])
+@command_views.route(f"/reset-webhook/")
 def reset_webhook():
     bot = telegram.Bot(token=os.environ['TOKEN'])
-    url = request.args.get('url', bot.get_webhook_info()['url'])
+    if request.args.get('key', None) != '@aoleu_bot':
+        abort(403)
     bot.deleteWebhook()
-    return f'URL: {url} | Result: {bot.setWebhook(url)}'
+    url = url_for('command_views.webhook', _external=True).replace('http://', 'https://')
+    return f"Result: {bot.setWebhook(url)}"
