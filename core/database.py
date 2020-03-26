@@ -44,7 +44,7 @@ def set_etag(etag):
 #     )
 
 
-def set_stats(slug, stats, collection=COLLECTION['romania']):
+def set_stats(stats, collection=COLLECTION['romania'], slug=SLUG['romania']):
     get_collection(collection).update_one(
         {'slug': slug},
         update={'$set': stats},

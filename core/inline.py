@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 START_MARKUP = InlineKeyboardMarkup([
     [
-        InlineKeyboardButton('🇷🇴', callback_data='total'),
+        InlineKeyboardButton('🇷🇴', callback_data='histogram'),
         InlineKeyboardButton('🌎', callback_data='global_'),
         InlineKeyboardButton('More', callback_data='more'),
     ] + [
@@ -24,6 +24,7 @@ START_MARKUP = InlineKeyboardMarkup([
 
 
 MORE_MARKUP = InlineKeyboardMarkup([[
+    InlineKeyboardButton('📈', callback_data='history'),
     InlineKeyboardButton('⬅️', callback_data='back')
 ]])
 

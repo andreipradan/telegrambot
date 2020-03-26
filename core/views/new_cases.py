@@ -4,11 +4,11 @@ import telegram
 from flask import Blueprint
 from flask import abort
 
+from commands import histogram
 from commands.parsers import parse_global
-from core.constants import URLS
-from commands.utils import request_total
+from core import constants
 from core import database
-from core.utils import check_etag
+from core.utils import parse_diff
 
 new_cases_views = Blueprint('new_cases_views', __name__)
 
@@ -18,13 +18,23 @@ def check_new_cases(token):
     if not database.get_collection('oicd_auth').find_one({'bearer': token}):
         raise abort(403)
 
-    url = URLS['romania']
-    if check_etag(url):
-        return 'No changes'
+    stats = histogram(json=True)
+    stats = stats['quickStats']['totals']
 
-    stats = request_total(url)
+    db_stats = database.get_stats(
+        constants.COLLECTION['romania'],
+        slug=constants.SLUG['romania']
+    )
+    if db_stats:
+        db_stats.pop('_id')
+        db_stats.pop('slug')
+        if stats == db_stats:
+            return 'No changes'
+
+    database.set_stats(stats)
+
     text = parse_global(
-        stats=stats,
+        stats=parse_diff(stats, db_stats),
         items={},
     )
     bot = telegram.Bot(token=os.environ['TOKEN'])

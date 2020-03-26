@@ -1,3 +1,4 @@
-from .covid import global_
-from .covid import total
+from .worldometers import global_
+from .date_la_zi import histogram
+from .date_la_zi import history
 from .google import analyze_sentiment

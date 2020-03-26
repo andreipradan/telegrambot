@@ -11,10 +11,8 @@ COMMANDS_WITH_UPDATE = [
 ]
 
 URLS = {
-    'romania': 'https://services7.arcgis.com/I8e17MZtXFDX9vvT/arcgis/rest/'
-               'services/Total_cazuri_confirmate/FeatureServer/0/query'
-               '?f=json&where=1%3D1&outFields=*',
-    'global': 'https://www.worldometers.info/coronavirus/#countries',
+    'romania': 'https://api1.datelazi.ro/api/v2/data/ui-data/',
+    'worldometers': 'https://www.worldometers.info/coronavirus/#countries',
 }
 
 DEFAULT_DB = 'telegrambot_db'
