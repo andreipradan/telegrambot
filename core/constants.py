@@ -24,3 +24,9 @@ SLUG = {
     'etag': 'etag-slug',
     'romania': 'romania-slug',
 }
+
+IDS = {
+    'ap': 412945234,
+    'covid-updates': -1001181792063,
+    'pbs': -382272798,
+}

@@ -8,6 +8,7 @@ from commands import histogram
 from commands.parsers import parse_global
 from core import constants
 from core import database
+from core.constants import IDS
 from core.utils import parse_diff
 
 new_cases_views = Blueprint('new_cases_views', __name__)
@@ -40,6 +41,7 @@ def check_new_cases(token):
     bot = telegram.Bot(token=os.environ['TOKEN'])
 
     return bot.sendMessage(
-        chat_id=412945234,
-        text=text
+        chat_id=IDS['covid-updates'],
+        text=text,
+        disable_notification=True,
     ).to_json()

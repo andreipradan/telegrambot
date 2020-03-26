@@ -12,6 +12,7 @@ from core import inline
 from core.constants import ALLOWED_COMMANDS
 from core.constants import COMMANDS_WITH_TEXT
 from core.constants import COMMANDS_WITH_UPDATE
+from core.constants import IDS
 from core.handlers import validate_components
 from core.views.base import make_json_response
 
@@ -67,8 +68,8 @@ def command(command_name):
 
 
 def send_message(bot, text, chat_id=None):
-    return bot.sendMessage(
-        chat_id=chat_id or 412945234,
+    return bot.send_message(
+        chat_id=chat_id or IDS['ap'],
         text=text
     ).to_json()
 
@@ -96,8 +97,10 @@ def webhook():
         command_text, status_code = validate_components(update)
 
         if status_code == 1337:
+            if command_text == 'skip-debug':
+                return 'ok'
             text = f'{command_text}.\nUpdate: {update.to_dict()}'
-            return send_message(bot, text=text, chat_id=412945234)
+            return send_message(bot, text=text, chat_id=IDS['ap'])
 
         chat_id = update.message.chat.id
         if status_code != 'valid-command':
