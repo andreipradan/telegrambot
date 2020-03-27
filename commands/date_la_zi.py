@@ -24,7 +24,7 @@ def histogram(**kwargs):
         return stats
 
     return parsers.parse_global(
-        title=f' Romania',
+        title=f'🦠 Romania',
         stats=totals,
         items={
             'Dupa varsta': age_histogram,

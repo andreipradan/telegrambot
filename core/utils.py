@@ -29,6 +29,8 @@ def chunks(lst, n):
 
 
 def parse_diff(data, old_version):
+    if not old_version:
+        return data
     new = deepcopy(data)
     for key in data:
         new_value, old_value = data[key], old_version.get(key)

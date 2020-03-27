@@ -8,13 +8,13 @@ from core import constants
 from commands import parsers
 
 
-def global_(count=None):
-    count = count.strip() if count else 3
+def global_(text=None, **kwargs):
+    text = text.strip() if text else 3
 
     try:
-        count = int(count)
+        text = int(text)
     except ValueError:
-        return f'Invalid count: "{count}".'
+        return f'Invalid count: "{text}".'
 
     main_stats_id = 'maincounter-wrap'
 
@@ -27,7 +27,7 @@ def global_(count=None):
 
     selector = 'table#main_table_countries_today'
     ths = [x.text for x in soup.select(f'{selector} > thead > tr > th')][1:6]
-    rows = soup.select(f'{selector} > tbody > tr')[:count]
+    rows = soup.select(f'{selector} > tbody > tr')[:text]
 
     countries = {}
     for row in rows:

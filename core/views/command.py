@@ -8,10 +8,7 @@ from flask import request
 from flask import url_for
 
 import commands
-from core import inline
-from core.constants import ALLOWED_COMMANDS
-from core.constants import COMMANDS_WITH_TEXT
-from core.constants import COMMANDS_WITH_UPDATE
+from core import inline, constants
 from core.constants import IDS
 from core.handlers import validate_components
 from core.views.base import make_json_response
@@ -27,14 +24,14 @@ def command_list():
     return make_json_response(
         data=[
             f"{url_for(home_view_name, _external=True)}{allowed_command}/"
-            for allowed_command in ALLOWED_COMMANDS
+            for allowed_command in constants.COMMANDS_FOR_VIEWS
         ]
     )
 
 
 @command_views.route('/commands/<command_name>/')
 def command(command_name):
-    if command_name not in ALLOWED_COMMANDS:
+    if command_name not in constants.COMMANDS_FOR_VIEWS:
         return make_json_response(
             home=home_view_name,
             errors=[
@@ -43,7 +40,7 @@ def command(command_name):
             ]
         )
 
-    if command_name in COMMANDS_WITH_TEXT and not request.args:
+    if command_name in constants.COMMANDS_WITH_TEXT and not request.args:
         error = (
             f"This command requires a text URL param. "
             f"e.g. {url_for(home_view_name, _external=True)}"
@@ -51,7 +48,7 @@ def command(command_name):
         )
         return make_json_response(home=home_view_name, errors=[error])
 
-    if command_name in COMMANDS_WITH_UPDATE:
+    if command_name in constants.COMMANDS_WITH_UPDATE:
         error = (
             'This command can not be executed via http. '
             '[requires a Telegram update object]'
@@ -107,9 +104,9 @@ def webhook():
             return send_message(bot, text=command_text, chat_id=chat_id)
 
         args = []
-        if command_text in COMMANDS_WITH_TEXT:
+        if command_text in constants.COMMANDS_WITH_TEXT:
             args.append(' '.join(update.message.text.split(' ')[1:]))
-        elif command_text in COMMANDS_WITH_UPDATE:
+        elif command_text in constants.COMMANDS_WITH_UPDATE:
             args.append(update)
 
         if command_text == 'start':
