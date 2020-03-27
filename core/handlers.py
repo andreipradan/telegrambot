@@ -22,6 +22,8 @@ def validate_components(update):
         if getattr(message, 'new_chat_members', None):
             new_members = [parse_name(u) for u in message.new_chat_members]
             return f"Welcome {', '.join(new_members)}!", 400
+        if getattr(message, 'photo', None):
+            return 'skip-debug', 1337
         raise ValueError(f'No message text. Update: {update.to_dict()}')
 
     if getattr(message, 'reply_to_message', None):

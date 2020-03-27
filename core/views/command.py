@@ -69,7 +69,8 @@ def command(command_name):
 def send_message(bot, text, chat_id=None):
     return bot.send_message(
         chat_id=chat_id or IDS['ap'],
-        text=text
+        text=text,
+        disable_notification=True,
     ).to_json()
 
 
