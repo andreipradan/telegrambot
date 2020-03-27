@@ -46,6 +46,8 @@ def parse_name(user):
 
 
 def parse_sentiment(data):
+    if isinstance(data, str):
+        return data
     score = data['Overall score']
     if score < 0:
         return 'Why so negative?'
