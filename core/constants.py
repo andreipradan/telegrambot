@@ -1,3 +1,5 @@
+import os
+
 ALLOWED_COMMANDS = {
     'analyze_sentiment',
     'start',
@@ -33,8 +35,5 @@ SLUG = {
     'stiri-oficiale': 'stiri-oficiale-slug'
 }
 
-IDS = {
-    'ap': 412945234,
-    'covid-updates': -1001181792063,
-    'pbs': -382272798,
-}
+CHAT_ID = os.environ['CHAT_ID']
+DEBUG_CHAT_ID = os.getenv('DEBUG_CHAT_ID', CHAT_ID)

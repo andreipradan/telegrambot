@@ -73,7 +73,7 @@ def check_new_cases(what, token):
         return 'No changes'
 
     return bot.sendMessage(
-        chat_id=constants.IDS['covid-updates'],
+        chat_id=constants.CHAT_ID,
         text=text,
         disable_notification=True,
     ).to_json()

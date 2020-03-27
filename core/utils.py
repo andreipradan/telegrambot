@@ -59,7 +59,7 @@ def parse_sentiment(data):
 
 def send_message(bot, text, chat_id=None):
     return bot.send_message(
-        chat_id=chat_id or constants.IDS['ap'],
+        chat_id=chat_id or constants.DEBUG_CHAT_ID,
         text=text,
         disable_notification=True,
     ).to_json()
