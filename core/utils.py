@@ -2,6 +2,7 @@ from copy import deepcopy
 
 import requests
 
+from core import constants
 from core import database
 from core import validators
 
@@ -54,3 +55,11 @@ def parse_sentiment(data):
     elif score > 0:
         return 'Nice to see you positive like that!'
     return 'You nailed it! You don\'t see everyday a neutral attitude.'
+
+
+def send_message(bot, text, chat_id=None):
+    return bot.send_message(
+        chat_id=chat_id or constants.IDS['ap'],
+        text=text,
+        disable_notification=True,
+    ).to_json()

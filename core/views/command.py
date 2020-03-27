@@ -9,10 +9,10 @@ from flask import url_for
 
 import commands
 from commands import analyze_sentiment
-from core import inline, constants
-from core.constants import IDS
-from core.handlers import validate_components
-from core.utils import parse_sentiment
+from core import inline
+from core import constants
+from core import handlers
+from core import utils
 from core.views.base import make_json_response
 
 
@@ -57,21 +57,10 @@ def command(command_name):
         )
         return make_json_response(home=home_view_name, errors=[error])
 
-    result = getattr(commands, command_name)(json=True, **request.args.to_dict())
-
-    if 'telegram' in request.args:
-        bot = telegram.Bot(token=os.environ['TOKEN'])
-        bot.send_message(chat_id=412945234, text=result)
-
-    return make_json_response(result, home=home_view_name)
-
-
-def send_message(bot, text, chat_id=None):
-    return bot.send_message(
-        chat_id=chat_id or IDS['ap'],
-        text=text,
-        disable_notification=True,
-    ).to_json()
+    return make_json_response(
+        getattr(commands, command_name)(json=True, **request.args.to_dict()),
+        home=home_view_name
+    )
 
 
 @command_views.route(f"/{os.environ['TOKEN']}", methods=['POST'])
@@ -94,24 +83,26 @@ def webhook():
                 return inline.restart(update)
             return inline.refresh_data(update, getattr(commands, data)())
 
-        command_text, status_code = validate_components(update)
+        command_text, status_code = handlers.validate_components(update)
 
         if status_code == 1337:
             if command_text == 'skip-debug':
                 return 'ok'
             text = f'{command_text}.\nUpdate: {update.to_dict()}'
-            return send_message(bot, text=text, chat_id=IDS['ap'])
+            return utils.send_message(bot, text=text)
 
         chat_id = update.message.chat.id
         if status_code == 'reply_to_message':
-            return send_message(
+            return utils.send_message(
                 bot,
-                text=parse_sentiment(analyze_sentiment(command_text, json=True)),
+                text=utils.parse_sentiment(
+                    analyze_sentiment(command_text, json=True)
+                ),
                 chat_id=chat_id
             )
 
         if status_code != 'valid-command':
-            return send_message(bot, text=command_text, chat_id=chat_id)
+            return utils.send_message(bot, text=command_text, chat_id=chat_id)
 
         args = []
         if command_text in constants.COMMANDS_WITH_TEXT:
@@ -125,14 +116,14 @@ def webhook():
         results = getattr(commands, command_text)(*args)
 
         try:
-            send_message(bot, text=results, chat_id=chat_id)
+            utils.send_message(bot, text=results, chat_id=chat_id)
         except telegram.error.BadRequest as err:
             text = (
                 f'Restrict results (e.g. /{command_text} 3'
                 if 'Message is too long' in str(err)
                 else str(err)
             )
-            send_message(bot, text=text, chat_id=chat_id)
+            utils.send_message(bot, text=text, chat_id=chat_id)
         return 'completed'
     return f"Unexpected method {request.method}"
 
@@ -143,5 +134,8 @@ def reset_webhook():
     if request.args.get('key', None) != '@aoleu_bot':
         abort(403)
     bot.deleteWebhook()
-    url = url_for('command_views.webhook', _external=True).replace('http://', 'https://')
+    url = url_for('command_views.webhook', _external=True).replace(
+        'http://',
+        'https://'
+    )
     return f"Result: {bot.setWebhook(url)}"
