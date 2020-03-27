@@ -35,10 +35,11 @@ def end(update):
     ConversationHandler that the conversation is over"""
     query = update.callback_query
     try:
-        return str(query.bot.delete_message(
+        return query.bot.edit_message_text(
             chat_id=query.message.chat_id,
             message_id=query.message.message_id,
-        ))
+            text="See you next time!"
+        ).to_json()
     except telegram.error.BadRequest as e:
         return e.message
 
@@ -51,7 +52,7 @@ def more(update):
         return bot.edit_message_text(
             chat_id=message.chat_id,
             message_id=message.message_id,
-            text="Coming soon...",
+            text="Choose an option",
             reply_markup=MORE_MARKUP
         ).to_json()
     except telegram.error.BadRequest as e:
