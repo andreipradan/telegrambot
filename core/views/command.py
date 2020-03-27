@@ -8,9 +8,11 @@ from flask import request
 from flask import url_for
 
 import commands
+from commands import analyze_sentiment
 from core import inline, constants
 from core.constants import IDS
 from core.handlers import validate_components
+from core.utils import parse_sentiment
 from core.views.base import make_json_response
 
 
@@ -100,6 +102,13 @@ def webhook():
             return send_message(bot, text=text, chat_id=IDS['ap'])
 
         chat_id = update.message.chat.id
+        if status_code == 'reply_to_message':
+            return send_message(
+                bot,
+                text=parse_sentiment(analyze_sentiment(command_text, json=True)),
+                chat_id=chat_id
+            )
+
         if status_code != 'valid-command':
             return send_message(bot, text=command_text, chat_id=chat_id)
 

@@ -16,7 +16,7 @@ Mixed:                   "score": 0.0,  "magnitude": 4.0
 """
 
 
-def analyze_sentiment(text):
+def analyze_sentiment(text, **kwargs):
     """
     Analyzing Sentiment in a String
 
@@ -48,6 +48,13 @@ def analyze_sentiment(text):
         sentences[title] = OrderedDict()
         sentences[title]['Score'] = sentence.sentiment.score
         sentences[title]['Magnitute'] = sentence.sentiment.magnitude
+
+    if 'json' in kwargs:
+        return {
+            'sentences': sentences,
+            **stats
+        }
+
     return parse_global(
         title='💔 Sentiment analysis',
         stats=stats,

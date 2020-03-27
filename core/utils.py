@@ -38,3 +38,17 @@ def parse_diff(data, old_version):
             diff = new_value - old_value if old_value else 0
             new[key] = f"{new_value} ({'+' if diff >= 0 else ''}{diff})"
     return new
+
+
+def parse_name(user):
+    full_name = f'{user.first_name or ""} {user.last_name or ""}'
+    return full_name if full_name.strip() else user.username
+
+
+def parse_sentiment(data):
+    score = data['Overall score']
+    if score < 0:
+        return 'Why so negative?'
+    elif score > 0:
+        return 'Nice to see you positive like that!'
+    return 'You nailed it! You don\'t see everyday a neutral attitude.'

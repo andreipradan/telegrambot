@@ -1,4 +1,5 @@
 from core.constants import ALLOWED_COMMANDS
+from core.utils import parse_name
 
 
 def validate_components(update):
@@ -19,12 +20,12 @@ def validate_components(update):
         if getattr(message, 'new_chat_title', None):
             return '🎉', 400
         if getattr(message, 'new_chat_members', None):
-            new_members = [
-                f'{user.first_name} {user.last_name}' or user.username
-                for user in message.new_chat_members
-            ]
+            new_members = [parse_name(u) for u in message.new_chat_members]
             return f"Welcome {', '.join(new_members)}!", 400
         raise ValueError(f'No message text. Update: {update.to_dict()}')
+
+    if getattr(message, 'reply_to_message', None):
+        return message_text, 'reply_to_message'
 
     if not message_text.startswith('/'):
         return (
