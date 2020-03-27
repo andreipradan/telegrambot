@@ -55,7 +55,7 @@ def command(command_name):
         )
         return make_json_response(home=home_view_name, errors=[error])
 
-    result = getattr(commands, command_name)(**request.args.to_dict())
+    result = getattr(commands, command_name)(json=True, **request.args.to_dict())
 
     if 'telegram' in request.args:
         bot = telegram.Bot(token=os.environ['TOKEN'])
