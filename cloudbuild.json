@@ -22,7 +22,7 @@
    },
    {
       "name": "gcr.io/cloud-builders/docker",
-      "args": ["run", "-it", "telegrambot_ci_image"]
+      "args": ["run", "telegrambot_ci_image"]
    },
    {
       "name": "gcr.io/cloud-builders/docker",
