@@ -25,38 +25,35 @@ def analyze_sentiment(text, **kwargs):
     """
 
     if not text:
-        return 'Syntax: /analyze_sentiment <your text here>'
+        return "Syntax: /analyze_sentiment <your text here>"
 
     client = language_v1.LanguageServiceClient()
 
     # Available types: PLAIN_TEXT, HTML
-    document = {"content": text, "type": enums.Document.Type.PLAIN_TEXT}
+    doc = {"content": text, "type": enums.Document.Type.PLAIN_TEXT}
     encoding_type = enums.EncodingType.UTF8
     try:
-        response = client.analyze_sentiment(document, encoding_type=encoding_type)
+        response = client.analyze_sentiment(doc, encoding_type=encoding_type)
     except InvalidArgument as error:
         return error.message
 
     stats = OrderedDict()
-    stats['Overall score'] = response.document_sentiment.score
-    stats['Overall magnitude'] = response.document_sentiment.magnitude
-    stats['Language'] = response.language
+    stats["Overall score"] = response.document_sentiment.score
+    stats["Overall magnitude"] = response.document_sentiment.magnitude
+    stats["Language"] = response.language
 
     sentences = {}
     for sentence in response.sentences:
         title = sentence.text.content
         sentences[title] = OrderedDict()
-        sentences[title]['Score'] = sentence.sentiment.score
-        sentences[title]['Magnitute'] = sentence.sentiment.magnitude
+        sentences[title]["Score"] = sentence.sentiment.score
+        sentences[title]["Magnitute"] = sentence.sentiment.magnitude
 
-    if 'json' in kwargs:
-        return {
-            'sentences': sentences,
-            **stats
-        }
+    if "json" in kwargs:
+        return {"sentences": sentences, **stats}
 
     return parse_global(
-        title='💔 Sentiment analysis',
+        title="💔 Sentiment analysis",
         stats=stats,
         items=sentences,
         footer=get_footer(),

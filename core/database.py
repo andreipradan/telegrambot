@@ -5,7 +5,7 @@ from core.constants import COLLECTION, DEFAULT_DB, SLUG
 
 
 def get_client():
-    return MongoClient(os.environ['MONGO_DB_HOST'])
+    return MongoClient(os.environ["MONGO_DB_HOST"])
 
 
 def get_collection(name, client=get_client()):
@@ -13,21 +13,23 @@ def get_collection(name, client=get_client()):
 
 
 def get_etag():
-    return get_collection(COLLECTION['etag']).find_one({'slug': SLUG['etag']})
+    return get_collection(COLLECTION["etag"]).find_one({"slug": SLUG["etag"]})
 
 
 def get_all(collection):
-    return list(get_collection(collection).find().sort('Cazuri_confirmate', -1))
+    return list(
+        get_collection(collection).find().sort("Cazuri_confirmate", -1)
+    )
 
 
 def get_stats(collection, slug):
-    return get_collection(collection).find_one({'slug': slug})
+    return get_collection(collection).find_one({"slug": slug})
 
 
 def set_etag(etag):
-    return get_collection(COLLECTION['etag']).update_one(
-        filter={'slug': SLUG['etag']},
-        update={'$set': {'value': etag}},
+    return get_collection(COLLECTION["etag"]).update_one(
+        filter={"slug": SLUG["etag"]},
+        update={"$set": {"value": etag}},
         upsert=True,
     )
 
@@ -44,9 +46,7 @@ def set_etag(etag):
 #     )
 
 
-def set_stats(stats, collection=COLLECTION['romania'], slug=SLUG['romania']):
+def set_stats(stats, collection=COLLECTION["romania"], slug=SLUG["romania"]):
     get_collection(collection).update_one(
-        {'slug': slug},
-        update={'$set': stats},
-        upsert=True,
+        {"slug": slug}, update={"$set": stats}, upsert=True,
     )

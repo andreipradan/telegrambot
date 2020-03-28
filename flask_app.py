@@ -10,10 +10,9 @@ from core.views.base import make_json_response
 from core.views.command import command_views
 from core.views.new_cases import new_cases_views
 
-if not os.getenv('FLASK_DEBUG', False):
+if not os.getenv("FLASK_DEBUG", False):
     sentry_sdk.init(
-        dsn=os.environ['SENTRY_DSN'],
-        integrations=[FlaskIntegration()]
+        dsn=os.environ["SENTRY_DSN"], integrations=[FlaskIntegration()]
     )
 
 app = Flask(__name__)
@@ -32,14 +31,14 @@ def site_map():
     links = [
         url_for(rule.endpoint, **(rule.defaults or {}), _external=True)
         for rule in app.url_map.iter_rules()
-        if 'GET' in rule.methods and has_no_empty_params(rule)
+        if "GET" in rule.methods and has_no_empty_params(rule)
     ]
     return make_json_response(links)
 
 
 if __name__ == "__main__":
     app.run(
-        host='0.0.0.0',
-        port=int(os.environ.get('PORT', 8080)),
-        debug=os.getenv('DEBUG', True),
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 8080)),
+        debug=os.getenv("DEBUG", True),
     )

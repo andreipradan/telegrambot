@@ -1,4 +1,5 @@
 beautifulsoup4==4.8.2
+black==19.10b0
 dnspython==1.16.0
 google-cloud-language==1.3.0
 gunicorn==20.0.4

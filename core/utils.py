@@ -10,12 +10,12 @@ from core import validators
 def check_etag(url):
     head = requests.head(url)
     validators.validate_response(head)
-    head_etag = head.headers.get('ETag')
+    head_etag = head.headers.get("ETag")
 
     db_etag = database.get_etag()
     if not db_etag:
         return False
-    db_etag = db_etag.get('value')
+    db_etag = db_etag.get("value")
 
     if not all([head_etag, db_etag]):
         return False
@@ -26,7 +26,7 @@ def check_etag(url):
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
     for i in range(0, len(lst), n):
-        yield lst[i:i + n]
+        yield lst[i : i + n]
 
 
 def parse_diff(data, old_version):
@@ -49,12 +49,12 @@ def parse_name(user):
 def parse_sentiment(data):
     if isinstance(data, str):
         return data
-    score = data['Overall score']
+    score = data["Overall score"]
     if score < 0:
-        return 'Why so negative?'
+        return "Why so negative?"
     elif score > 0:
-        return 'Nice to see you positive like that!'
-    return 'You nailed it! You don\'t see everyday a neutral attitude.'
+        return "Nice to see you positive like that!"
+    return "You nailed it! You don't see everyday a neutral attitude."
 
 
 def send_message(bot, text, chat_id=None):

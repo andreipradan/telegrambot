@@ -3,7 +3,7 @@ import pytest
 from flask_app import app
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def test_client():
     testing_client = app.test_client()
     # Establish an application context before running the tests.
