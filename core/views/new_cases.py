@@ -5,7 +5,7 @@ from flask import Blueprint
 from flask import abort
 
 import commands
-from commands import parsers
+from commands import formatters
 from core import constants
 from core import database
 from core import utils
@@ -27,7 +27,7 @@ def get_histogram():
 
     database.set_stats(stats)
 
-    return parsers.parse_global(
+    return formatters.parse_global(
         title='🔴 Cazuri noi',
         stats=utils.parse_diff(stats, db_stats),
         items={},
@@ -50,7 +50,7 @@ def get_latest_news():
     database.set_stats(stats, slug=constants.SLUG['stiri-oficiale'])
 
     items = {stats.pop('description'): [stats.pop('url')]}
-    return parsers.parse_global(
+    return formatters.parse_global(
         title=f"🔵 {stats.pop('title')}",
         stats=stats,
         items=items,
@@ -66,7 +66,7 @@ def check_new_cases(what, token):
     if what not in FUNCS:
         raise abort(404)
 
-    bot = telegram.Bot(token=os.environ['TOKEN'])
+    bot = telegram.Bot(token=constants.TOKEN)
 
     text = FUNCS[what]()
     if not text:

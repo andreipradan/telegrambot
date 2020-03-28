@@ -37,3 +37,4 @@ SLUG = {
 
 CHAT_ID = os.environ['CHAT_ID']
 DEBUG_CHAT_ID = os.getenv('DEBUG_CHAT_ID', CHAT_ID)
+TOKEN = os.environ['TOKEN']

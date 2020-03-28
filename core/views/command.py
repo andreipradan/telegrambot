@@ -63,14 +63,14 @@ def command(command_name):
     )
 
 
-@command_views.route(f"/{os.environ['TOKEN']}", methods=['POST'])
+@command_views.route(f"/{constants.TOKEN}", methods=['POST'])
 def webhook():
     if request.method == "POST":
         json = request.get_json()
         if not json:
             raise ValueError('No payload')
 
-        bot = telegram.Bot(token=os.environ['TOKEN'])
+        bot = telegram.Bot(token=constants.TOKEN)
         update = telegram.Update.de_json(json, bot)
 
         if update.callback_query:
@@ -130,7 +130,7 @@ def webhook():
 
 @command_views.route(f"/reset-webhook/")
 def reset_webhook():
-    bot = telegram.Bot(token=os.environ['TOKEN'])
+    bot = telegram.Bot(token=constants.TOKEN)
     if request.args.get('key', None) != '@aoleu_bot':
         abort(403)
     bot.deleteWebhook()

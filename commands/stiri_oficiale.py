@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 
-from commands import parsers
+from commands import formatters
 from core import constants
 
 
@@ -32,7 +32,7 @@ def latest_article(**kwargs):
     if 'json' in kwargs:
         return stats
 
-    return parsers.parse_global(
+    return formatters.parse_global(
         title=f"❗️{stats['title']}",
         stats=stats,
         items={}

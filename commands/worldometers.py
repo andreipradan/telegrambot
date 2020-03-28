@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 
 from core import constants
-from commands import parsers
+from commands import formatters
 
 
 def global_(text=None, **kwargs):
@@ -38,7 +38,7 @@ def global_(text=None, **kwargs):
             countries[country][ths[i]] = data[i]
 
     last_updated = soup.find(string=re.compile('Last updated: '))
-    return parsers.parse_global(
+    return formatters.parse_global(
         title=f'🌎 Global Stats',
         stats=top_stats,
         items=countries,

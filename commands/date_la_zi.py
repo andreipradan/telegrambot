@@ -1,6 +1,6 @@
 import requests
 
-from commands import parsers
+from commands import formatters
 from core import constants
 
 
@@ -23,7 +23,7 @@ def histogram(**kwargs):
     if 'json' in kwargs:
         return stats
 
-    return parsers.parse_global(
+    return formatters.parse_global(
         title=f'🦠 Romania',
         stats=totals,
         items={
@@ -49,7 +49,7 @@ def history(**kwargs):
 
     history_stats = stats['quickStats']['history']
 
-    return parsers.parse_global(
+    return formatters.parse_global(
         title=f'🦠 Romania istoric',
         stats={'Last updated': stats['quickStats']['last_updated_on_string']},
         items={

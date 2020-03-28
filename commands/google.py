@@ -4,7 +4,7 @@ from google.cloud import language_v1
 from google.cloud.language_v1 import enums
 from google.api_core.exceptions import InvalidArgument
 
-from commands.parsers import parse_global
+from commands.formatters import parse_global
 
 
 def get_footer():
