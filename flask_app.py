@@ -7,8 +7,9 @@ from flask import Flask
 from flask import url_for
 
 from core.views.base import make_json_response
-from core.views.command import command_views
+from core.views.commands import commands_views
 from core.views.new_cases import new_cases_views
+from core.views.webhook import webhook_views
 
 if not os.getenv("FLASK_DEBUG", False):
     sentry_sdk.init(
@@ -16,8 +17,9 @@ if not os.getenv("FLASK_DEBUG", False):
     )
 
 app = Flask(__name__)
-app.register_blueprint(command_views)
+app.register_blueprint(commands_views)
 app.register_blueprint(new_cases_views)
+app.register_blueprint(webhook_views)
 
 
 def has_no_empty_params(rule):

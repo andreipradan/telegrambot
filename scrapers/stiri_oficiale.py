@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 
-from commands import formatters
+from scrapers import formatters
 from core import constants
 
 
@@ -56,5 +56,5 @@ def latest_article(**kwargs):
         return stats
 
     return formatters.parse_global(
-        title=f"❗️{stats['title']}", stats=stats, items={}
+        title=f"❗️{stats['titlu']}", stats=stats, items={}
     )

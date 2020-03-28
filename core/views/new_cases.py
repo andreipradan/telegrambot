@@ -1,11 +1,8 @@
-import os
-
 import telegram
 from flask import Blueprint
 from flask import abort
 
-import commands
-from commands import formatters
+import scrapers
 from core import constants
 from core import database
 from core import utils
@@ -14,7 +11,7 @@ new_cases_views = Blueprint("new_cases_views", __name__)
 
 
 def get_histogram():
-    stats = commands.histogram(json=True)["quickStats"]["totals"]
+    stats = scrapers.histogram(json=True)["quickStats"]["totals"]
     db_stats = database.get_stats(
         constants.COLLECTION["romania"], slug=constants.SLUG["romania"]
     )
@@ -26,7 +23,7 @@ def get_histogram():
 
     database.set_stats(stats)
 
-    return formatters.parse_global(
+    return scrapers.formatters.parse_global(
         title="🔴 Cazuri noi",
         stats=utils.parse_diff(stats, db_stats),
         items={},
@@ -34,7 +31,7 @@ def get_histogram():
 
 
 def get_latest_news():
-    stats = commands.latest_article(json=True)
+    stats = scrapers.latest_article(json=True)
 
     db_stats = database.get_stats(
         constants.COLLECTION["romania"], slug=constants.SLUG["stiri-oficiale"]
@@ -48,7 +45,7 @@ def get_latest_news():
     database.set_stats(stats, slug=constants.SLUG["stiri-oficiale"])
 
     items = {stats.pop("descriere"): [stats.pop("url")]}
-    return formatters.parse_global(
+    return scrapers.formatters.parse_global(
         title=f"🔵 {stats.pop('titlu')}", stats=stats, items=items, emoji="❗"
     )
 

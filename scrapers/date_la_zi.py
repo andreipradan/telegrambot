@@ -1,7 +1,7 @@
 import requests
 
-from commands import formatters
 from core import constants
+from scrapers import formatters
 
 
 def histogram(**kwargs):

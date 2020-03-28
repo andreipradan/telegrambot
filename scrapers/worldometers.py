@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 
 from core import constants
-from commands import formatters
+from scrapers import formatters
 
 
 def global_(text=None, **kwargs):
