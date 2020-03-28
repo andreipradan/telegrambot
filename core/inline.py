@@ -78,7 +78,7 @@ def refresh_data(update, command):
         return e.message
 
 
-def restart(update):
+def back(update):
     """Prompt same text & keyboard as `start` does but not as new message"""
     bot = update.callback_query.bot
     message = update.callback_query.message

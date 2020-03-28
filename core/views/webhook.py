@@ -32,7 +32,7 @@ def webhook():
             elif data == "more":
                 return inline.more(update)
             elif data == "back":
-                return inline.restart(update)
+                return inline.back(update)
             return inline.refresh_data(update, getattr(scrapers, data)())
 
         command_text, status_code = handlers.validate_components(update)
