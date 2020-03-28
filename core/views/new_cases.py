@@ -47,9 +47,9 @@ def get_latest_news():
 
     database.set_stats(stats, slug=constants.SLUG["stiri-oficiale"])
 
-    items = {stats.pop("description"): [stats.pop("url")]}
+    items = {stats.pop("descriere"): [stats.pop("url")]}
     return formatters.parse_global(
-        title=f"🔵 {stats.pop('title')}", stats=stats, items=items, emoji="❗"
+        title=f"🔵 {stats.pop('titlu')}", stats=stats, items=items, emoji="❗"
     )
 
 
