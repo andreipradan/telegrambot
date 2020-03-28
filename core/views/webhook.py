@@ -14,8 +14,6 @@ from core import utils
 
 webhook_views = Blueprint("webhook_views", __name__)
 
-home_view_name = "webhook_views.command_list"
-
 
 @webhook_views.route(f"/{constants.TOKEN}", methods=["POST"])
 def webhook():

@@ -22,8 +22,12 @@ def get_all(collection):
     )
 
 
-def get_stats(collection, slug):
-    return get_collection(collection).find_one({"slug": slug})
+def get_stats(collection=COLLECTION["romania"], slug=SLUG["romania"]):
+    stats = get_collection(collection).find_one({"slug": slug})
+    if stats:
+        stats.pop("_id")
+        stats.pop("slug")
+    return stats
 
 
 def set_etag(etag):

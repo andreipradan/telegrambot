@@ -5,10 +5,10 @@ ALLOWED_COMMANDS = {
     "start",
 }
 COMMANDS_FOR_VIEWS = [
-    "latest_article",
-    "histogram",
     "analyze_sentiment",
     "global_",
+    "histogram",
+    "latest_article",
 ]
 COMMANDS_WITH_TEXT = [
     "analyze_sentiment",

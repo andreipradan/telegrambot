@@ -55,6 +55,7 @@ def latest_article(**kwargs):
     if "json" in kwargs:
         return stats
 
+    items = {stats.pop("descriere"): [stats.pop("url")]}
     return formatters.parse_global(
-        title=f"❗️{stats['titlu']}", stats=stats, items={}
+        title=f"🔵 {stats.pop('titlu')}", stats=stats, items=items, emoji="❗"
     )

@@ -3,6 +3,7 @@ from flask import Blueprint
 from flask import abort
 
 import scrapers
+from scrapers import formatters
 from core import constants
 from core import database
 from core import utils
@@ -10,20 +11,15 @@ from core import utils
 new_cases_views = Blueprint("new_cases_views", __name__)
 
 
-def get_histogram():
+def get_quick_stats():
     stats = scrapers.histogram(json=True)["quickStats"]["totals"]
-    db_stats = database.get_stats(
-        constants.COLLECTION["romania"], slug=constants.SLUG["romania"]
-    )
-    if db_stats:
-        db_stats.pop("_id")
-        db_stats.pop("slug")
-        if stats.items() <= db_stats.items():
-            return
+    db_stats = database.get_stats()
+    if db_stats and stats.items() <= db_stats.items():
+        return
 
     database.set_stats(stats)
 
-    return scrapers.formatters.parse_global(
+    return formatters.parse_global(
         title="🔴 Cazuri noi",
         stats=utils.parse_diff(stats, db_stats),
         items={},
@@ -33,14 +29,9 @@ def get_histogram():
 def get_latest_news():
     stats = scrapers.latest_article(json=True)
 
-    db_stats = database.get_stats(
-        constants.COLLECTION["romania"], slug=constants.SLUG["stiri-oficiale"]
-    )
-    if db_stats:
-        db_stats.pop("_id")
-        db_stats.pop("slug")
-        if stats.items() <= db_stats.items():
-            return
+    db_stats = database.get_stats(slug=constants.SLUG["stiri-oficiale"])
+    if db_stats and stats.items() <= db_stats.items():
+        return
 
     database.set_stats(stats, slug=constants.SLUG["stiri-oficiale"])
 
@@ -70,6 +61,6 @@ def check_new_cases(what, token):
 
 
 FUNCS = {
-    "covid-new-cases": get_histogram,
+    "covid-new-cases": get_quick_stats,
     "stiri-oficiale": get_latest_news,
 }
