@@ -1,0 +1,14 @@
+FROM gcr.io/glassy-signal-267913/test/telegrambot-test-image
+
+ENV APP_HOME /app
+WORKDIR $APP_HOME
+
+# Install test dependencies.
+RUN pip install -r test_requirements.txt
+
+ENV CHAT_ID=test_id
+ENV FLASK_DEBUG=test_debug
+ENV MONGO_DB_HOST=test_host
+ENV TOKEN=test_token
+
+CMD exec pytest /app/tests/
