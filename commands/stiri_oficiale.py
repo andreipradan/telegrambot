@@ -9,14 +9,21 @@ def get_children(elements):
     return elements.find_all(True, recursive=False)
 
 
-def parse_actualizat_la(element):
-    return element.time.span.text.strip().replace(":", "")
+def parse_text(element):
+    return element.text.strip()
+
+
+def parse_sub_header(element):
+    key, *value = get_children(element.time)
+    key = parse_text(key).replace(":", "")
+    date, time, *_ = value
+    return key, f"{parse_text(date)} {parse_text(time)}"
 
 
 def parse_header(time_and_who):
     date_time, author = get_children(time_and_who.div)
-    date, time = [element.text.strip() for element in get_children(date_time)]
-    return f"{date} {time}", author.text.strip()
+    date, time = [parse_text(element) for element in get_children(date_time)]
+    return f"{date} {time}", parse_text(author)
 
 
 def latest_article(**kwargs):
@@ -28,8 +35,9 @@ def latest_article(**kwargs):
     if len(children) == 4:
         header, title, desc, link = children
     elif len(children) == 5:
-        header, actualizat, title, desc, link = children
-        stats["actualizat_la"] = parse_actualizat_la(actualizat)
+        header, sub_header, title, desc, link = children
+        key, value = parse_sub_header(sub_header)
+        stats[key] = value
     else:
         raise ValueError(f"Invalid number of elements in article: {children}")
 
@@ -39,8 +47,8 @@ def latest_article(**kwargs):
         {
             "autor": author,
             "data": date_time,
-            "titlu": title.text.strip(),
-            "descriere": desc.text.strip(),
+            "titlu": parse_text(title),
+            "descriere": parse_text(desc),
             "url": link.a["href"],
         }
     )
