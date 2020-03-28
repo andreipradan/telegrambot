@@ -11,26 +11,16 @@
    {
       "name": "gcr.io/cloud-builders/docker",
       "args": [
-         "build",
-         "-t",
-         "gcr.io/glassy-signal-267913/test/telegrambot-test-image",
-         "Dockerfile.test"
+         "build", "-t", "telegrambot_ci_image", "-f", "Dockerfile.ci", "."
       ]
    },
    {
       "name": "gcr.io/cloud-builders/docker",
-      "args": [
-         "run",
-         "-it",
-         "gcr.io/glassy-signal-267913/test/telegrambot-test-image"
-      ]
+      "args": ["run", "-it", "telegrambot_ci_image"]
    },
    {
       "name": "gcr.io/cloud-builders/docker",
-      "args": [
-         "push",
-         "gcr.io/glassy-signal-267913/telegrambot-image"
-      ]
+      "args": ["push", "gcr.io/glassy-signal-267913/telegrambot-image"]
    },
    {
       "name": "gcr.io/cloud-builders/gcloud",

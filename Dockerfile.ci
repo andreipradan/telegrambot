@@ -1,4 +1,4 @@
-FROM gcr.io/glassy-signal-267913/test/telegrambot-test-image
+FROM telegrambot_ci_image
 
 ENV APP_HOME /app
 WORKDIR $APP_HOME
