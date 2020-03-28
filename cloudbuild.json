@@ -11,7 +11,13 @@
    {
       "name": "gcr.io/cloud-builders/docker",
       "args": [
-         "build", "-t", "telegrambot_ci_image", "-f", "Dockerfile.ci", "."
+         "build",
+         "-t",
+         "telegrambot_ci_image",
+         "-f",
+         "Dockerfile.ci",
+         "--build-arg=APP_IMAGE=gcr.io/glassy-signal-267913/telegrambot-image:$COMMIT_SHA",
+         "."
       ]
    },
    {
