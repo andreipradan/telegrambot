@@ -2,7 +2,7 @@ import pytest
 import requests
 import responses
 
-from commands.date_la_zi import histogram
+from scrapers.date_la_zi import histogram
 from core import constants
 
 
