@@ -38,11 +38,12 @@ MORE_MARKUP = InlineKeyboardMarkup(
 def end(update):
     """Returns `ConversationHandler.END`, which tells the
     ConversationHandler that the conversation is over"""
-    query = update.callback_query
+    bot = update.callback_query.bot
+    message = update.callback_query.message
     try:
-        return query.bot.edit_message_text(
-            chat_id=query.message.chat_id,
-            message_id=query.message.message_id,
+        return bot.edit_message_text(
+            chat_id=message.chat_id,
+            message_id=message.message_id,
             text="See you next time!",
         ).to_json()
     except telegram.error.BadRequest as e:
