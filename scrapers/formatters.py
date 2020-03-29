@@ -3,6 +3,9 @@ def get_verbose(string):
 
 
 def parse_details(data):
+    if not data:
+        raise ValueError("data must not be null, empty, etc.")
+
     if isinstance(data, dict):
         items = list(data.items())
         if len(items) > 1:

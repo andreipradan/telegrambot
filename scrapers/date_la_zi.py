@@ -24,7 +24,7 @@ def histogram(**kwargs):
         return stats
 
     return formatters.parse_global(
-        title=f"🦠 Romania",
+        title="🦠 Romania",
         stats=totals,
         items={"Dupa varsta": age_histogram, "Dupa gen (%)": gender_stats},
         footer="\nLast updated: "
