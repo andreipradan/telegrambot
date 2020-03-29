@@ -21,13 +21,15 @@ class TestGlobal:
         element.div.span.text.strip.return_value = "value_foo"
         soup().find_all.return_value = [element]
         row = mock.MagicMock()
-        row.select().__iter__.return_value = [mock.MagicMock(text="country_foo")]
+        row.select().__iter__.return_value = [
+            mock.MagicMock(text="country_foo")
+        ]
         soup().select().__getitem__.return_value = [row]
         assert global_(3) == "parsed"
         parser.assert_called_once_with(
             title="🌎 Global Stats",
-            stats={'key_foo': 'value_foo'},
-            items={'country_foo': {}},
+            stats={"key_foo": "value_foo"},
+            items={"country_foo": {}},
             emoji="🦠",
-            footer=f"({soup().find()})\n[Source: worldometers.info]"
+            footer=f"({soup().find()})\n[Source: worldometers.info]",
         )
