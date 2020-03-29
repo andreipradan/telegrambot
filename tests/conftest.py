@@ -7,7 +7,7 @@ app.config["TESTING"] = True
 
 
 @pytest.fixture(scope="module")
-def test_client():
+def client():
     client = app.test_client()
     # Establish an application context before running the tests.
     ctx = app.app_context()

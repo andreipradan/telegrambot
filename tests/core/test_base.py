@@ -4,7 +4,7 @@ from core.views.base import make_json_response
 
 
 class TestMakeJsonResponse:
-    def test_with_no_params(self, test_client):
+    def test_with_no_params(self, client):
         response, status_code = make_json_response()
         assert status_code == 200
         assert response.json == {
@@ -23,6 +23,6 @@ class TestMakeJsonResponse:
             *[(x, 0) for x in [[], (), {}, "", 0]],
         ],
     )
-    def test_count(self, test_client, data, count):
+    def test_count(self, client, data, count):
         response, _ = make_json_response(data=data)
         assert response.json["count"] == count
