@@ -10,9 +10,9 @@ class TestAnalyzeSentiment:
     @staticmethod
     def mock_sentence(**kwargs):
         sentence = mock.MagicMock()
-        sentence.text.content = kwargs.get('content', "foo_content")
-        sentence.sentiment.score = kwargs.get('score', 1)
-        sentence.sentiment.magnitude = kwargs.get('magnitude', 2)
+        sentence.text.content = kwargs.get("content", "foo_content")
+        sentence.sentiment.score = kwargs.get("score", 1)
+        sentence.sentiment.magnitude = kwargs.get("magnitude", 2)
         return sentence
 
     def mock_analyze(self):
@@ -21,7 +21,7 @@ class TestAnalyzeSentiment:
         resp.document_sentiment.magnitude = 2
         resp.language = 3
         resp.sentences = [
-            self.mock_sentence(score=x, magnitude=x+1) for x in range(5, 7)
+            self.mock_sentence(score=x, magnitude=x + 1) for x in range(5, 7)
         ]
         return resp
 
@@ -40,15 +40,10 @@ class TestAnalyzeSentiment:
         resp = self.mock_analyze()
         lang.return_value.analyze_sentiment.return_value = resp
         assert google.analyze_sentiment("foo", json=True) == {
-            'Language': 3,
-            'Overall magnitude': 2,
-            'Overall score': 1,
-            'sentences': {
-                'foo_content': {
-                    'Score': 6,
-                    'Magnitute': 7
-                }
-            }
+            "Language": 3,
+            "Overall magnitude": 2,
+            "Overall score": 1,
+            "sentences": {"foo_content": {"Score": 6, "Magnitute": 7}},
         }
 
     @mock.patch("scrapers.google.parse_global", return_value="parsed")
@@ -59,17 +54,12 @@ class TestAnalyzeSentiment:
         assert google.analyze_sentiment("foo") == "parsed"
         parser.assert_called_once_with(
             title="💔 Sentiment analysis",
-            stats={'Language': 3, 'Overall magnitude': 2, 'Overall score': 1},
-            items={
-                'foo_content': {
-                    'Score': 6,
-                    'Magnitute': 7
-                }
-            },
+            stats={"Language": 3, "Overall magnitude": 2, "Overall score": 1},
+            items={"foo_content": {"Score": 6, "Magnitute": 7}},
             footer="""===================================
 Clearly Positive:   "score": 0.8,  "magnitude": 3.0
 Clearly Negative: "score": -0.6, "magnitude": 4.0
 Neutral:                 "score": 0.1,  "magnitude": 0.0
 Mixed:                   "score": 0.0,  "magnitude": 4.0
-"""
+""",
         )
