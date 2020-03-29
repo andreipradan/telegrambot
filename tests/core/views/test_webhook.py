@@ -138,10 +138,11 @@ class TestWebhook:
         assert response.status_code == 200
         assert response.data.decode("utf-8") == "inline_start_foo"
 
-    @mock.patch("core.utils.send_message", side_effect=telegram.error.BadRequest("foo"))
+    @mock.patch("core.utils.send_message")
     @mock.patch("scrapers.date_la_zi", return_value="scrapers_foo")
     @mock.patch("core.handlers.validate_components")
-    def test_message_too_long(self, validate, scrapers, message, update, _, client):
+    def test_message_too_long(self, validate, scrape, msg, update, _, client):
+        msg.side_effect = telegram.error.BadRequest("foo")
         validate.return_value = "date_la_zi", "valid-command"
         update.return_value.callback_query = None
 
@@ -151,4 +152,4 @@ class TestWebhook:
         assert e.value.message == "foo"
 
         validate.assert_called_once_with(update())
-        scrapers.assert_called_once_with()
+        scrape.assert_called_once_with()
