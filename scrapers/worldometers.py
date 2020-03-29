@@ -9,7 +9,7 @@ from scrapers import formatters
 
 
 def global_(text=None, **kwargs):
-    text = text.strip() if text else 3
+    text = text.strip() if text and isinstance(text, str) else 3
 
     try:
         text = int(text)
@@ -39,7 +39,7 @@ def global_(text=None, **kwargs):
 
     last_updated = soup.find(string=re.compile("Last updated: "))
     return formatters.parse_global(
-        title=f"🌎 Global Stats",
+        title="🌎 Global Stats",
         stats=top_stats,
         items=countries,
         emoji="🦠",
