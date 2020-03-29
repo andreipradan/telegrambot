@@ -49,12 +49,11 @@ def check_new_cases(what, token):
     if what not in FUNCS:
         raise abort(404)
 
-    bot = telegram.Bot(token=constants.TOKEN)
-
     text = FUNCS[what]()
     if not text:
         return "No changes"
 
+    bot = telegram.Bot(token=constants.TOKEN)
     return bot.sendMessage(
         chat_id=constants.CHAT_ID, text=text, disable_notification=True,
     ).to_json()

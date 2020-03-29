@@ -13,7 +13,7 @@ class TestWebhook:
     view_name = "webhook_views.webhook"
 
     @pytest.mark.parametrize("method", ["get", "put", "delete", "head"])
-    def test_with_not_allowed_methods(self, _, __, client, method):
+    def test_methods_not_allowed(self, _, __, client, method):
         method = getattr(client, method)
         response = method(url_for(self.view_name))
         assert response.status_code == 405
