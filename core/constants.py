@@ -1,9 +1,9 @@
 import os
 
-ALLOWED_COMMANDS = {
+ALLOWED_COMMANDS = [
     "analyze_sentiment",
     "start",
-}
+]
 COMMANDS_FOR_VIEWS = [
     "analyze_sentiment",
     "global_",
