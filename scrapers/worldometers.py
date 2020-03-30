@@ -20,7 +20,7 @@ def global_(text=None, **kwargs):
     except ValueError:
         return f'Invalid count: "{text}".'
 
-    respqonse = requests.get(constants.URLS["worldometers"])
+    response = requests.get(constants.URLS["worldometers"])
     soup = BeautifulSoup(response.text, features="html.parser")
 
     top_stats = {
