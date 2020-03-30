@@ -8,6 +8,7 @@ from core.views import new_cases
 
 class BaseNewCasesMixin:
     db_stats_kwargs = NotImplemented
+    set_db_stats_kwargs = NotImplemented
     func = NotImplemented
     mock_func = NotImplemented
     mock_func_return_value = NotImplemented
@@ -20,7 +21,7 @@ class BaseNewCasesMixin:
 
     @mock.patch("core.database.get_stats")
     def test_stats_already_in_db(self, db_stats_mock):
-        db_stats_mock.return_value = {"foo": 1}
+        db_stats_mock.return_value = {"foo": 1, **self.set_db_stats_kwargs}
 
         with mock.patch(self.mock_func) as func_mock:
             func_mock.return_value = self.mock_return_value
@@ -48,7 +49,8 @@ class BaseNewCasesMixin:
         func_mock.assert_called_once_with(json=True)
         get_db_stats_mock.assert_called_once_with(**self.db_stats_kwargs)
         set_db_stats_mock.assert_called_once_with(
-            {"foo": 1, "bar": 2}, **self.db_stats_kwargs
+            {"foo": 1, "bar": 2, **self.set_db_stats_kwargs},
+            **self.db_stats_kwargs,
         )
         parse_mock.assert_called_once_with(**self.parse_mock_return_value)
         assert results == "parse_global_result"
@@ -56,10 +58,25 @@ class BaseNewCasesMixin:
 
 class TestGetHistogram(BaseNewCasesMixin):
     db_stats_kwargs = {}
+    set_db_stats_kwargs = {"vindecati": 3, "decedati": 4, "confirmati": 5}
     func = "get_quick_stats"
     mock_func = "scrapers.histogram"
-    mock_func_return_value = {"quickStats": {"totals": {"foo": 1, "bar": 2}}}
-    mock_return_value = {"quickStats": {"totals": {"foo": 1}}}
+    mock_func_return_value = {
+        "quickStats": {
+            "totals": {
+                "foo": 1,
+                "bar": 2,
+                "cured": 3,
+                "deaths": 4,
+                "confirmed": 5,
+            }
+        }
+    }
+    mock_return_value = {
+        "quickStats": {
+            "totals": {"foo": 1, "cured": 3, "deaths": 4, "confirmed": 5}
+        }
+    }
     parse_mock_return_value = {
         "title": "🔴 Cazuri noi",
         "stats": "diff_mock",
@@ -69,6 +86,7 @@ class TestGetHistogram(BaseNewCasesMixin):
 
 class TestGetLatestNews(BaseNewCasesMixin):
     db_stats_kwargs = {"slug": "stiri-oficiale-slug"}
+    set_db_stats_kwargs = {}
     func = "get_latest_news"
     mock_func = "scrapers.latest_article"
     mock_func_return_value = {

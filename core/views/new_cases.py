@@ -13,6 +13,9 @@ new_cases_views = Blueprint("new_cases_views", __name__)
 
 def get_quick_stats():
     stats = scrapers.histogram(json=True)["quickStats"]["totals"]
+    stats["confirmati"] = stats.pop("confirmed")
+    stats["vindecati"] = stats.pop("cured")
+    stats["decedati"] = stats.pop("deaths")
     db_stats = database.get_stats()
     if db_stats and stats.items() <= db_stats.items():
         return
