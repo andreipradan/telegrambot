@@ -1,14 +1,13 @@
 import telegram
 
 from flask import Blueprint
-from flask import abort
 from flask import request
-from flask import url_for
 
 import scrapers
 from core import inline
 from core import constants
 from core import handlers
+from core import local_data
 from core import utils
 
 
@@ -32,7 +31,7 @@ def webhook():
             return inline.more(update)
         elif data == "back":
             return inline.back(update)
-        return inline.refresh_data(update, getattr(scrapers, data)())
+        return inline.refresh_data(update, getattr(local_data, data)())
 
     command_text, status_code = handlers.validate_components(update)
 

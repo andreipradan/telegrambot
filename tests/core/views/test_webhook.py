@@ -5,6 +5,7 @@ import telegram
 from flask import url_for
 
 from core import constants
+from core import inline
 
 
 @mock.patch("telegram.Bot", return_value="Bot_foo")
@@ -35,13 +36,23 @@ class TestWebhook:
         assert response.status_code == 200
         assert response.data.decode("utf-8") == f"inline_{inline_func}_foo"
 
+    @pytest.mark.parametrize(
+        "local_data_func",
+        [
+            x.callback_data
+            for x in inline.START_MARKUP.inline_keyboard[0]
+            if x.callback_data not in ["end", "back", "more"]
+        ],
+    )
     @mock.patch("scrapers.date_la_zi")
     @mock.patch("core.inline.refresh_data", return_value="refresh_data")
-    def test_refresh_data(self, _, __, de_json, ___, client):
-        de_json.return_value.callback_query.data = "date_la_zi"
+    def test_refresh_data(self, _, __, de_json, ___, client, local_data_func):
+        de_json.return_value.callback_query.data = local_data_func
 
-        response = client.post(url_for(self.view_name), json={"1": 2})
+        with mock.patch(f"core.local_data.{local_data_func}") as local_func:
+            response = client.post(url_for(self.view_name), json={"1": 2})
         de_json.assert_called_once_with({"1": 2}, "Bot_foo")
+        local_func.assert_called_once_with()
         assert response.status_code == 200
         assert response.data.decode("utf-8") == "refresh_data"
 
