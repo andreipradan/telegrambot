@@ -29,27 +29,14 @@ def get_stats(collection=COLLECTION["romania"], slug=SLUG["romania"]):
     return stats
 
 
-# def set_etag(etag):
-#     return get_collection(COLLECTION["etag"]).update_one(
-#         filter={"slug": SLUG["etag"]},
-#         update={"$set": {"value": etag}},
-#         upsert=True,
-#     )
-#
-#
-# def set_multiple(data, collection=COLLECTION['romania']):
-#     return get_collection(collection).bulk_write(
-#         [
-#             UpdateOne(
-#                 {'slug': item.pop('Judete')},
-#                 update={'$set': item},
-#                 upsert=True
-#             ) for item in data
-#         ]
-#     )
-
-
 def set_stats(stats, collection=COLLECTION["romania"], slug=SLUG["romania"]):
     get_collection(collection).update_one(
         {"slug": slug}, update={"$set": stats}, upsert=True,
     )
+
+
+def get_many(collection, order_by=None, how=-1):
+    result = get_collection(collection).find()
+    if order_by:
+        return result.sort(order_by, how)
+    return result

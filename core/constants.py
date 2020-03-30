@@ -25,6 +25,7 @@ URLS = {
 
 DEFAULT_DB = "telegrambot_db"
 COLLECTION = {
+    "country": "country-collection",
     "etag": "etag-collection",
     "global": "global-collection",
     "romania": "romania-collection",

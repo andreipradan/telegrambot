@@ -1,4 +1,0 @@
-beautifulsoup4==4.8.2
-dnspython==1.16.0
-pymongo==3.10.1
-requests==2.23.0
