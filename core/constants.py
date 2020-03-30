@@ -12,7 +12,6 @@ COMMANDS_FOR_VIEWS = [
 ]
 COMMANDS_WITH_TEXT = [
     "analyze_sentiment",
-    "global_",
 ]
 COMMANDS_WITH_UPDATE = [
     "start",

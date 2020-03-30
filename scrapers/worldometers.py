@@ -8,6 +8,10 @@ from core import constants
 from scrapers import formatters
 
 
+def string_to_field(field):
+    return "_".join([part.lower() for part in field.split(" ")])
+
+
 def global_(text=None, **kwargs):
     text = text.strip() if text and isinstance(text, str) else 3
 
@@ -16,13 +20,12 @@ def global_(text=None, **kwargs):
     except ValueError:
         return f'Invalid count: "{text}".'
 
-    main_stats_id = "maincounter-wrap"
-
-    soup = BeautifulSoup(requests.get(constants.URLS["worldometers"]).text)
+    respqonse = requests.get(constants.URLS["worldometers"])
+    soup = BeautifulSoup(response.text, features="html.parser")
 
     top_stats = {
-        x.h1.text: x.div.span.text.strip()
-        for x in soup.find_all(id=main_stats_id)
+        string_to_field(x.h1.text.strip()): x.div.span.text.strip()
+        for x in soup.find_all(id="maincounter-wrap")
     }
 
     selector = "table#main_table_countries_today"
@@ -38,6 +41,12 @@ def global_(text=None, **kwargs):
             countries[country][ths[i]] = data[i]
 
     last_updated = soup.find(string=re.compile("Last updated: "))
+    if "json" in kwargs:
+        return {
+            "top_stats": top_stats,
+            "counties": countries,
+            "last_updated": last_updated,
+        }
     return formatters.parse_global(
         title="🌎 Global Stats",
         stats=top_stats,
