@@ -29,9 +29,11 @@ class TestGlobal:
 
         if with_json:
             assert global_(json=True) == {
-                "top_stats": {"key_foo": "value_foo"},
-                "counties": {"country_foo": {}},
-                "last_updated": mock.ANY,
+                "top_stats": {
+                    "key_foo": "value_foo",
+                    "last_updated": mock.ANY,
+                },
+                "countries": {"country_foo": {}},
             }
         else:
             parser.return_value = "parsed"

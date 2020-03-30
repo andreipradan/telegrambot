@@ -4,7 +4,7 @@ from scrapers import formatters
 
 
 def test_get_verbose():
-    assert formatters.get_verbose("last_updated") == "Last updated"
+    assert formatters.field_to_string("last_updated") == "Last updated"
 
 
 class TestParseDetails:

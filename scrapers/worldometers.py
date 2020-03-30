@@ -8,10 +8,6 @@ from core import constants
 from scrapers import formatters
 
 
-def string_to_field(field):
-    return "_".join([part.lower() for part in field.split(" ")])
-
-
 def global_(text=None, **kwargs):
     text = text.strip() if text and isinstance(text, str) else 3
 
@@ -24,7 +20,7 @@ def global_(text=None, **kwargs):
     soup = BeautifulSoup(response.text, features="html.parser")
 
     top_stats = {
-        string_to_field(x.h1.text.strip()): x.div.span.text.strip()
+        formatters.string_to_field(x.h1.text.strip()): x.div.span.text.strip()
         for x in soup.find_all(id="maincounter-wrap")
     }
 
@@ -42,11 +38,8 @@ def global_(text=None, **kwargs):
 
     last_updated = soup.find(string=re.compile("Last updated: "))
     if "json" in kwargs:
-        return {
-            "top_stats": top_stats,
-            "counties": countries,
-            "last_updated": last_updated,
-        }
+        top_stats["last_updated"] = last_updated
+        return {"top_stats": top_stats, "countries": countries}
     return formatters.parse_global(
         title="🌎 Global Stats",
         stats=top_stats,

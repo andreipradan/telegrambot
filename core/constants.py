@@ -26,10 +26,12 @@ URLS = {
 DEFAULT_DB = "telegrambot_db"
 COLLECTION = {
     "etag": "etag-collection",
+    "global": "global-collection",
     "romania": "romania-collection",
 }
 SLUG = {
     "etag": "etag-slug",
+    "global": "global-slug",
     "romania": "romania-slug",
     "stiri-oficiale": "stiri-oficiale-slug",
 }

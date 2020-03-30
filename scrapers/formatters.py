@@ -1,5 +1,9 @@
-def get_verbose(string):
+def field_to_string(string):
     return " ".join(string.split("_")).capitalize()
+
+
+def string_to_field(field):
+    return "_".join([part.lower() for part in field.split(" ")])
 
 
 def parse_details(data):
@@ -12,11 +16,11 @@ def parse_details(data):
             return (
                 "├ "
                 + "\n├ ".join(
-                    [f"{get_verbose(k)}: {v}" for k, v in items[:-1]]
+                    [f"{field_to_string(k)}: {v}" for k, v in items[:-1]]
                 )
-                + f"\n└ {get_verbose(items[-1][0])}: {items[-1][1]}"
+                + f"\n└ {field_to_string(items[-1][0])}: {items[-1][1]}"
             )
-        return f"└ {get_verbose(items[-1][0])}: {items[-1][1]}"
+        return f"└ {field_to_string(items[-1][0])}: {items[-1][1]}"
     elif isinstance(data, list):
         items = data
         if len(items) > 1:

@@ -8,12 +8,13 @@ from core.constants import DEFAULT_DB
 from core.constants import SLUG
 
 
-def get_client():
-    return MongoClient(os.environ["MONGO_DB_HOST"])
+def get_client(db_host=None):
+    return MongoClient(db_host or os.environ["MONGO_DB_HOST"])
 
 
-def get_collection(name):
-    return get_client()[DEFAULT_DB][name]
+def get_collection(name, client=None):
+    client = client or get_client
+    return client()[DEFAULT_DB][name]
 
 
 def get_etag():
