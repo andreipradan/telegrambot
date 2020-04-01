@@ -6,7 +6,6 @@ ALLOWED_COMMANDS = [
 ]
 COMMANDS_FOR_VIEWS = [
     "analyze_sentiment",
-    "global_",
     "histogram",
     "latest_article",
 ]

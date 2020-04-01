@@ -28,6 +28,7 @@ START_MARKUP = InlineKeyboardMarkup(
 MORE_MARKUP = InlineKeyboardMarkup(
     [
         [
+            InlineKeyboardButton("👫️", callback_data="history"),
             InlineKeyboardButton("📈", callback_data="history"),
             InlineKeyboardButton("⬅️", callback_data="back"),
         ]
