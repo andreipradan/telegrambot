@@ -10,14 +10,14 @@ from scrapers.formatters import parse_global
 logger = logging.getLogger(__name__)
 
 
-def translate_text(text, target='en', limit=255):
+def translate_text(text, target="en", limit=255):
     if len(text) > limit:
         return f"Too many characters. Try sending < {limit}"
 
     translate_client = translate.Client()
 
     if isinstance(text, six.binary_type):
-        text = text.decode('utf-8')
+        text = text.decode("utf-8")
 
     # Text can also be a sequence of strings, in which case this method
     # will return a sequence of results for each text.
@@ -31,8 +31,8 @@ def translate_text(text, target='en', limit=255):
         title="💬 Translate",
         stats={
             "Input": result["input"],
-            "Detected source language": result['detectedSourceLanguage'],
-            "Translation": result['translatedText'],
+            "Detected source language": result["detectedSourceLanguage"],
+            "Translation": result["translatedText"],
         },
-        items={}
+        items={},
     )
