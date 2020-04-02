@@ -107,7 +107,7 @@ class TestValidateComponents:
         update = MagicMock(message=message)
         assert validate_components(update) == (
             f'Unknown command: "command_foo".\n'
-            f"Available commands: \n• /analyze_sentiment\n• /start",
+            f"Available commands: \n• /analyze_sentiment\n• /start\n• /translate",
             400,
         )
 
