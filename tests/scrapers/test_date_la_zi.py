@@ -4,8 +4,9 @@ import pytest
 import requests
 import responses
 
-from core import constants
 from scrapers import date_la_zi
+
+URL = "https://api1.datelazi.ro/api/v2/data/ui-data/"
 
 
 def get_payload(**kwargs):
@@ -32,7 +33,7 @@ def get_payload(**kwargs):
 def mock_request(**kwargs):
     responses.add(
         responses.GET,
-        constants.URLS["romania"],
+        URL,
         status=kwargs.pop("status_code", 200),
         json=get_payload(**kwargs),
     )

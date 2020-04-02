@@ -2,7 +2,8 @@ from bs4 import BeautifulSoup
 import requests
 
 from scrapers import formatters
-from core import constants
+
+URL = "https://stirioficiale.ro/informatii"
 
 
 def get_children(elements):
@@ -27,7 +28,7 @@ def parse_header(time_and_who):
 
 
 def latest_article(**kwargs):
-    resp = requests.get(constants.URLS["stiri-oficiale"])
+    resp = requests.get(URL)
     soup = BeautifulSoup(resp.text)
 
     stats = {}

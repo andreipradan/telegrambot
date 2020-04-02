@@ -3,8 +3,9 @@ from unittest import mock
 import pytest
 import responses
 
-from core import constants
 from scrapers import stiri_oficiale
+
+URL = "https://stirioficiale.ro/informatii"
 
 
 def test_get_children():
@@ -50,7 +51,7 @@ class TestLatestArticle:
         get_children.return_value = [1, 2, 3, link]
         header.return_value = ["date_time_foo", "author_foo"]
         text.side_effect = ["title_foo", "desc_foo"]
-        responses.add(responses.GET, constants.URLS["stiri-oficiale"])
+        responses.add(responses.GET, URL)
         assert stiri_oficiale.latest_article(json=True) == {
             "autor": "author_foo",
             "data": "date_time_foo",
@@ -71,7 +72,7 @@ class TestLatestArticle:
         get_children.return_value = [1, 2, 3, 4, link]
         header.return_value = ["date_time_foo", "author_foo"]
         text.side_effect = ["title_foo", "desc_foo"]
-        responses.add(responses.GET, constants.URLS["stiri-oficiale"])
+        responses.add(responses.GET, URL)
         assert stiri_oficiale.latest_article(json=True) == {
             1: 2,
             "autor": "author_foo",
@@ -84,7 +85,7 @@ class TestLatestArticle:
     @mock.patch("scrapers.stiri_oficiale.get_children", return_value="foo")
     @responses.activate
     def test_other_number_of_elements(self, *_):
-        responses.add(responses.GET, constants.URLS["stiri-oficiale"])
+        responses.add(responses.GET, URL)
         with pytest.raises(ValueError) as e:
             stiri_oficiale.latest_article()
         assert e.value.args[0] == "Invalid number of elements in article: foo"
@@ -105,7 +106,7 @@ class TestLatestArticle:
         get_children.return_value = [1, 2, 3, 4, link]
         header.return_value = ["date_time_foo", "author_foo"]
         text.side_effect = ["title_foo", "desc_foo"]
-        responses.add(responses.GET, constants.URLS["stiri-oficiale"])
+        responses.add(responses.GET, URL)
         assert stiri_oficiale.latest_article() == "results"
         glob.assert_called_once_with(
             title="🔵 title_foo",

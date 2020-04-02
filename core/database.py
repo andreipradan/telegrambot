@@ -1,8 +1,6 @@
 import os
 from pymongo import MongoClient
 
-# from pymongo import UpdateOne
-
 from core.constants import COLLECTION
 from core.constants import DEFAULT_DB
 from core.constants import SLUG

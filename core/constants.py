@@ -16,12 +16,6 @@ COMMANDS_WITH_UPDATE = [
     "start",
 ]
 
-URLS = {
-    "romania": "https://api1.datelazi.ro/api/v2/data/ui-data/",
-    "stiri-oficiale": "https://stirioficiale.ro/informatii",
-    "worldometers": "https://www.worldometers.info/coronavirus/#countries",
-}
-
 DEFAULT_DB = "telegrambot_db"
 COLLECTION = {
     "country": "country-collection",

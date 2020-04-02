@@ -1,11 +1,12 @@
 import requests
 
-from core import constants
 from scrapers import formatters
+
+URL = "https://api1.datelazi.ro/api/v2/data/ui-data/"
 
 
 def histogram(**kwargs):
-    response = requests.get(constants.URLS["romania"])
+    response = requests.get(URL)
     response.raise_for_status()
 
     stats = response.json()
@@ -37,7 +38,7 @@ def history(**kwargs):
         date_stats.pop("date")
         return date_stats
 
-    response = requests.get(constants.URLS["romania"])
+    response = requests.get(URL)
     response.raise_for_status()
 
     stats = response.json()
