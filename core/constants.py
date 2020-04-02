@@ -3,6 +3,7 @@ import os
 ALLOWED_COMMANDS = [
     "analyze_sentiment",
     "start",
+    "translate",
 ]
 COMMANDS_FOR_VIEWS = [
     "analyze_sentiment",
@@ -11,6 +12,7 @@ COMMANDS_FOR_VIEWS = [
 ]
 COMMANDS_WITH_TEXT = [
     "analyze_sentiment",
+    "translate",
 ]
 COMMANDS_WITH_UPDATE = [
     "start",
