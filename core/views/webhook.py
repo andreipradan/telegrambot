@@ -9,7 +9,7 @@ from core import constants
 from core import handlers
 from core import local_data
 from core import utils
-
+from powers.translate import translate_text
 
 webhook_views = Blueprint("webhook_views", __name__)
 
@@ -62,7 +62,10 @@ def webhook():
 
     if command_text == "start":
         return inline.start(update)
-
+    if command_text == "translate":
+        if not all(args):
+            return utils.send_message(bot, "You must provide the text", chat_id)
+        return utils.send_message(bot, translate_text(" ".join(args)), chat_id)
     results = getattr(scrapers, command_text)(*args)
 
     try:
