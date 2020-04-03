@@ -11,7 +11,7 @@ def epoch_to_timezone(epoch):
     tz = pytz.timezone("Europe/Bucharest")
     dt = utc_dt.astimezone(tz)
 
-    return dt.strftime("%Y-%m-%d %H:%M:%S %Z")
+    return dt.strftime("%Y-%m-%d %H:%M")
 
 
 class DLZSerializer:

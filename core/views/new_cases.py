@@ -27,11 +27,11 @@ def get_quick_stats():
 
     serializer.save()
 
-    return formatters.parse_global(
-        title="🔴 Cazuri noi",
-        stats=utils.parse_diff(serializer.data, db_stats),
-        items={},
-    )
+    deserialized = serializer.deserialize(serializer.data)
+    actualizat_la = deserialized.pop("Actualizat la")
+    diff = utils.parse_diff(deserialized, db_stats)
+    diff["Actualizat la"] = actualizat_la
+    return formatters.parse_global(title="🔴 Cazuri noi", stats=diff, items={},)
 
 
 def get_latest_news():
