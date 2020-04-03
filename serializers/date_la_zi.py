@@ -1,44 +1,57 @@
-class BaseSerializer:
-    @staticmethod
-    def serialize():
-        return NotImplementedError
+from copy import deepcopy
+from datetime import datetime
+import pytz
 
-    @staticmethod
-    def to_telegram():
-        return NotImplementedError
+
+def epoch_to_timezone(epoch):
+    utc_dt = datetime.utcfromtimestamp(epoch).replace(tzinfo=pytz.utc)
+    tz = pytz.timezone("Europe/Bucharest")
+    dt = utc_dt.astimezone(tz)
+
+    return dt.strftime("%Y-%m-%d %H:%M:%S %Z")
 
 
 class DLZSerializer:
-    pass
+    epoch_time_fields = ("Actualizat la",)
+    excluded_fields = "complete", "fileName", "parsedOnString"
+    serialize_fields = (
+        ("averageAge", "Vârstă medie"),
+        ("distributionByAge", "Categorii de vârstă"),
+        ("numberCured", "Vindecați"),
+        ("numberDeceased", "Decedați"),
+        ("numberInfected", "Confirmați"),
+        ("parsedOn", "Actualizat la"),
+        ("percentageOfWomen", "Procent femei"),
+        ("percentageOfMen", "Procent barbati"),
+        ("percentageOfChildren", "Procent copii"),
+    )
+
+    @classmethod
+    def serialize(cls, data):
+        data = deepcopy(data)
+        for field in cls.excluded_fields:
+            data.pop(field, None)
+        for key in deepcopy(data):
+            data[dict(cls.serialize_fields)[key]] = data.pop(key)
+        return data
+
+    @classmethod
+    def deserialize(cls, data):
+        data = deepcopy(data)
+        for key, value in data.items():
+            data[key] = cls.deserialize_field(key, value)
+        return data
+
+    @classmethod
+    def deserialize_field(cls, key, value):
+        if key in cls.epoch_time_fields:
+            return epoch_to_timezone(value)
+        return value
 
 
-class DLZArchiveSerializer:
-    pass
-
-
-aaa = {
-    "_id": {"$oid": "5e851916553d0aed0f3b67a4"},
-    "parsedOnString": "2020-03-31",
-    "averageAge": "46",
-    "complete": True,
-    "distributionByAge": {
-        "0-9": {"$numberInt": "30"},
-        "10-19": {"$numberInt": "47"},
-        "20-29": {"$numberInt": "165"},
-        "30-39": {"$numberInt": "337"},
-        "40-49": {"$numberInt": "501"},
-        "50-59": {"$numberInt": "373"},
-        "60-69": {"$numberInt": "228"},
-        "70-79": {"$numberInt": "126"},
-        ">80": {"$numberInt": "29"},
-        "în procesare": {"$numberInt": "116"},
-    },
-    "fileName": "",
-    "numberCured": {"$numberInt": "220"},
-    "numberDeceased": {"$numberInt": "82"},
-    "numberInfected": {"$numberInt": "2245"},
-    "parsedOn": {"$numberInt": "1585681080"},
-    "percentageOfChildren": {"$numberDouble": "4"},
-    "percentageOfMen": {"$numberDouble": "41"},
-    "percentageOfWomen": {"$numberDouble": "55"},
-}
+class DLZArchiveSerializer(DLZSerializer):
+    epoch_time_fields = DLZSerializer.epoch_time_fields + ("Data",)
+    excluded_fields = "complete", "fileName"
+    serialize_fields = DLZSerializer.serialize_fields + (
+        ("parsedOnString", "Data"),
+    )
