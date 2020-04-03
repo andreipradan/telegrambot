@@ -3,6 +3,7 @@ import os
 ALLOWED_COMMANDS = [
     "analyze_sentiment",
     "start",
+    "translate",
 ]
 COMMANDS_FOR_VIEWS = [
     "analyze_sentiment",
@@ -10,10 +11,18 @@ COMMANDS_FOR_VIEWS = [
 ]
 COMMANDS_WITH_TEXT = [
     "analyze_sentiment",
+    "translate",
 ]
-COMMANDS_WITH_UPDATE = [
-    "start",
+GOOGLE_CLOUD_COMMANDS = [
+    "analyze_sentiment",
+    "translate",
 ]
+
+GOOGLE_CLOUD_WHITELIST = {
+    "group": [-256548530, -382272798],
+    "supergroup": [-1001324997534],
+    "private": [412945234],
+}
 
 DEFAULT_DB = "telegrambot_db"
 COLLECTION = {

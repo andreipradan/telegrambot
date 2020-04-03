@@ -1,4 +1,6 @@
 from core.constants import ALLOWED_COMMANDS
+from core.constants import GOOGLE_CLOUD_COMMANDS
+from core.constants import GOOGLE_CLOUD_WHITELIST
 from core.utils import parse_name
 
 
@@ -39,6 +41,12 @@ def validate_components(update):
     if command_text not in ALLOWED_COMMANDS:
         allowed_text = ""
         for command in ALLOWED_COMMANDS:
+            if (
+                command in GOOGLE_CLOUD_COMMANDS
+                and message.chat_id
+                not in GOOGLE_CLOUD_WHITELIST[message.chat.type]
+            ):
+                continue
             allowed_text += f"\n• /{command}"
         return (
             f'Unknown command: "{command_text}".\n'

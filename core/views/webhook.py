@@ -9,7 +9,7 @@ from core import constants
 from core import handlers
 from core import local_data
 from core import utils
-
+from powers.translate import translate_text
 
 webhook_views = Blueprint("webhook_views", __name__)
 
@@ -57,11 +57,17 @@ def webhook():
     args = []
     if command_text in constants.COMMANDS_WITH_TEXT:
         args.append(" ".join(update.message.text.split(" ")[1:]))
-    elif command_text in constants.COMMANDS_WITH_UPDATE:
-        args.append(update)
 
     if command_text == "start":
         return inline.start(update)
+
+    if command_text in constants.GOOGLE_CLOUD_COMMANDS:
+        chat_type = update.message.chat.type
+        if chat_id not in constants.GOOGLE_CLOUD_WHITELIST[chat_type]:
+            return utils.send_message(bot, "Unauthorized", chat_id)
+
+    if command_text == "translate":
+        return utils.send_message(bot, translate_text(" ".join(args)), chat_id)
 
     results = getattr(scrapers, command_text)(*args)
 
