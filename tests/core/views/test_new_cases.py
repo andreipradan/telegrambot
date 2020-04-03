@@ -6,6 +6,46 @@ from flask import url_for
 from core.views import new_cases
 
 
+class TestGetHistogram:
+    func = "get_quick_stats"
+    parse_mock_return_value = {
+        "title": "🔴 Cazuri noi",
+        "stats": "diff_mock",
+        "items": {},
+    }
+
+    @mock.patch("requests.get")
+    @mock.patch("serializers.DLZSerializer.serialize")
+    @mock.patch("core.database.get_stats")
+    def test_stats_already_in_db(self, db_stats_mock, serialize, get):
+        serialize.return_value = {"foo": 1}
+        db_stats_mock.return_value = {"foo": 1}
+        results = getattr(new_cases, self.func)()
+        get.assert_called_once_with(new_cases.URL)
+        get().raise_for_status.assert_called_once_with()
+        db_stats_mock.assert_called_once_with()
+        assert results is None
+
+    @mock.patch("core.utils.parse_diff")
+    @mock.patch("scrapers.formatters.parse_global")
+    @mock.patch("core.database.set_stats")
+    @mock.patch("core.database.get_stats")
+    @mock.patch("serializers.DLZSerializer.serialize")
+    @mock.patch("requests.get")
+    def test_set_stats_if_not_in_db(self, get, ser, db_get, db_set, par, diff):
+        diff.return_value = "diff_mock"
+        par.return_value = "parse_global_result"
+        ser.return_value = {"foo": 1, "bar": 2}
+        db_get.return_value = {"foo": 1}
+        results = getattr(new_cases, self.func)()
+        get.assert_called_once_with(new_cases.URL)
+        get().raise_for_status.assert_called_once_with()
+        db_get.assert_called_once_with()
+        db_set.assert_called_once_with({"foo": 1, "bar": 2})
+        par.assert_called_once_with(**self.parse_mock_return_value)
+        assert results == "parse_global_result"
+
+
 class BaseNewCasesMixin:
     db_stats_kwargs = NotImplemented
     set_db_stats_kwargs = NotImplemented
@@ -54,34 +94,6 @@ class BaseNewCasesMixin:
         )
         parse_mock.assert_called_once_with(**self.parse_mock_return_value)
         assert results == "parse_global_result"
-
-
-class TestGetHistogram(BaseNewCasesMixin):
-    db_stats_kwargs = {}
-    set_db_stats_kwargs = {"vindecati": 3, "decedati": 4, "confirmati": 5}
-    func = "get_quick_stats"
-    mock_func = "scrapers.histogram"
-    mock_func_return_value = {
-        "quickStats": {
-            "totals": {
-                "foo": 1,
-                "bar": 2,
-                "cured": 3,
-                "deaths": 4,
-                "confirmed": 5,
-            }
-        }
-    }
-    mock_return_value = {
-        "quickStats": {
-            "totals": {"foo": 1, "cured": 3, "deaths": 4, "confirmed": 5}
-        }
-    }
-    parse_mock_return_value = {
-        "title": "🔴 Cazuri noi",
-        "stats": "diff_mock",
-        "items": {},
-    }
 
 
 class TestGetLatestNews(BaseNewCasesMixin):

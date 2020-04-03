@@ -6,7 +6,6 @@ ALLOWED_COMMANDS = [
 ]
 COMMANDS_FOR_VIEWS = [
     "analyze_sentiment",
-    "histogram",
     "latest_article",
 ]
 COMMANDS_WITH_TEXT = [

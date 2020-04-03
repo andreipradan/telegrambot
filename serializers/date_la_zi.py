@@ -13,6 +13,7 @@ def epoch_to_timezone(epoch):
 
 class DLZSerializer:
     epoch_time_fields = ("Actualizat la",)
+    fields = "Confirmați", "Vindecați", "Decedați", "Actualizat la"
     excluded_fields = "complete", "fileName", "parsedOnString"
     serialize_fields = (
         ("averageAge", "Vârstă medie"),
@@ -38,8 +39,8 @@ class DLZSerializer:
     @classmethod
     def deserialize(cls, data):
         data = deepcopy(data)
-        for key, value in data.items():
-            data[key] = cls.deserialize_field(key, value)
+        for key in cls.fields:
+            data[key] = cls.deserialize_field(key, data[key])
         return data
 
     @classmethod

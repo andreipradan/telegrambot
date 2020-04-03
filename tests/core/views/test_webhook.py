@@ -44,9 +44,8 @@ class TestWebhook:
             if x.callback_data not in ["end", "back", "more"]
         ],
     )
-    @mock.patch("scrapers.date_la_zi")
     @mock.patch("core.inline.refresh_data", return_value="refresh_data")
-    def test_refresh_data(self, _, __, de_json, ___, client, local_data_func):
+    def test_refresh_data(self, _, de_json, ___, client, local_data_func):
         de_json.return_value.callback_query.data = local_data_func
 
         with mock.patch(f"core.local_data.{local_data_func}") as local_func:
@@ -150,11 +149,11 @@ class TestWebhook:
         assert response.data.decode("utf-8") == "inline_start_foo"
 
     @mock.patch("core.utils.send_message")
-    @mock.patch("scrapers.date_la_zi", return_value="scrapers_foo")
+    @mock.patch("scrapers.analyze_sentiment", return_value="scrapers_foo")
     @mock.patch("core.handlers.validate_components")
     def test_message_too_long(self, validate, scrape, msg, update, _, client):
         msg.side_effect = telegram.error.BadRequest("foo")
-        validate.return_value = "date_la_zi", "valid-command"
+        validate.return_value = "analyze_sentiment", "valid-command"
         update.return_value.callback_query = None
 
         with pytest.raises(telegram.error.BadRequest) as e:
@@ -163,4 +162,4 @@ class TestWebhook:
         assert e.value.message == "foo"
 
         validate.assert_called_once_with(update())
-        scrape.assert_called_once_with()
+        scrape.assert_called_once_with("")

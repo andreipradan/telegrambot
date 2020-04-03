@@ -1,3 +1,4 @@
+import requests
 import telegram
 from flask import Blueprint
 from flask import abort
@@ -7,15 +8,18 @@ from scrapers import formatters
 from core import constants
 from core import database
 from core import utils
+from serializers import DLZSerializer
 
 new_cases_views = Blueprint("new_cases_views", __name__)
 
+URL = "https://api1.datelazi.ro/api/v2/data/"
+
 
 def get_quick_stats():
-    stats = scrapers.histogram(json=True)["quickStats"]["totals"]
-    stats["confirmati"] = stats.pop("confirmed")
-    stats["vindecati"] = stats.pop("cured")
-    stats["decedati"] = stats.pop("deaths")
+    response = requests.get(URL)
+    response.raise_for_status()
+    stats = DLZSerializer.serialize(response.json()["currentDayStats"])
+
     db_stats = database.get_stats()
     if db_stats and stats.items() <= db_stats.items():
         return
