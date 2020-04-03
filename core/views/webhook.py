@@ -57,16 +57,11 @@ def webhook():
     args = []
     if command_text in constants.COMMANDS_WITH_TEXT:
         args.append(" ".join(update.message.text.split(" ")[1:]))
-    elif command_text in constants.COMMANDS_WITH_UPDATE:
-        args.append(update)
 
     if command_text == "start":
         return inline.start(update)
+
     if command_text == "translate":
-        if not all(args):
-            return utils.send_message(
-                bot, "You must provide the text", chat_id
-            )
         return utils.send_message(bot, translate_text(" ".join(args)), chat_id)
     results = getattr(scrapers, command_text)(*args)
 

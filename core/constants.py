@@ -14,9 +14,6 @@ COMMANDS_WITH_TEXT = [
     "analyze_sentiment",
     "translate",
 ]
-COMMANDS_WITH_UPDATE = [
-    "start",
-]
 
 URLS = {
     "romania": "https://api1.datelazi.ro/api/v2/data/ui-data/",
