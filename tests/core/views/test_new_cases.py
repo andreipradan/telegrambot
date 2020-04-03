@@ -23,12 +23,11 @@ class TestGetQuickStats:
 
     @mock.patch("core.utils.parse_diff")
     @mock.patch("scrapers.formatters.parse_global")
-    @mock.patch("core.database.set_stats")
     @mock.patch("core.database.get_stats")
     @mock.patch("core.views.new_cases.DLZSerializer")
     @mock.patch("requests.get")
-    def test_set_stats_if_not_in_db(self, get, ser, db_get, db_set, par, diff):
-        diff.return_value = "diff_mock"
+    def test_set_stats_if_not_in_db(self, get, ser, db_get, par, diff):
+        diff.return_value = {"diff_mock": 1}
         par.return_value = "parse_global_result"
         ser().data = {"foo": 1, "bar": 2}
         db_get.return_value = {"foo": 1}
@@ -38,7 +37,9 @@ class TestGetQuickStats:
         db_get.assert_called_once_with()
         ser().save.assert_called_once_with()
         par.assert_called_once_with(
-            title="🔴 Cazuri noi", stats="diff_mock", items={}
+            title="🔴 Cazuri noi",
+            stats={"diff_mock": 1, "Actualizat la": ser().deserialize().pop()},
+            items={},
         )
         assert results == "parse_global_result"
 

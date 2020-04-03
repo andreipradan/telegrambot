@@ -68,7 +68,7 @@ class TestDLZSerializer:
         "Confirmați": 3183,
         "Vindecați": 283,
         "Decedați": 133,
-        "Actualizat la": "2020-04-03 17:22:00 EEST",
+        "Actualizat la": "2020-04-03 17:22",
     }
     serializer = DLZSerializer
     mapped_fields = {
@@ -115,7 +115,7 @@ class TestDLZArchiveSerializer(TestDLZSerializer):
     deserialized = {
         "Data": "2020-04-03",
         "Vârstă medie": "46",
-        "Actualizat la": "2020-04-03 17:22:00 EEST",
+        "Actualizat la": "2020-04-03 17:22",
         "Confirmați": 3183,
         "Vindecați": 283,
         "Decedați": 133,

@@ -158,6 +158,10 @@ class TestWebhook:
         msg.side_effect = telegram.error.BadRequest("foo")
         validate.return_value = "analyze_sentiment", "valid-command"
         update.return_value.callback_query = None
+        update().message.chat.type = "private"
+        update().message.chat.id = constants.GOOGLE_CLOUD_WHITELIST["private"][
+            0
+        ]
 
         with pytest.raises(telegram.error.BadRequest) as e:
             client.post(url_for(self.view_name), json={"1": 2})
