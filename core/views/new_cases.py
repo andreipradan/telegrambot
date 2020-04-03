@@ -18,17 +18,18 @@ URL = "https://api1.datelazi.ro/api/v2/data/"
 def get_quick_stats():
     response = requests.get(URL)
     response.raise_for_status()
-    stats = DLZSerializer.serialize(response.json()["currentDayStats"])
+
+    serializer = DLZSerializer(response.json()["currentDayStats"])
 
     db_stats = database.get_stats()
-    if db_stats and stats.items() <= db_stats.items():
+    if db_stats and serializer.data.items() <= db_stats.items():
         return
 
-    database.set_stats(stats)
+    serializer.save()
 
     return formatters.parse_global(
         title="🔴 Cazuri noi",
-        stats=utils.parse_diff(stats, db_stats),
+        stats=utils.parse_diff(serializer.data, db_stats),
         items={},
     )
 

@@ -6,19 +6,14 @@ from flask import url_for
 from core.views import new_cases
 
 
-class TestGetHistogram:
+class TestGetQuickStats:
     func = "get_quick_stats"
-    parse_mock_return_value = {
-        "title": "🔴 Cazuri noi",
-        "stats": "diff_mock",
-        "items": {},
-    }
 
     @mock.patch("requests.get")
-    @mock.patch("serializers.DLZSerializer.serialize")
+    @mock.patch("core.views.new_cases.DLZSerializer")
     @mock.patch("core.database.get_stats")
-    def test_stats_already_in_db(self, db_stats_mock, serialize, get):
-        serialize.return_value = {"foo": 1}
+    def test_stats_already_in_db(self, db_stats_mock, serializer, get):
+        serializer.return_value.data = {"foo": 1}
         db_stats_mock.return_value = {"foo": 1}
         results = getattr(new_cases, self.func)()
         get.assert_called_once_with(new_cases.URL)
@@ -30,19 +25,21 @@ class TestGetHistogram:
     @mock.patch("scrapers.formatters.parse_global")
     @mock.patch("core.database.set_stats")
     @mock.patch("core.database.get_stats")
-    @mock.patch("serializers.DLZSerializer.serialize")
+    @mock.patch("core.views.new_cases.DLZSerializer")
     @mock.patch("requests.get")
     def test_set_stats_if_not_in_db(self, get, ser, db_get, db_set, par, diff):
         diff.return_value = "diff_mock"
         par.return_value = "parse_global_result"
-        ser.return_value = {"foo": 1, "bar": 2}
+        ser().data = {"foo": 1, "bar": 2}
         db_get.return_value = {"foo": 1}
         results = getattr(new_cases, self.func)()
         get.assert_called_once_with(new_cases.URL)
         get().raise_for_status.assert_called_once_with()
         db_get.assert_called_once_with()
-        db_set.assert_called_once_with({"foo": 1, "bar": 2})
-        par.assert_called_once_with(**self.parse_mock_return_value)
+        ser().save.assert_called_once_with()
+        par.assert_called_once_with(
+            title="🔴 Cazuri noi", stats="diff_mock", items={}
+        )
         assert results == "parse_global_result"
 
 

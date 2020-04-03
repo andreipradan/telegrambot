@@ -1,6 +1,9 @@
-from copy import deepcopy
+from collections import OrderedDict
 from datetime import datetime
 import pytz
+
+from core import database
+from core.constants import COLLECTION, SLUG
 
 
 def epoch_to_timezone(epoch):
@@ -13,35 +16,32 @@ def epoch_to_timezone(epoch):
 
 class DLZSerializer:
     epoch_time_fields = ("Actualizat la",)
-    fields = "Confirmați", "Vindecați", "Decedați", "Actualizat la"
-    excluded_fields = "complete", "fileName", "parsedOnString"
-    serialize_fields = (
-        ("averageAge", "Vârstă medie"),
-        ("distributionByAge", "Categorii de vârstă"),
-        ("numberCured", "Vindecați"),
-        ("numberDeceased", "Decedați"),
-        ("numberInfected", "Confirmați"),
-        ("parsedOn", "Actualizat la"),
-        ("percentageOfWomen", "Procent femei"),
-        ("percentageOfMen", "Procent barbati"),
-        ("percentageOfChildren", "Procent copii"),
-    )
+    mapped_fields = {
+        "Confirmați": "numberInfected",
+        "Vindecați": "numberCured",
+        "Decedați": "numberDeceased",
+        "Actualizat la": "parsedOn",
+    }
 
-    @classmethod
-    def serialize(cls, data):
-        data = deepcopy(data)
-        for field in cls.excluded_fields:
-            data.pop(field, None)
-        for key in deepcopy(data):
-            data[dict(cls.serialize_fields)[key]] = data.pop(key)
-        return data
+    def __init__(self, response):
+        self.response = response
+        self.data = OrderedDict()
+        for field, api_field in self.mapped_fields.items():
+            self.data[field] = self.response[api_field]
+
+    def save(self):
+        database.set_stats(
+            stats=self.data,
+            collection=COLLECTION["romania"],
+            slug=SLUG["romania"],
+        )
 
     @classmethod
     def deserialize(cls, data):
-        data = deepcopy(data)
-        for key in cls.fields:
-            data[key] = cls.deserialize_field(key, data[key])
-        return data
+        results = OrderedDict()
+        for key in cls.mapped_fields:
+            results[key] = cls.deserialize_field(key, data[key])
+        return results
 
     @classmethod
     def deserialize_field(cls, key, value):
@@ -51,8 +51,15 @@ class DLZSerializer:
 
 
 class DLZArchiveSerializer(DLZSerializer):
-    epoch_time_fields = DLZSerializer.epoch_time_fields + ("Data",)
-    excluded_fields = "complete", "fileName"
-    serialize_fields = DLZSerializer.serialize_fields + (
-        ("parsedOnString", "Data"),
-    )
+    mapped_fields = {
+        "Confirmați": "numberInfected",
+        "Vindecați": "numberCured",
+        "Decedați": "numberDeceased",
+        "Actualizat la": "parsedOn",
+        "Data": "parsedOnString",
+        "Procent barbati": "percentageOfMen",
+        "Procent femei": "percentageOfWomen",
+        "Procent copii": "percentageOfChildren",
+        "Vârstă medie": "averageAge",
+        "Categorii de vârstă": "distributionByAge",
+    }
