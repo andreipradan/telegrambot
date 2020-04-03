@@ -61,8 +61,14 @@ def webhook():
     if command_text == "start":
         return inline.start(update)
 
+    if command_text in constants.GOOGLE_CLOUD_COMMANDS:
+        chat_type = update.message.chat.type
+        if chat_id not in constants.GOOGLE_CLOUD_WHITELIST[chat_type]:
+            return utils.send_message(bot, "Unauthorized", chat_id)
+
     if command_text == "translate":
         return utils.send_message(bot, translate_text(" ".join(args)), chat_id)
+
     results = getattr(scrapers, command_text)(*args)
 
     try:

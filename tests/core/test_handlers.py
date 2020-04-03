@@ -102,9 +102,21 @@ class TestValidateComponents:
             "send-message",
         )
 
-    def test_unknown_command(self):
+    def test_unknown_command_not_whitelisted(self):
         message = MagicMock(reply_to_message=None, text="/command_foo 123 4")
         update = MagicMock(message=message)
+        update.message.chat.type = "private"
+        assert validate_components(update) == (
+            f'Unknown command: "command_foo".\n'
+            f"Available commands: \n• /start",
+            400,
+        )
+
+    def test_unknown_command_whitelisted(self):
+        message = MagicMock(reply_to_message=None, text="/command_foo 123 4")
+        update = MagicMock(message=message)
+        update.message.chat.type = "private"
+        update.message.chat_id = constants.GOOGLE_CLOUD_WHITELIST["private"][0]
         assert validate_components(update) == (
             f'Unknown command: "command_foo".\n'
             f"Available commands: \n• /analyze_sentiment\n• /start\n• /translate",

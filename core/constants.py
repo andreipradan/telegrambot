@@ -14,6 +14,16 @@ COMMANDS_WITH_TEXT = [
     "analyze_sentiment",
     "translate",
 ]
+GOOGLE_CLOUD_COMMANDS = [
+    "analyze_sentiment",
+    "translate",
+]
+
+GOOGLE_CLOUD_WHITELIST = {
+    "group": [-256548530, -382272798],
+    "supergroup": [-1001324997534],
+    "private": [412945234],
+}
 
 URLS = {
     "romania": "https://api1.datelazi.ro/api/v2/data/ui-data/",

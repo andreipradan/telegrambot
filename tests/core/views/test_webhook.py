@@ -123,7 +123,9 @@ class TestWebhook:
     def test_commands_with_text(self, validate, msg, update, _, cmd, client):
         validate.return_value = cmd, "valid-command"
         update.return_value.callback_query = None
-        if cmd == "translate":
+        update.message.chat.type = "private"
+        update.message.chat_id = constants.GOOGLE_CLOUD_WHITELIST["private"][0]
+        if cmd in constants.GOOGLE_CLOUD_COMMANDS:
             pytest.skip("skiped translate")
         with mock.patch(f"scrapers.{cmd}", return_value="cmd_foo"):
             response = client.post(url_for(self.view_name), json={"1": 2})
