@@ -23,14 +23,12 @@ HELP_TEXT = {
         "/translate target=<language_code> <insert text here>",
         "/translate languages",
     ],
-    **EXAMPLES
+    **EXAMPLES,
 }
 
 MISSING_TARGET = "  Please provide a valid target language."
 MISSING_TEXT = "️ Please provide a text to translate."
-TYPE_HELP = {
-    "For more usages": ' /translate help '
-}
+TYPE_HELP = {"For more usages": " /translate help "}
 
 
 def translate_text(text):
