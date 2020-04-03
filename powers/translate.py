@@ -59,7 +59,9 @@ def translate_text(text):
     # Text can also be a sequence of strings, in which case this method
     # will return a sequence of results for each text.
     try:
-        result = translate_client.translate(text, target_language=target)
+        result = translate_client.translate(
+            text, target_language=target, format_="text"
+        )
     except (GoogleAPICallError, BadRequest) as e:
         logger.error(e)
         return "Something went wrong. For usage and examples type '/translate help'."
