@@ -1,0 +1,16 @@
+ARG APP_IMAGE
+FROM $APP_IMAGE
+
+ENV APP_HOME /app
+WORKDIR $APP_HOME
+
+# Install test dependencies.
+RUN pip install -r test_requirements.txt
+
+ENV CHAT_ID=test_id
+ENV DATABASE_NAME=test_db_name
+ENV FLASK_DEBUG=test_debug
+ENV MONGO_DB_HOST=test_host
+ENV TOKEN=test_token
+
+CMD exec pytest /app/tests/ --cov=. --cov-fail-under=80
