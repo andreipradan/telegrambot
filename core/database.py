@@ -3,10 +3,12 @@ from pymongo import MongoClient
 
 from core.constants import COLLECTION
 
-DATABASE_NAME = os.environ["DATABASE_NAME"]
+DATABASE_NAME = os.getenv("DATABASE_NAME")
 
 
 def get_client(db_host=None):
+    if not DATABASE_NAME:
+        raise ValueError("DATABASE_NAME env variable required")
     return MongoClient(db_host or os.environ["MONGO_DB_HOST"])
 
 

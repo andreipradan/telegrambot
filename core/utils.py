@@ -1,14 +1,17 @@
+import os
 from copy import deepcopy
 
 import telegram
 
-from core import constants
 
-
-def chunks(lst, n):
+def chunks(lst, width):
     """Yield successive n-sized chunks from lst."""
-    for i in range(0, len(lst), n):
-        yield lst[i : i + n]
+    for i in range(width):
+        yield [
+            lst[i + j * width]
+            for j in range(width)
+            if i + j * width < len(lst)
+        ]
 
 
 def parse_diff(data, old_version):
@@ -43,14 +46,14 @@ def parse_sentiment(data):
 def send_message(bot, text, chat_id=None):
     try:
         return bot.send_message(
-            chat_id=chat_id or constants.DEBUG_CHAT_ID,
+            chat_id=chat_id or os.getenv("DEBUG_CHAT_ID"),
             text=text,
             disable_notification=True,
             parse_mode=telegram.ParseMode.MARKDOWN,
         ).to_json()
     except telegram.error.BadRequest as err:
         return bot.send_message(
-            chat_id=chat_id or constants.DEBUG_CHAT_ID,
+            chat_id=chat_id or os.getenv("DEBUG_CHAT_ID"),
             text=str(err),
             disable_notification=True,
             parse_mode=telegram.ParseMode.MARKDOWN,

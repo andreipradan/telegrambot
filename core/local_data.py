@@ -66,11 +66,14 @@ def local_counties():
 
     max_key_len = len(counties[0])
     max_val_len = len(str(stats[counties[0]]))
+
+    top_three = counties[:3]
+    remaining = list(sorted(counties[3:]))
     return formatters.parse_global(
         title=f"🇷🇴Top cazuri confirmate",
         stats=[
             f"🦠 `{name:<{max_key_len}}: {stats[name]:<{max_val_len}}`"
-            for name in counties[:3]
+            for name in top_three
         ],
         items=["\nRestul județelor"]
         + [
@@ -80,7 +83,7 @@ def local_counties():
                     for name in judete
                 ]
             )
-            for judete in chunks(counties[3:], 5)
+            for judete in chunks(remaining, 15)
         ],
         emoji="🦠",
     )

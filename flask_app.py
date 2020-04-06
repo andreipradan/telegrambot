@@ -9,7 +9,8 @@ from flask import redirect
 from core.views.new_cases import new_cases_views
 from core.views.webhook import webhook_views
 
-if not os.getenv("FLASK_DEBUG", False):
+SENTRY_DSN = os.getenv("SENTRY_DSN")
+if SENTRY_DSN:
     sentry_sdk.init(
         dsn=os.environ["SENTRY_DSN"], integrations=[FlaskIntegration()]
     )

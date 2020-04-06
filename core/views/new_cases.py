@@ -1,4 +1,5 @@
 import logging
+import os
 
 import requests
 import telegram
@@ -6,7 +7,9 @@ from flask import Blueprint
 from flask import abort
 
 import scrapers
-from core.constants import COLLECTION, SLUG, TOKEN, CHAT_ID
+from core.constants import COLLECTION
+from core.constants import SLUG
+from core.constants import TOKEN
 from scrapers import formatters
 from core import database
 from core import utils
@@ -122,7 +125,7 @@ def check_new_cases(what, token):
 
     bot = telegram.Bot(token=TOKEN)
     return bot.sendMessage(
-        chat_id=CHAT_ID,
+        chat_id=os.environ["CHAT_ID"],
         text=text,
         disable_notification=True,
         parse_mode=telegram.ParseMode.MARKDOWN,
