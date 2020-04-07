@@ -2,6 +2,7 @@ import os
 from unittest.mock import MagicMock
 
 import pytest
+from telegram.error import Unauthorized
 
 from core import utils, constants
 
@@ -62,6 +63,12 @@ def test_send_message_without_chat_id():
         parse_mode="Markdown",
     )
     bot.send_message.return_value.to_json.assert_called_once_with()
+
+
+def test_send_message_unauthorized():
+    bot = MagicMock()
+    bot.send_message.side_effect = Unauthorized("err")
+    assert utils.send_message(bot, text="hey foo!") == "err"
 
 
 @pytest.mark.parametrize(

@@ -2,6 +2,7 @@ import os
 from copy import deepcopy
 
 import telegram
+from telegram.error import Unauthorized
 
 
 def chunks(lst, width):
@@ -58,3 +59,5 @@ def send_message(bot, text, chat_id=None):
             disable_notification=True,
             parse_mode=telegram.ParseMode.MARKDOWN,
         ).to_json()
+    except Unauthorized as e:
+        return str(e)
