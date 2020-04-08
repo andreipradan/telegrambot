@@ -108,6 +108,7 @@ class TestDLZSerializer:
         "Confirmați": 3183,
         "Vindecați": 283,
         "Decedați": 133,
+        "Actualizat la": "17:22, 03 Apr 2020",
     }
     serializer = DLZSerializer
     mapped_fields = {
