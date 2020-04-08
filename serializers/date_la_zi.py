@@ -28,7 +28,7 @@ class DLZSerializer:
         "Categorii de vârstă": "distributionByAge",
         "Judete": "countyInfectionsNumbers",
     }
-    deserialize_fields = "Confirmați", "Vindecați", "Decedați", "Actualizat la"
+    deserialize_fields = "Confirmați", "Vindecați", "Decedați"
 
     def __init__(self, response):
         self.response = response
