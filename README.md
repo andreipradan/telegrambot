@@ -1,8 +1,6 @@
 <h1 align="center">Welcome to telegrambot 👋</h1>
 <p>
-  <a href="#">
-    <img alt="cloud build status" src="https://storage.googleapis.com/telegrambot/build-status.svg" />
-  </a>
+  <img alt="cloud build status" src="https://storage.googleapis.com/telegrambot/build-status.svg" />
   <a href="https://github.com/andreipradan/telegrambot/blob/master/LICENCE.md" target="_blank">
     <img alt="License: LICENCE.md" src="https://img.shields.io/badge/License-LICENCE.md-yellow.svg" />
   </a>
@@ -11,9 +9,14 @@
 
 > A telegram bot to interactively check OFFICIAL COVID-19 stats for Romania and other countries.
 
-### 🤖 Use the bot directly: [here](https://telegrambot.pradan.dev/)
+<h3> 🤖 Interact with the bot
+    <a href="https://telegrambot.pradan.dev/" target="_blank">here</a>
+</h3>
 
-### ✨ See it in action in the [Covid Updates](https://t.me/covid_ro_updates) telegram channel [here]((https://t.me/covid_ro_updates))
+<h3> ✨ See it in action in the
+    <a href="https://t.me/covid_ro_updates">🇷🇴 Covid Updates</a> telegram channel
+</h3>
+
 
 ## Usage
 

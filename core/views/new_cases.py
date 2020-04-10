@@ -10,6 +10,7 @@ import scrapers
 from core.constants import COLLECTION
 from core.constants import SLUG
 from core.constants import TOKEN
+from core.validators import is_valid_date
 from scrapers import formatters
 from core import database
 from core import utils
@@ -24,7 +25,9 @@ URL = "https://api1.datelazi.ro/api/v2/data/"
 
 
 def store_yesterdays_stats(today, historical_data):
-    past_days = sorted([d for d in historical_data if d != today])
+    past_days = sorted(
+        [d for d in historical_data if d != today and is_valid_date(d)]
+    )
     if not past_days:
         logger.error("No data for past days!")
         return
