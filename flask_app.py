@@ -25,6 +25,11 @@ def home():
     return redirect("https://telegram.me/alfred_the_robot")
 
 
+@app.route("/channel/")
+def channel():
+    return redirect("https://t.me/covid_ro_updates")
+
+
 if __name__ == "__main__":
     app.run(
         host=os.getenv("HOST", "127.0.0.1"),
