@@ -8,9 +8,15 @@ from core import database, constants
 
 class TestDatabase:
     @mock.patch("core.database.MongoClient", return_value="mongo_response")
-    def test_get_client(self, monkeypatch):
+    def test_get_client_with_no_mongo_db_host(self, client_mock):
         assert database.get_client() == "mongo_response"
-        monkeypatch.assert_called_once_with(os.environ["MONGO_DB_HOST"])
+        client_mock.assert_called_once_with(host=None)
+
+    @mock.patch("core.database.MongoClient", return_value="mongo_response")
+    def test_get_client(self, client_mock, monkeypatch):
+        monkeypatch.setenv("MONGO_DB_HOST", "test_mongo_db_host")
+        assert database.get_client() == "mongo_response"
+        client_mock.assert_called_once_with(host="test_mongo_db_host")
 
     @mock.patch("core.database.get_client")
     def test_get_collection(self, client_mock):

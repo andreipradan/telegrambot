@@ -6,14 +6,16 @@ import telegram
 from flask import Blueprint
 from flask import abort
 
-import scrapers
+from core.auth import header_auth
 from core.constants import COLLECTION
 from core.constants import SLUG
 from core.constants import TOKEN
 from core.validators import is_valid_date
-from scrapers import formatters
 from core import database
 from core import utils
+from scrapers import latest_article
+from scrapers.client import DLZClient
+from scrapers.formatters import parse_global
 from serializers import DLZSerializer
 from serializers import DLZArchiveSerializer
 
@@ -92,11 +94,11 @@ def get_quick_stats():
     actualizat_la = deserialized.pop("Actualizat la")
     diff = utils.parse_diff(deserialized, db_stats)
     diff["Actualizat la"] = actualizat_la
-    return formatters.parse_global(title="🔴 Cazuri noi", stats=diff, items={})
+    return parse_global(title="🔴 Cazuri noi", stats=diff, items={})
 
 
 def get_latest_news():
-    stats = scrapers.latest_article(json=True)
+    stats = latest_article(json=True)
 
     db_stats = database.get_stats(slug=SLUG["stiri-oficiale"])
     if db_stats and stats.items() <= db_stats.items():
@@ -109,7 +111,7 @@ def get_latest_news():
     )
 
     items = {stats.pop("descriere"): [stats.pop("url")]}
-    return scrapers.formatters.parse_global(
+    return parse_global(
         title=f"🔵 {stats.pop('titlu')}", stats=stats, items=items, emoji="❗"
     )
 
@@ -140,3 +142,38 @@ FUNCS = {
     "stiri-oficiale": get_latest_news,
     "sync-archive": sync_archive,
 }
+
+
+@new_cases_views.route("/today-stats/", methods=["POST"])
+@header_auth
+def check_quick_stats():
+    client = DLZClient()
+    data = client.fetch()
+
+    db_stats = database.get_stats(slug=SLUG["romania"])
+    if db_stats and data.items() <= db_stats.items():
+        msg = "No updates for today's stats"
+        logger.info(msg)
+        return msg
+    client.store()
+    logger.info("Stored current day stats.")
+
+    quick_stats = client.normalized_data
+    last_updated = quick_stats.pop("Actualizat la")
+
+    if db_stats and quick_stats.items() <= db_stats.items():
+        msg = "No updates to quick stats"
+        logger.info(msg)
+        return msg
+
+    diff = utils.parse_diff(quick_stats, db_stats)
+    diff["Actualizat la"] = last_updated
+
+    utils.send_message(
+        bot=telegram.Bot(token=TOKEN),
+        text=parse_global(title="🔴 Cazuri noi", stats=diff, items={}),
+        chat_id=os.environ["CHAT_ID"],
+    )
+    msg = "Quick stats updated"
+    logger.info(msg)
+    return msg

@@ -29,3 +29,8 @@ SLUG = {
 }
 
 TOKEN = os.environ["TOKEN"]
+
+AUTH = {
+    "HEADER_NAME": "X_TELEGRAMBOT_AUTH",
+    "WHITELIST": ["91.108.4.0/22", "149.154.160.0/20"],  # telegram networks
+}

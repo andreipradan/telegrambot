@@ -16,7 +16,7 @@ START_MARKUP = InlineKeyboardMarkup(
     [
         [
             InlineKeyboardButton("🇷🇴", callback_data="local_quick_stats"),
-            InlineKeyboardButton("Jud", callback_data="local_counties"),
+            InlineKeyboardButton("🏙", callback_data="local_counties"),
             InlineKeyboardButton("👵", callback_data="local_age"),
             InlineKeyboardButton("🌎", callback_data="local_global_stats"),
             InlineKeyboardButton("🗞", callback_data="local_latest_article"),

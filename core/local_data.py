@@ -61,7 +61,8 @@ def local_counties():
     serializer.deserialize_fields = [
         f for f in serializer.deserialize_fields if f != "Data"
     ]
-    stats = DLZArchiveSerializer.deserialize(stats)["Judete"]
+    deserialized = DLZArchiveSerializer.deserialize(stats)
+    stats = deserialized["Judete"]
     counties = list(reversed(sorted(stats, key=stats.get)))
 
     max_key_len = len(counties[0])
@@ -86,6 +87,7 @@ def local_counties():
             for judete in chunks(remaining, 15)
         ],
         emoji="🦠",
+        footer=f"\n`Actualizat la: {deserialized['Actualizat la']}`",
     )
 
 
@@ -95,8 +97,9 @@ def local_age():
     serializer.deserialize_fields = [
         f for f in serializer.deserialize_fields if f != "Data"
     ]
-    stats = DLZArchiveSerializer.deserialize(stats)["Categorii de vârstă"]
-    categories = list(reversed(sorted(stats)))  # , key=stats.get)))
+    deserialized = DLZArchiveSerializer.deserialize(stats)
+    stats = deserialized["Categorii de vârstă"]
+    categories = list(reversed(sorted(stats)))
 
     max_key_len = len(categories[0])
     max_val_len = len(str(stats[categories[0]]))
@@ -107,4 +110,5 @@ def local_age():
         ],
         items=[],
         emoji="🦠",
+        footer=f"\n`Actualizat la: {deserialized['Actualizat la']}`",
     )

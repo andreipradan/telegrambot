@@ -3,18 +3,13 @@ from pymongo import MongoClient
 
 from core.constants import COLLECTION
 
-DATABASE_NAME = os.getenv("DATABASE_NAME")
+
+def get_client():
+    return MongoClient(host=os.getenv("MONGO_DB_HOST"))
 
 
-def get_client(db_host=None):
-    if not DATABASE_NAME:
-        raise ValueError("DATABASE_NAME env variable required")
-    return MongoClient(db_host or os.environ["MONGO_DB_HOST"])
-
-
-def get_collection(name, client=None):
-    client = client or get_client
-    return client()[DATABASE_NAME][name]
+def get_collection(name):
+    return get_client()[os.getenv("DATABASE_NAME", "telegrambot_db")][name]
 
 
 def get_stats(collection=COLLECTION["romania"], **kwargs):
