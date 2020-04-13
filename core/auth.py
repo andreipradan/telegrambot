@@ -83,7 +83,7 @@ def _is_authorized(ip):
 def header_auth(func):
     @wraps(func)
     def _decorator(*args, **kwargs):
-        if os.getenv("DISABLE_HEADER_AUTH") is True:
+        if bool(os.getenv("DISABLE_HEADER_AUTH")) is True:
             return func(*args, **kwargs)
 
         token = request.headers.get("Authorization")

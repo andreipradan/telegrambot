@@ -3,7 +3,10 @@ from unittest import mock
 
 import pytest
 
-from core.auth import _authenticate, _is_authorized, _get_client_ip
+from core.auth import _authenticate
+from core.auth import _is_authorized
+from core.auth import _get_client_ip
+from core.auth import header_auth
 from core.constants import WEBHOOK_WHITELIST
 
 
@@ -127,3 +130,40 @@ class TestGetClientIP:
     def test_with_first_ip_empty_and_valid_other_one(self, req):
         req.access_route = ["", "86.14.11.2"]
         assert _get_client_ip() == "86.14.11.2"
+
+
+class TestHeaderAuth:
+    def test_with_disabled_header_auth(self, monkeypatch):
+        monkeypatch.setenv("DISABLE_HEADER_AUTH", "True")
+        func = mock.Mock(return_value="foo response")
+        decorated_func = header_auth(func)
+        response = decorated_func("foo_arg", foo=1, bar=2)
+        func.assert_called_with("foo_arg", foo=1, bar=2)
+        assert response == "foo response"
+
+    @mock.patch("core.auth.abort")
+    @mock.patch("core.auth.request")
+    def test_with_no_auth_header(self, request_mock, abort_mock):
+        request_mock.headers.get.return_value = None
+        func = mock.Mock()
+        decorated_func = header_auth(func)
+        response = decorated_func("foo_arg", foo=1, bar=2)
+        request_mock.headers.get.assert_called_once_with("Authorization")
+        assert not func.called
+        abort_mock.assert_called_once_with(403)
+        assert response == abort_mock()
+
+    @mock.patch("core.auth._authenticate")
+    @mock.patch("core.auth.abort")
+    @mock.patch("core.auth.request")
+    def test_with_authentication_failed(self, req, abort_mock, auth_mock):
+        auth_mock.return_value = False
+
+        func = mock.Mock()
+        decorated_func = header_auth(func)
+        response = decorated_func("foo_arg", foo=1, bar=2)
+
+        assert not func.called
+        req.headers.get.assert_called_once_with("Authorization")
+        abort_mock.assert_called_once_with(403)
+        assert response == abort_mock()
