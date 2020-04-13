@@ -6,13 +6,13 @@ import telegram
 from flask import Blueprint
 from flask import abort
 
+from core import database
+from core import utils
 from core.auth import header_auth
 from core.constants import COLLECTION
 from core.constants import SLUG
 from core.constants import TOKEN
 from core.validators import is_valid_date
-from core import database
-from core import utils
 from scrapers import latest_article
 from scrapers.client import DLZClient
 from scrapers.formatters import parse_global

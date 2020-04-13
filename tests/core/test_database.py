@@ -25,6 +25,11 @@ class TestDatabase:
         assert database.get_collection("foo") == mock.ANY
         client_mock.assert_called_once_with()
 
+    def test_get_stats_with_no_kwargs(self):
+        with pytest.raises(ValueError) as e:
+            database.get_stats()
+        assert e.value.args[0] == "filter kwargs required"
+
     @pytest.mark.parametrize(
         ("collection", "slug"), [(None, None), ("foo", "bar")]
     )
@@ -59,3 +64,18 @@ class TestDatabase:
         collection.return_value.update_one.assert_called_once_with(
             {"filter_id": 1}, update={"$set": {"foo": "bar"}}, upsert=True,
         )
+
+    @mock.patch("core.database.get_collection")
+    def test_get_many_no_order(self, collection_mock):
+        collection_mock.return_value.find.return_value = "find_foo"
+        assert database.get_many("foo") == "find_foo"
+        collection_mock.assert_called_once_with("foo")
+        collection_mock().find.assert_called_once_with()
+
+    @mock.patch("core.database.get_collection")
+    def test_get_many_order_by(self, collection_mock):
+        collection_mock.return_value.find.return_value.sort.return_value = "fs"
+        assert database.get_many("foo", order_by="foo_order") == "fs"
+        collection_mock.assert_called_once_with("foo")
+        collection_mock().find.assert_called_once_with()
+        collection_mock().find().sort.assert_called_once_with("foo_order", -1)
