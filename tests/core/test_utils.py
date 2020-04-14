@@ -1,7 +1,9 @@
 import os
+from unittest import mock
 from unittest.mock import MagicMock
 
 import pytest
+import telegram
 from telegram.error import Unauthorized
 
 from core.parsers import parse_sentiment
@@ -25,6 +27,17 @@ def test_send_message_unauthorized():
     bot = MagicMock()
     bot.send_message.side_effect = Unauthorized("err")
     assert send_message(bot, text="hey foo!") == "err"
+
+
+def test_send_message_bad_request():
+    bot = MagicMock()
+    second_call = MagicMock()
+    second_call.to_json.return_value = "foo"
+    bot.send_message.side_effect = [
+        telegram.error.BadRequest("err"),
+        second_call,
+    ]
+    assert send_message(bot, text="hey foo!") == "foo"
 
 
 @pytest.mark.parametrize(

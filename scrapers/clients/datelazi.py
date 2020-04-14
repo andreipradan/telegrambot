@@ -25,9 +25,9 @@ class DateLaZiClient:
         self._remote_data = response.json()
         return self._remote_data
 
-    def sync(self, serializer_class=DLZSerializer, sub_bloc="currentDayStats"):
+    def sync(self):
         remote_data = self._fetch_remote()
-        serializer = serializer_class(remote_data[sub_bloc])
+        serializer = DLZSerializer(remote_data["currentDayStats"])
 
         data = serializer.data
         self.serialized_data = data
