@@ -2,3 +2,4 @@
 omit =
     flask_app.py
     tests/*
+    config/*

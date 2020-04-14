@@ -40,7 +40,6 @@ __pypackages__/
 .tox/
 .webassets-cache
 
-/config/
 /site
 
 ENV/

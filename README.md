@@ -9,16 +9,13 @@
 
 > A telegram bot to interactively check OFFICIAL COVID-19 stats for Romania and other countries.
 
-<h3> 🤖 Interact with the bot
-    <a href="https://telegrambot.pradan.dev/" target="_blank">here</a>
-</h3>
+>![doc](docs/inline.png)
 
-<h3> ✨ See it in action in the
-    <a href="https://t.me/covid_ro_updates">🇷🇴 Covid Updates</a> telegram channel
-</h3>
+See it in action here: https://telegrambot.pradan.dev/channel/
 
+Or interact directly with it here: https://telegrambot.pradan.dev/
 
-## Usage
+## How to install
 
 #### Prerequisites:
 
@@ -28,38 +25,48 @@
     - give it a `username`: e.g. my_extraordinary_bot (this one does need to end in "bot")
     - write down your `token` that BotFather gives you at the end. You will need it later on
 
-#### Basic setup
+#### Steps
 1. Start the Flask local server:
     ```sh
-    $ TOKEN=<telegram_bot_token> python flask_app.py
+    $ TOKEN=<token_from_BotFather> python flask_app.py
     ```
 2. [Ngrok](https://ngrok.com/)
 
+    Telegram bots need a **https URL** as a callback for sending update events. Details [here](https://core.telegram.org/bots/api#getting-updates)
+
     Ngrok is a great utility used for exposing your localhost to a publicly accessible https URL
 
-    Telegram bot needs a https URL as a callback for sending events.
-    e.g. received a message, received a command, a new user was added to the telegram group, etc.
     - sign up here https://dashboard.ngrok.com/signup
     - install `ngrok` and set it up using these four simple steps here: https://dashboard.ngrok.com/get-started
     - run it locally: `ngrok http 5000`
         - this will start a session and forward your localhost port 5000 to an online tunnel
         - copy the output of the https tunnel e.g. ![doc](docs/ngrok.png)
 3. Set the webhook URL for your telegram bot using the  [config/webhook.py](config/webhook.py) script
-    - e.g.
     ```sh
-    $ python config/webhook.py --host=https://5efg4d21.ngrok.io --token=1234567890:ABCD-aBsadfASDFasfdb-v
-    Setting webhook... True
+    $ python config/webhook.py --token=1234567890:ABCD-aBsadfASDFasfdb-v
+    Current webhook url: is not set up
+
+    $ python config/webhook.py --token=1234567890:ABCD-aBsadfASDFasfdb-v --set
+    INFO:root:Current webhook url: https://5efg4d21.ngrok.io/1234567890:ABCD-aBsadfASDFasfdb-v
     ```
     - replace the host and token with your own
-    - your telegram bot should now be pointed to your newly created public URL that mirrors the localhost 5000 port
+    - your telegram bot should now be pointed to your newly created public URL that is tunneling to your localhost 5000 port
 
+4. Data source setup
 
-#### Advanced setup
-1. Configure a MongoDB database
-    - this will be used for storing the data collected by the bot
-    - I use https://www.mongodb.com/cloud/atlas
-    - set the MONGO_DB_HOST on the environment for the flask server to use
-    - set the DATABASE_NAME on the environment as well
+    The telegrambot pull all of its data from mongodb collections
+
+    Configure a MongoDB database:
+    - Steps for setting up mongo db locally <a href="https://docs.mongodb.com/manual/installation/" target="_blank">here</a>
+    - Steps for setting up a remote mongo db cluster <a href="https://docs.atlas.mongodb.com/getting-started/" target="_blank">here</a>
+        - set the MONGO_DB_HOST env variable with the MongoDB Atlas connection string
+        - set the DATABASE_NAME on the environment (optional => defaults to "telegrambot_db")
+
+5. Populate database with initial data
+    ```shell script
+    python config/sync_data.py --all
+    ```
+   - `python config/sync_data.py --help` for the complete list of parameters
 
 
 #### Troubleshooting:
@@ -67,25 +74,36 @@
 1. Make sure you've set the correct TOKEN when starting the Flask server
     - the callback url contains your bot's token so if the TOKEN environment variable is not set correctly, when using the bot you will see a lot of 404s in the server console from the telegram bot trying to post callbacks (respond to commands) to an invalid URL
 
-2. Make sure you've set the correct webhook URL.
-    - you can double check the correct webhook URL by going into a python console and calling:
-        - this should return your bot's webhook url (public https host + bot's token)
-        ```shell script
-        > python config/webhook.py --token=1234567890:ABCD-aBsadfASDFasfdb-v
-        Current webhook url: https://5efg4d21.ngrok.io/1234567890:ABCD-aBsadfASDFasfdb-v
-        ```
+2. Make sure ngrok is tunneling your localhost:
+    - you can do this by navigating to the https URL that ngrok provided - directly into your browser
+
+3. Make sure you've set the correct webhook URL.
+    ```shell script
+    > python config/webhook.py --token=1234567890:ABCD-aBsadfASDFasfdb-v
+    Current webhook url: https://5efg4d21.ngrok.io/1234567890:ABCD-aBsadfASDFasfdb-v
+    ```
+   - should be the ngrok provided HTTPS URL + your telegram bot token
 
 ## Run tests
 
 ```sh
-pytest tests
+TOKEN=foo pytest tests --cov .
 ```
+- for html coverage report add `--cov-report=html`
+
+## Upcoming features
+
+- English keys
+- More data sources
+- Charts and diagrams for historical data, stats based on gender, age, etc.
+- Storing historical data for Global regions/countries (currently only today's statistics)
+- TBD: more google cloud commands
 
 ## Author
 
 👤 **Andrei Prădan**
 
-* Website: https://pradan.dev/
+* Website: [pradan.dev](https://pradan.dev/)
 * Github: [andreipradan](https://github.com/andreipradan)
 * LinkedIn: [andreipradan](https://linkedin.com/in/andreipradan)
 

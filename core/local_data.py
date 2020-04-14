@@ -16,6 +16,8 @@ def prepare_items(title, data):
 
 def local_quick_stats():
     stats = database.get_stats(slug=SLUG["romania"])
+    if not stats:
+        return "Nu sunt statistici salvate pentru ziua de azi"
     stats = DLZSerializer.deserialize(stats)
     return formatters.parse_global(
         title="🔴 Cazuri noi", stats=stats, items={},
@@ -24,6 +26,8 @@ def local_quick_stats():
 
 def local_latest_article():
     stats = database.get_stats(slug=SLUG["stiri-oficiale"])
+    if not stats:
+        return "Nu sunt stiri salvate pentru ziua de azi"
     items = {stats.pop("descriere"): [stats.pop("url")]}
     return formatters.parse_global(
         title=f"🔵 {stats.pop('titlu')}", stats=stats, items=items, emoji="❗"
@@ -38,6 +42,8 @@ def local_global_stats():
     top_stats = database.get_stats(
         collection=COLLECTION["global"], slug=SLUG["global"],
     )
+    if not top_stats:
+        return "Nu sunt statistici globale pentru ziua de azi"
     countries = list(
         database.get_many(COLLECTION["country"], order_by="total_cases")[:3]
     )
@@ -55,8 +61,8 @@ def local_global_stats():
 
 def local_counties():
     stats = database.get_stats(slug=SLUG["romania"])
-    if not stats.get("Judete"):
-        return "Nu sunt date pentru ziua de astăzi"
+    if not stats or not stats.get("Judete"):
+        return "Nu sunt date despre județe pentru ziua de azi"
     serializer = DLZArchiveSerializer
     serializer.deserialize_fields = [
         f for f in serializer.deserialize_fields if f != "Data"
@@ -93,6 +99,8 @@ def local_counties():
 
 def local_age():
     stats = database.get_stats(slug=SLUG["romania"])
+    if not stats:
+        return "Nu sunt statistici de vârstă pentru ziua de azi"
     serializer = DLZArchiveSerializer
     serializer.deserialize_fields = [
         f for f in serializer.deserialize_fields if f != "Data"

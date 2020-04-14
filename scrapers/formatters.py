@@ -1,3 +1,13 @@
+import re
+
+
+def camel_case_to_field(identifier):
+    matches = re.finditer(
+        ".+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)", identifier
+    )
+    return "_".join([m.group(0).lower() for m in matches])
+
+
 def field_to_string(string):
     return " ".join(string.split("_")).capitalize()
 
