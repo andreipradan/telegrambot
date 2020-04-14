@@ -32,7 +32,7 @@ Or interact directly with it here: https://telegrambot.pradan.dev/
     ```
 2. [Ngrok](https://ngrok.com/)
 
-    Telegram bots need a **https URL** as a callback for sending update events. Details [here](https://core.telegram.org/bots/api#getting-updates)
+    Telegram bots need a **https URL** as a callback for sending update events. Details <a href="https://core.telegram.org/bots/api#getting-updates" target="_blank">here</a>
 
     Ngrok is a great utility used for exposing your localhost to a publicly accessible https URL
 
@@ -103,19 +103,18 @@ TOKEN=foo pytest tests --cov .
 
 👤 **Andrei Prădan**
 
-* Website: [pradan.dev](https://pradan.dev/)
-* Github: [andreipradan](https://github.com/andreipradan)
-* LinkedIn: [andreipradan](https://linkedin.com/in/andreipradan)
+* Website: <a href="https://pradan.dev/" target="_blank">pradan.dev</a>
+* Github: <a href="https://github.com/andreipradan" target="_blank">andreipradan</a>
+* LinkedIn: <a href="https://linkedin.com/in/andreipradan" target="_blank">andreipradan</a>
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/andreipradan/telegrambot/issues).
+Contributions, issues and feature requests are welcome!<br />Feel free to check <a href="https://github.com/andreipradan/telegrambot/issues" target="_blank">issues page</a>.
 
 ## Show your support
 
 Give a ⭐️ if this project helped you!
 
 <a href="https://www.buymeacoffee.com/andreipradan" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
-
 ***
-_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
+_This README was generated with ❤️ by <a href="https://github.com/kefranabg/readme-md-generator" target="_blank">readme-md-generator</a>_
