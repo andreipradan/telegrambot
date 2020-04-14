@@ -46,8 +46,8 @@ Or interact directly with it here: https://telegrambot.pradan.dev/
     $ python config/webhook.py --token=1234567890:ABCD-aBsadfASDFasfdb-v
     Current webhook url: is not set up
 
-    $ python config/webhook.py --token=1234567890:ABCD-aBsadfASDFasfdb-v --host=https://5efg4d21.ngrok.io
-    Setting webhook... True
+    $ python config/webhook.py --token=1234567890:ABCD-aBsadfASDFasfdb-v --set
+    INFO:root:Current webhook url: https://5efg4d21.ngrok.io/1234567890:ABCD-aBsadfASDFasfdb-v
     ```
     - replace the host and token with your own
     - your telegram bot should now be pointed to your newly created public URL that is tunneling to your localhost 5000 port
@@ -57,29 +57,17 @@ Or interact directly with it here: https://telegrambot.pradan.dev/
     The telegrambot pull all of its data from mongodb collections
 
     Configure a MongoDB database:
-    - locally: https://www.mongodb.com/download-center/community
-    - remote: https://docs.atlas.mongodb.com/getting-started/
-        - set the MONGO_DB_HOST on the environment
-        - set the DATABASE_NAME on the environment as well
-            - this is optional => defaults to "telegrambot_db"
+    - Steps for setting up mongo db locally <a href="https://docs.mongodb.com/manual/installation/" target="_blank">here</a>
+    - Steps for setting up a remote mongo db cluster <a href="https://docs.atlas.mongodb.com/getting-started/" target="_blank">here</a>
+        - set the MONGO_DB_HOST env variable with the MongoDB Atlas connection string
+        - set the DATABASE_NAME on the environment (optional => defaults to "telegrambot_db")
 
 5. Populate database with initial data
-    - set the `DISABLE_HEADER_AUTH` environment variable to `True`
-    - do a `POST` request to each of the the following endpoints:
-        - `/sync-stats/` for populating the database with statistics for Romania
-        - `/sync-news/` for populating the database with the latest news for Romania
-        - `/sync-global/` for populating the database with Global stats for today
+    ```shell script
+    python config/sync_data.py --all
+    ```
+   - `python config/sync_data.py --help` for the complete list of parameters
 
-        ```sh
-        » curl http://127.0.0.1:5000/today-stats/ -X POST
-
-        *🔴 Cazuri noi*
-        ├ `Confirmați    : 6300               `
-        ├ `Vindecați     : 852                `
-        ├ `Decedați      : 306                `
-        └ `Actualizat la : 12:48, 12 Apr 2020`
-
-        ```
 
 #### Troubleshooting:
 

@@ -1,7 +1,7 @@
 from core.constants import ALLOWED_COMMANDS
 from core.constants import GOOGLE_CLOUD_COMMANDS
 from core.constants import GOOGLE_CLOUD_WHITELIST
-from core.utils import parse_name
+from core.parsers import parse_name
 
 
 def validate_components(update):

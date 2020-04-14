@@ -31,10 +31,9 @@ class DLZSerializer:
     deserialize_fields = "Confirmați", "Vindecați", "Decedați", "Actualizat la"
 
     def __init__(self, response):
-        self.response = response
         self.data = OrderedDict()
         for field, api_field in self.mapped_fields.items():
-            self.data[field] = self.response[api_field]
+            self.data[field] = response[api_field]
 
     def save(self):
         database.set_stats(

@@ -17,12 +17,12 @@ class TestGetQuickStats:
         serializer.return_value.data = {"foo": 1}
         db_stats_mock.return_value = {"foo": 1}
         results = getattr(new_cases, self.func)()
-        get.assert_called_once_with(new_cases.URL)
+        get.assert_called_once_with("https://api1.datelazi.ro/api/v2/data/")
         get().raise_for_status.assert_called_once_with()
         db_stats_mock.assert_called_once_with(slug="romania-slug")
         assert results is None
 
-    @mock.patch("core.utils.parse_diff")
+    @mock.patch("core.parsers.parse_diff")
     @mock.patch("scrapers.formatters.parse_global")
     @mock.patch("core.database.get_stats")
     @mock.patch("core.views.new_cases.DLZSerializer")
@@ -33,14 +33,14 @@ class TestGetQuickStats:
         ser().data = {"foo": 1, "bar": 2}
         db_get.return_value = {"foo": 1}
         results = getattr(new_cases, self.func)()
-        get.assert_called_once_with(new_cases.URL)
+        get.assert_called_once_with("https://api1.datelazi.ro/api/v2/data/")
         get().raise_for_status.assert_called_once_with()
         db_get.assert_called_once_with(slug="romania-slug")
         ser().save.assert_called_once_with()
         assert not par.called
         assert results is None
 
-    @mock.patch("core.utils.parse_diff")
+    @mock.patch("core.views.new_cases.parse_diff")
     @mock.patch("core.views.new_cases.parse_global")
     @mock.patch("core.database.get_stats")
     @mock.patch("core.views.new_cases.DLZSerializer")
@@ -64,7 +64,7 @@ class TestGetQuickStats:
         ser.mapped_fields = DLZSerializer.mapped_fields
         db_get.return_value = {"foo": 1}
         results = new_cases.get_quick_stats()
-        get.assert_called_once_with(new_cases.URL)
+        get.assert_called_once_with("https://api1.datelazi.ro/api/v2/data/")
         get().raise_for_status.assert_called_once_with()
         db_get.assert_called_once_with(slug="romania-slug")
         ser().save.assert_called_once_with()
@@ -85,17 +85,18 @@ class TestGetLatestNews:
     def test_stats_already_in_db(self, db_stats_mock):
         db_stats_mock.return_value = {"foo": 1}
 
-        with mock.patch("core.views.new_cases.latest_article") as func_mock:
-            func_mock.return_value = {"foo": 1}
+        with mock.patch(
+            "core.views.new_cases.StiriOficialeClient"
+        ) as func_mock:
+            func_mock.return_value.sync.return_value = None
             results = new_cases.get_latest_news()
 
-        func_mock.assert_called_once_with(json=True)
-        db_stats_mock.assert_called_once_with(slug="stiri-oficiale-slug")
+        func_mock.assert_called_once_with()
         assert results is None
 
     @mock.patch("core.database.set_stats")
     @mock.patch("core.database.get_stats")
-    @mock.patch("core.utils.parse_diff")
+    @mock.patch("core.parsers.parse_diff")
     @mock.patch("core.views.new_cases.parse_global")
     def test_set_stats_if_not_in_db(
         self, parse_mock, diff_mock, get_db_stats_mock, set_db_stats_mock,
@@ -104,8 +105,10 @@ class TestGetLatestNews:
         get_db_stats_mock.return_value = {"foo": 1}
         parse_mock.return_value = "parse_global_result"
 
-        with mock.patch("core.views.new_cases.latest_article") as func_mock:
-            func_mock.return_value = {
+        with mock.patch(
+            "core.views.new_cases.StiriOficialeClient"
+        ) as func_mock:
+            func_mock.return_value.sync.return_value = {
                 "bar": 2,
                 "descriere": "description",
                 "foo": 1,
@@ -114,13 +117,7 @@ class TestGetLatestNews:
             }
             results = new_cases.get_latest_news()
 
-        func_mock.assert_called_once_with(json=True)
-        get_db_stats_mock.assert_called_once_with(slug="stiri-oficiale-slug")
-        set_db_stats_mock.assert_called_once_with(
-            stats={"foo": 1, "bar": 2},
-            collection="romania-collection",
-            slug="stiri-oficiale-slug",
-        )
+        func_mock.assert_called_once_with()
         parse_mock.assert_called_once_with(
             emoji="❗",
             items={"description": ["http://foo.url"]},

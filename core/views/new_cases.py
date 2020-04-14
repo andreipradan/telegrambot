@@ -7,14 +7,14 @@ from flask import Blueprint
 from flask import abort
 
 from core import database
-from core import utils
 from core.auth import header_auth
 from core.constants import COLLECTION
 from core.constants import SLUG
-from core.constants import TOKEN
+from core.parsers import parse_diff
+from core.utils import send_message
 from core.validators import is_valid_date
-from scrapers import latest_article
-from scrapers.client import DLZClient
+from scrapers.clients.datelazi import DateLaZiClient
+from scrapers.clients.stirioficiale import StiriOficialeClient
 from scrapers.formatters import parse_global
 from serializers import DLZSerializer
 from serializers import DLZArchiveSerializer
@@ -22,8 +22,6 @@ from serializers import DLZArchiveSerializer
 logger = logging.getLogger(__name__)
 
 new_cases_views = Blueprint("new_cases_views", __name__)
-
-URL = "https://api1.datelazi.ro/api/v2/data/"
 
 
 def store_yesterdays_stats(today, historical_data):
@@ -45,26 +43,8 @@ def store_yesterdays_stats(today, historical_data):
     logger.info(f"Updated archive stats for {yesterday}")
 
 
-def sync_archive():
-    response = requests.get(URL)
-    response.raise_for_status()
-
-    data = response.json()
-    historical_data = data["historicalData"]
-
-    for day in historical_data:
-        serializer = DLZArchiveSerializer(historical_data[day])
-        db_stats = database.get_stats(COLLECTION["archive"], Data=day)
-        if db_stats and serializer.data.items() <= db_stats.items():
-            logger.info(f"No updates for {day}")
-            continue
-
-        serializer.save()
-        logger.info(f"Updated archive stats for {day}")
-
-
 def get_quick_stats():
-    response = requests.get(URL)
+    response = requests.get(DateLaZiClient.url)
     response.raise_for_status()
 
     data = response.json()
@@ -92,23 +72,16 @@ def get_quick_stats():
 
     deserialized = serializer.deserialize(serializer.data)
     actualizat_la = deserialized.pop("Actualizat la")
-    diff = utils.parse_diff(deserialized, db_stats)
+    diff = parse_diff(deserialized, db_stats)
     diff["Actualizat la"] = actualizat_la
     return parse_global(title="🔴 Cazuri noi", stats=diff, items={})
 
 
 def get_latest_news():
-    stats = latest_article(json=True)
-
-    db_stats = database.get_stats(slug=SLUG["stiri-oficiale"])
-    if db_stats and stats.items() <= db_stats.items():
+    client = StiriOficialeClient()
+    stats = client.sync()
+    if not stats:
         return
-
-    database.set_stats(
-        stats=stats,
-        collection=COLLECTION["romania"],
-        slug=SLUG["stiri-oficiale"],
-    )
 
     items = {stats.pop("descriere"): [stats.pop("url")]}
     return parse_global(
@@ -128,7 +101,7 @@ def check_new_cases(what, token):
     if not text:
         return "No changes"
 
-    bot = telegram.Bot(token=TOKEN)
+    bot = telegram.Bot(token=os.environ["TOKEN"])
     return bot.sendMessage(
         chat_id=os.environ["CHAT_ID"],
         text=text,
@@ -140,37 +113,30 @@ def check_new_cases(what, token):
 FUNCS = {
     "covid-new-cases": get_quick_stats,
     "stiri-oficiale": get_latest_news,
-    "sync-archive": sync_archive,
+    "sync-archive": DateLaZiClient().sync_archive,
 }
 
 
 @new_cases_views.route("/today-stats/", methods=["POST"])
 @header_auth
 def check_quick_stats():
-    client = DLZClient()
-    data = client.fetch()
+    client = DateLaZiClient()
+    client.sync()
 
-    db_stats = database.get_stats(slug=SLUG["romania"])
-    if db_stats and data.items() <= db_stats.items():
-        msg = "No updates for today's stats"
-        logger.info(msg)
-        return msg
-    client.store()
-    logger.info("Stored current day stats.")
-
-    quick_stats = client.normalized_data
+    quick_stats = DLZSerializer.deserialize(client._remote_data)
     last_updated = quick_stats.pop("Actualizat la")
 
+    db_stats = client.serialized_data
     if db_stats and quick_stats.items() <= db_stats.items():
         msg = "No updates to quick stats"
         logger.info(msg)
         return msg
 
-    diff = utils.parse_diff(quick_stats, db_stats)
+    diff = parse_diff(quick_stats, db_stats)
     diff["Actualizat la"] = last_updated
 
-    utils.send_message(
-        bot=telegram.Bot(token=TOKEN),
+    send_message(
+        bot=telegram.Bot(token=os.environ["TOKEN"]),
         text=parse_global(title="🔴 Cazuri noi", stats=diff, items={}),
         chat_id=os.environ["CHAT_ID"],
     )

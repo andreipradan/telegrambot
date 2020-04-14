@@ -7,6 +7,7 @@ from core.auth import _authenticate
 from core.auth import _is_authorized
 from core.auth import _get_client_ip
 from core.auth import header_auth
+from core.auth import whitelist_auth
 from core.constants import WEBHOOK_WHITELIST
 
 
@@ -167,3 +168,55 @@ class TestHeaderAuth:
         req.headers.get.assert_called_once_with("Authorization")
         abort_mock.assert_called_once_with(403)
         assert response == abort_mock()
+
+    @mock.patch("core.auth._authenticate")
+    @mock.patch("core.auth.abort")
+    @mock.patch("core.auth.request")
+    def test_auth_successful(self, req, abort_mock, auth_mock):
+        auth_mock.return_value = True
+
+        func = mock.Mock(return_value="result_foo")
+        decorated_func = header_auth(func)
+        response = decorated_func("foo_arg", foo=1, bar=2)
+
+        req.headers.get.assert_called_once_with("Authorization")
+        assert not abort_mock.called
+        func.assert_called_once_with("foo_arg", bar=2, foo=1)
+        assert response == "result_foo"
+
+
+class TestWhitelistAuth:
+    @mock.patch("core.auth.abort")
+    @mock.patch("core.auth._is_authorized")
+    @mock.patch("core.auth._get_client_ip")
+    def test_with_unauthorized_ip(self, get_ip, is_authorized, abort_mock):
+        get_ip.return_value = "ip_foo"
+        is_authorized.return_value = False
+
+        func = mock.Mock()
+        decorated_func = whitelist_auth(func)
+        response = decorated_func("foo_arg", foo=1, bar=2)
+
+        assert not func.called
+        get_ip.assert_called_once_with()
+        is_authorized.assert_called_once_with("ip_foo")
+        abort_mock.assert_called_once_with(403)
+        assert response == abort_mock()
+
+    @mock.patch("core.auth.abort")
+    @mock.patch("core.auth._is_authorized")
+    @mock.patch("core.auth._get_client_ip")
+    @mock.patch("core.auth.request")
+    def test_with_authorized_ip(self, req, get_ip, is_authorized, abort_mock):
+        get_ip.return_value = "ip_foo"
+        is_authorized.return_value = True
+
+        func = mock.Mock(return_value="response_foo")
+        decorated_func = whitelist_auth(func)
+        response = decorated_func("foo_arg", foo=1, bar=2)
+
+        func.assert_called_once_with(req, "foo_arg", foo=1, bar=2)
+        get_ip.assert_called_once_with()
+        is_authorized.assert_called_once_with("ip_foo")
+        assert response == "response_foo"
+        assert not abort_mock.called
