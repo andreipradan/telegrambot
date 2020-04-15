@@ -111,7 +111,6 @@ def check_new_cases(what, token):
 
 
 FUNCS = {
-    "covid-new-cases": get_quick_stats,
     "stiri-oficiale": get_latest_news,
     "sync-archive": DateLaZiClient().sync_archive,
 }
@@ -122,6 +121,9 @@ FUNCS = {
 def check_quick_stats():
     client = DateLaZiClient()
     client.sync()
+
+    # TODO: add sync_archive (or separate endpoint to check less often
+    #  e.g. only once a day)
 
     quick_stats = DLZSerializer.deserialize(client.serialized_data)
     last_updated = quick_stats.pop("Actualizat la")
