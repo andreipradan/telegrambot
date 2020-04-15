@@ -117,16 +117,16 @@ FUNCS = {
 }
 
 
-@new_cases_views.route("/today-stats/", methods=["POST"])
+@new_cases_views.route("/check-new-cases/", methods=["POST"])
 @header_auth
 def check_quick_stats():
     client = DateLaZiClient()
     client.sync()
 
-    quick_stats = DLZSerializer.deserialize(client._remote_data)
+    quick_stats = DLZSerializer.deserialize(client.serialized_data)
     last_updated = quick_stats.pop("Actualizat la")
 
-    db_stats = client.serialized_data
+    db_stats = client._local_data
     if db_stats and quick_stats.items() <= db_stats.items():
         msg = "No updates to quick stats"
         logger.info(msg)
