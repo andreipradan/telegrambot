@@ -23,11 +23,14 @@ def send_message(bot, text, chat_id=None):
             parse_mode=telegram.ParseMode.MARKDOWN,
         ).to_json()
     except telegram.error.BadRequest as err:
-        return bot.send_message(
-            chat_id=chat_id or os.getenv("DEBUG_CHAT_ID"),
-            text=str(err),
-            disable_notification=True,
-            parse_mode=telegram.ParseMode.MARKDOWN,
-        ).to_json()
+        try:
+            return bot.send_message(
+                chat_id=chat_id or os.getenv("DEBUG_CHAT_ID"),
+                text=str(err),
+                disable_notification=True,
+                parse_mode=telegram.ParseMode.MARKDOWN,
+            ).to_json()
+        except Unauthorized as e:
+            return str(e)
     except Unauthorized as e:
         return str(e)
