@@ -43,40 +43,6 @@ def store_yesterdays_stats(today, historical_data):
     logger.info(f"Updated archive stats for {yesterday}")
 
 
-def get_quick_stats():
-    response = requests.get(DateLaZiClient.url)
-    response.raise_for_status()
-
-    data = response.json()
-    today_stats = data["currentDayStats"]
-    historical_data = data["historicalData"]
-
-    store_yesterdays_stats(today_stats["parsedOnString"], historical_data)
-
-    serializer = DLZSerializer(today_stats)
-    db_stats = database.get_stats(slug=SLUG["romania"])
-    if db_stats and serializer.data.items() <= db_stats.items():
-        logger.info("No updates for today's stats")
-        return
-
-    serializer.save()
-    logger.info("Updated current day stats.")
-
-    quick_stats = {
-        field: data["currentDayStats"][DLZSerializer.mapped_fields[field]]
-        for field in DLZSerializer.deserialize_fields
-    }
-    if db_stats and quick_stats.items() <= db_stats.items():
-        logger.info("No updates to quick stats")
-        return
-
-    deserialized = serializer.deserialize(serializer.data)
-    actualizat_la = deserialized.pop("Actualizat la")
-    diff = parse_diff(deserialized, db_stats)
-    diff["Actualizat la"] = actualizat_la
-    return parse_global(title="🔴 Cazuri noi", stats=diff, items={})
-
-
 def get_latest_news():
     client = StiriOficialeClient()
     stats = client.sync()

@@ -1,16 +1,19 @@
+import os
 import pytest
 
-from flask_app import app
-
-app.config["SERVER_NAME"] = "example.com"
-app.config["TESTING"] = True
+os.environ["SECRET_KEY"] = "test_secret_key"
+os.environ["TOKEN"] = "test_token"
 
 
 @pytest.fixture(scope="module")
 def client():
-    client = app.test_client()
+    from flask_app import flask_app
+
+    flask_app.config["SERVER_NAME"] = "example.com"
+    flask_app.config["TESTING"] = True
+    client = flask_app.test_client()
     # Establish an application context before running the tests.
-    ctx = app.app_context()
+    ctx = flask_app.app_context()
     ctx.push()
     yield client  # this is where the testing happens!
     ctx.pop()

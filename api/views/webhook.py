@@ -19,7 +19,7 @@ webhook_views = Blueprint("webhook_views", __name__)
 TOKEN = os.environ["TOKEN"]
 
 
-@webhook_views.route(f"/{TOKEN}", methods=["POST"])
+@webhook_views.route(f"/webhook/{TOKEN}", methods=["POST"])
 def webhook():
     json = request.get_json()
     if not json:

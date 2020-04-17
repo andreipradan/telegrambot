@@ -78,3 +78,4 @@ var/
 venv/
 venv.bak/
 wheels/
+app/base/static/

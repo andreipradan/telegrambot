@@ -1,5 +1,4 @@
 import os
-from unittest import mock
 from unittest.mock import MagicMock
 
 import pytest
@@ -38,6 +37,15 @@ def test_send_message_bad_request():
         second_call,
     ]
     assert send_message(bot, text="hey foo!") == "foo"
+
+
+def test_send_message_unauthorized_bad_request():
+    bot = MagicMock()
+    bot.send_message.side_effect = [
+        telegram.error.BadRequest("err"),
+        telegram.error.Unauthorized("unauth"),
+    ]
+    assert send_message(bot, text="hey foo!") == "unauth"
 
 
 @pytest.mark.parametrize(

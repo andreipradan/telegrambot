@@ -7,6 +7,4 @@ WORKDIR $APP_HOME
 # Install test dependencies.
 RUN pip install -r test_requirements.txt
 
-ENV TOKEN=test_token
-
 CMD exec pytest /app/tests/ --cov=. --cov-fail-under=70

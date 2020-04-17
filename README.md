@@ -13,7 +13,7 @@
 
 See it in action here: https://telegrambot.pradan.dev/channel/
 
-Or interact directly with it here: https://telegrambot.pradan.dev/
+Or interact directly with it here: https://telegrambot.pradan.dev/bot/
 
 ## How to install
 
@@ -87,7 +87,7 @@ Or interact directly with it here: https://telegrambot.pradan.dev/
 ## Run tests
 
 ```sh
-TOKEN=foo pytest tests --cov .
+pytest tests --cov .
 ```
 - for html coverage report add `--cov-report=html`
 
