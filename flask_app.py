@@ -20,10 +20,10 @@ from api.views.webhook import webhook_views
 login_manager = LoginManager()
 
 
-def register_blueprints(app):
-    app.register_blueprint(new_cases_views)
-    app.register_blueprint(redirects_views)
-    app.register_blueprint(webhook_views)
+def register_blueprints(app_instance):
+    app_instance.register_blueprint(new_cases_views)
+    app_instance.register_blueprint(redirects_views)
+    app_instance.register_blueprint(webhook_views)
 
     for module_name in (
         "base",
@@ -36,7 +36,7 @@ def register_blueprints(app):
         "base",
     ):
         module = import_module("app.{}.routes".format(module_name))
-        app.register_blueprint(module.blueprint)
+        app_instance.register_blueprint(module.blueprint)
 
 
 def configure_logs():
@@ -45,7 +45,7 @@ def configure_logs():
     logger.addHandler(StreamHandler())
 
 
-def apply_themes(app):
+def apply_themes(flask_app):
     """
     Add support for themes.
 
@@ -61,22 +61,20 @@ def apply_themes(app):
       in the default /static/ location
     """
 
-    @app.context_processor
+    @flask_app.context_processor
     def override_url_for():
         return dict(url_for=_generate_url_for_theme)
 
     def _generate_url_for_theme(endpoint, **values):
         if endpoint.endswith("static"):
-            themename = values.get("theme", None) or app.config.get(
+            theme = values.get("theme", None) or flask_app.config.get(
                 "DEFAULT_THEME", None
             )
-            if themename:
-                theme_file = "{}/{}".format(
-                    themename, values.get("filename", "")
-                )
-                if path.isfile(path.join(app.static_folder, theme_file)):
+            if theme:
+                theme_file = "{}/{}".format(theme, values.get("filename", ""))
+                if path.isfile(path.join(flask_app.static_folder, theme_file)):
                     values["filename"] = theme_file
-        if app.env != "development":
+        if flask_app.env != "development":
             return f"{os.getenv('STATIC_HOST')}{url_for(endpoint, **values)}"
         return url_for(endpoint, **values)
 
@@ -97,9 +95,9 @@ if SENTRY_DSN:
         dsn=os.environ["SENTRY_DSN"], integrations=[FlaskIntegration()]
     )
 
-flask_app = create_app()
+app = create_app()
 if __name__ == "__main__":
-    flask_app.run(
+    app.run(
         host=os.getenv("HOST", "127.0.0.1"),
         port=int(os.environ.get("PORT", 5000)),
         debug=os.getenv("DEBUG", False),
