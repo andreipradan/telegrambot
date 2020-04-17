@@ -11,7 +11,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
       {% endblock meta %}
 
-      <title>Gentelella Alela! | {% block title %}{% endblock %}</title>
+      <title>Covid 19 Romania | {% block title %}{% endblock %}</title>
 
       {% block stylesheets %}
         <!-- Bootstrap -->
@@ -40,7 +40,7 @@
         <div class="main_container">
 
           {% block sidebar %}
-            <div class="col-md-3 left_col {% block sidebar_class %} {% endblock sidebar_class %}">
+            <div class="col-md-3 left_col {% block sidebar_class %} menu_fixed {% endblock sidebar_class %}">
               {% include "site_template/sidebar.html" %}
             </div>
           {% endblock sidebar %}

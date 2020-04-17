@@ -74,8 +74,10 @@ def apply_themes(flask_app):
                 theme_file = "{}/{}".format(theme, values.get("filename", ""))
                 if path.isfile(path.join(flask_app.static_folder, theme_file)):
                     values["filename"] = theme_file
-        if flask_app.env != "development":
-            return f"{os.getenv('STATIC_HOST')}{url_for(endpoint, **values)}"
+            if flask_app.env != "development":
+                return (
+                    f"{os.getenv('STATIC_HOST')}{url_for(endpoint, **values)}"
+                )
         return url_for(endpoint, **values)
 
 
