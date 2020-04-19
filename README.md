@@ -1,6 +1,11 @@
 <h1 align="center">Welcome to telegrambot 👋</h1>
 <p>
   <img alt="cloud build status" src="https://storage.googleapis.com/telegrambot/build-status.svg" />
+  <img alt="coverage status" src="https://storage.googleapis.com/telegrambot/coverage.svg?" />
+  <a href="https://github.com/psf/black" target="_blank">
+    <img alt="black code style" src="https://img.shields.io/badge/code%20style-black-000000.svg" />
+  </a>
+
   <a href="https://github.com/andreipradan/telegrambot/blob/master/LICENCE.md" target="_blank">
     <img alt="License: LICENCE.md" src="https://img.shields.io/badge/License-LICENCE.md-yellow.svg" />
   </a>
@@ -11,15 +16,15 @@
 
 >![doc](docs/inline.png)
 
-See it in action here: https://telegrambot.pradan.dev/channel/
+See it in action here: <a href="https://telegrambot.pradan.dev/channel/" target="_blank">https://telegrambot.pradan.dev/channel/</a>
 
-Or interact directly with it here: https://telegrambot.pradan.dev/bot/
+Or interact directly with it here: <a href="https://telegrambot.pradan.dev/bot/" target="_blank">https://telegrambot.pradan.dev/bot/</a>
 
 ## How to install
 
 #### Prerequisites:
 
-- Create a new telegram bot by typing `/newbot` to BotFather here: https://t.me/botfather
+- Create a new telegram bot by typing `/newbot` to BotFather here: <a href="https://t.me/botfather" target="_blank">https://t.me/botfather</a>
 
     - give it a `name`: e.g. MyExtraordinaryBot (does not need to end in "Bot")
     - give it a `username`: e.g. my_extraordinary_bot (this one does need to end in "bot")
@@ -37,7 +42,7 @@ Or interact directly with it here: https://telegrambot.pradan.dev/bot/
     Ngrok is a great utility used for exposing your localhost to a publicly accessible https URL
 
     - sign up here https://dashboard.ngrok.com/signup
-    - install `ngrok` and set it up using these four simple steps here: https://dashboard.ngrok.com/get-started
+    - install `ngrok` and set it up using these four simple steps here: <a href="https://dashboard.ngrok.com/get-started" target="_blank">https://dashboard.ngrok.com/get-started</a>
     - run it locally: `ngrok http 5000`
         - this will start a session and forward your localhost port 5000 to an online tunnel
         - copy the output of the https tunnel e.g. ![doc](docs/ngrok.png)
@@ -99,6 +104,10 @@ pytest tests --cov .
 - Storing historical data for Global regions/countries (currently only today's statistics)
 - TBD: more google cloud commands
 
+## Frontend
+
+https://github.com/afourmy/flask-gentelella
+
 ## Author
 
 👤 **Andrei Prădan**
@@ -117,11 +126,7 @@ Give a ⭐️ if this project helped you!
 
 <a href="https://www.buymeacoffee.com/andreipradan" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee"></a>
 
-
 <a href="https://pay.revolut.com/profile/eusebifsd" target="_blank"><img src="https://storage.googleapis.com/telegrambot/buttons/revolut.png" alt="Revolut"></a>
-
-
-
 
 ***
 _This README was generated with ❤️ by <a href="https://github.com/kefranabg/readme-md-generator" target="_blank">readme-md-generator</a>_

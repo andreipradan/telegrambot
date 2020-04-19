@@ -54,7 +54,7 @@ def login():
             login_form=login_form,
             create_account_form=create_account_form,
         )
-    return redirect(url_for("home_blueprint.index"))
+    return redirect(url_for("base_blueprint.route_default"))
 
 
 @blueprint.route("/create_user", methods=["POST"])
