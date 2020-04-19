@@ -26,14 +26,14 @@ def register_blueprints(app_instance):
     app_instance.register_blueprint(webhook_views)
 
     for module_name in (
-        "base",
-        "forms",
-        "ui",
-        "home",
-        "tables",
-        "data",
         "additional",
         "base",
+        "data",
+        "forms",
+        "home",
+        "public",
+        "tables",
+        "ui",
     ):
         module = import_module("app.{}.routes".format(module_name))
         app_instance.register_blueprint(module.blueprint)

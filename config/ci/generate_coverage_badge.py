@@ -1,6 +1,5 @@
 import logging
 from coverage import coverage
-from google.cloud import storage
 
 
 COVERAGE_COLOURS = [

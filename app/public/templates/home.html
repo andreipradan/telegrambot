@@ -1,0 +1,35 @@
+{% extends "base_site.html" %}
+
+{% block title %} Homepage {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+{% endblock stylesheets %}
+
+{% block body_class %}nav-sm{% endblock %}
+{% block top_navigation %}{% endblock %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <!-- top tiles -->
+    <div class="row tile_count">
+        {% for tile in top_stats %}
+            {% with title=tile.name, count=tile.value, count_change=tile.change, icon=tile.icon, count_color=tile.count_color%}
+                {% include "sections/parts/title_tile.html" %}
+            {% endwith %}
+        {% endfor %}
+    </div>
+
+    <!-- /top tiles -->
+
+    {% include "sections/parts/line_graph.html" %}
+
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+    {{ super()}}
+    <script src="{{ url_for('static', filename='vendors/echarts/dist/echarts.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='build/js/home.js') }}"></script>
+    <script type="text/javascript">init_e_chart_line('{{ archive|tojson }}')</script>
+{% endblock javascripts %}

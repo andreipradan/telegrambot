@@ -9,10 +9,10 @@ from app.base.forms import LoginForm, CreateAccountForm
 from app.base.models import User
 
 
-@blueprint.route("/")
-def route_default():
+@blueprint.route("/admin")
+def admin():
     if current_user.is_authenticated:
-        return render_template("index.html")
+        return render_template("index1.html")
     return redirect(url_for("base_blueprint.login"))
 
 
@@ -46,7 +46,7 @@ def login():
         user = User.objects.get(username=username)
         if user and checkpw(password.encode("utf8"), user.password):
             login_user(user)
-            return redirect(url_for("base_blueprint.route_default"))
+            return redirect(url_for("base_blueprint.admin"))
         return render_template("errors/page_403.html")
     if not current_user.is_authenticated:
         return render_template(
@@ -54,7 +54,7 @@ def login():
             login_form=login_form,
             create_account_form=create_account_form,
         )
-    return redirect(url_for("base_blueprint.route_default"))
+    return redirect(url_for("base_blueprint.admin"))
 
 
 @blueprint.route("/create_user", methods=["POST"])

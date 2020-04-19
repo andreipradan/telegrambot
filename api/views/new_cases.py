@@ -1,7 +1,6 @@
 import logging
 import os
 
-import requests
 import telegram
 from flask import Blueprint
 from flask import abort
@@ -9,7 +8,6 @@ from flask import abort
 from core import database
 from core.auth import header_auth
 from core.constants import COLLECTION
-from core.constants import SLUG
 from core.parsers import parse_diff
 from core.utils import send_message
 from core.validators import is_valid_date

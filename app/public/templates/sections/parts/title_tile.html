@@ -1,0 +1,15 @@
+<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+    <span class="count_top">
+        <i class="fa fa-{{icon}}"></i> {{ title }}
+    </span>
+    <div class="count">{{ count }}{% if "Procent" in title %}%{% endif %}</div>
+    {% if count_change %}
+        <span class="count_bottom">
+            Față de ieri
+            <i class="{% if title == "Vindecați" %}green{% elif count_change > 0 %}red{% elif count_change== 0 %}dark{% else %}green{% endif %}">
+                {{ count_change }}
+                <i class="fa fa-sort{% if count_change > 0 %}-asc{% elif count_change < 0 %}-desc{% endif %}"></i>
+            </i>
+        </span>
+    {% endif %}
+</div>
