@@ -16,15 +16,15 @@
 
 >![doc](docs/inline.png)
 
-See it in action here: <a href="https://telegrambot.pradan.dev/channel/" target="_blank">https://telegrambot.pradan.dev/channel/</a>
+See it in action here: https://telegrambot.pradan.dev/channel/
 
-Or interact directly with it here: <a href="https://telegrambot.pradan.dev/bot/" target="_blank">https://telegrambot.pradan.dev/bot/</a>
+Or interact directly with it here: https://telegrambot.pradan.dev/bot/</a>
 
 ## How to install
 
 #### Prerequisites:
 
-- Create a new telegram bot by typing `/newbot` to BotFather here: <a href="https://t.me/botfather" target="_blank">https://t.me/botfather</a>
+- Create a new telegram bot by sending the `/newbot` command to BotFather [here](https://t.me/botfather)
 
     - give it a `name`: e.g. MyExtraordinaryBot (does not need to end in "Bot")
     - give it a `username`: e.g. my_extraordinary_bot (this one does need to end in "bot")
@@ -37,12 +37,12 @@ Or interact directly with it here: <a href="https://telegrambot.pradan.dev/bot/"
     ```
 2. [Ngrok](https://ngrok.com/)
 
-    Telegram bots need a **https URL** as a callback for sending update events. Details <a href="https://core.telegram.org/bots/api#getting-updates" target="_blank">here</a>
+    Telegram bots need a **https URL** as a callback for sending update events. Details [here](https://core.telegram.org/bots/api#getting-updates)
 
     Ngrok is a great utility used for exposing your localhost to a publicly accessible https URL
 
     - sign up here https://dashboard.ngrok.com/signup
-    - install `ngrok` and set it up using these four simple steps here: <a href="https://dashboard.ngrok.com/get-started" target="_blank">https://dashboard.ngrok.com/get-started</a>
+    - install `ngrok` and set it up using these four simple steps here: https://dashboard.ngrok.com/get-started
     - run it locally: `ngrok http 5000`
         - this will start a session and forward your localhost port 5000 to an online tunnel
         - copy the output of the https tunnel e.g. ![doc](docs/ngrok.png)
@@ -62,8 +62,8 @@ Or interact directly with it here: <a href="https://telegrambot.pradan.dev/bot/"
     The telegrambot pull all of its data from mongodb collections
 
     Configure a MongoDB database:
-    - Steps for setting up mongo db locally <a href="https://docs.mongodb.com/manual/installation/" target="_blank">here</a>
-    - Steps for setting up a remote mongo db cluster <a href="https://docs.atlas.mongodb.com/getting-started/" target="_blank">here</a>
+    - Steps for setting up mongo db locally [here](https://docs.mongodb.com/manual/installation/)
+    - Steps for setting up a remote mongo db cluster [here](https://docs.atlas.mongodb.com/getting-started/)
         - set the MONGO_DB_HOST env variable with the MongoDB Atlas connection string
         - set the DATABASE_NAME on the environment (optional => defaults to "telegrambot_db")
 
@@ -112,13 +112,13 @@ https://github.com/afourmy/flask-gentelella
 
 👤 **Andrei Prădan**
 
-* Website: <a href="https://pradan.dev/" target="_blank">pradan.dev</a>
-* Github: <a href="https://github.com/andreipradan" target="_blank">andreipradan</a>
-* LinkedIn: <a href="https://linkedin.com/in/andreipradan" target="_blank">andreipradan</a>
+* Website: [pradan.dev](https://pradan.dev/)
+* Github: [andreipradan](https://github.com/andreipradan)
+* LinkedIn: [andreipradan](https://linkedin.com/in/andreipradan)
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check <a href="https://github.com/andreipradan/telegrambot/issues" target="_blank">issues page</a>.
+Contributions, issues and feature requests are welcome!<br />Feel free to check the [issues page](https://github.com/andreipradan/telegrambot/issues)
 
 ## Show your support
 
@@ -129,4 +129,4 @@ Give a ⭐️ if this project helped you!
 <a href="https://pay.revolut.com/profile/eusebifsd" target="_blank"><img src="https://storage.googleapis.com/telegrambot/buttons/revolut.png" alt="Revolut"></a>
 
 ***
-_This README was generated with ❤️ by <a href="https://github.com/kefranabg/readme-md-generator" target="_blank">readme-md-generator</a>_
+_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_

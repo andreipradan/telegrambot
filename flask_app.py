@@ -1,11 +1,6 @@
 import os
 from os import path
 from importlib import import_module
-from logging import DEBUG
-from logging import StreamHandler
-from logging import basicConfig
-from logging import getLogger
-
 
 from flask import Flask
 from flask import url_for
@@ -37,12 +32,6 @@ def register_blueprints(app_instance):
     ):
         module = import_module("app.{}.routes".format(module_name))
         app_instance.register_blueprint(module.blueprint)
-
-
-def configure_logs():
-    basicConfig(filename="error.log", level=DEBUG)
-    logger = getLogger()
-    logger.addHandler(StreamHandler())
 
 
 def apply_themes(flask_app):
@@ -86,7 +75,6 @@ def create_app():
     app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
     login_manager.init_app(app)
     register_blueprints(app)
-    configure_logs()
     apply_themes(app)
     return app
 
