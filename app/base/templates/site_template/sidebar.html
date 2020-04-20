@@ -1,0 +1,129 @@
+<div class="left_col scroll-view">
+  <div class="navbar nav_title" style="border: 0;">
+    <a href="{{ url_for("public_blueprint.route_default") }}" class="site_title"><i class="fa fa-spinner"></i> <span>Covid 19</span></a>
+  </div>
+
+  <div class="clearfix"></div>
+
+  <!-- menu profile quick info -->
+  <div class="profile clearfix">
+    <div class="profile_pic">
+      <img src="{{ url_for('static', filename='images/img.jpg') }}" alt="..." class="img-circle profile_img">
+    </div>
+    <div class="profile_info">
+      <span>Welcome,</span>
+      <h2> {{ current_user.username }} </h2>
+    </div>
+  </div>
+  <!-- /menu profile quick info -->
+
+  <br />
+
+  <!-- sidebar menu -->
+  <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+
+  {% if not current_user.is_authenticated %}
+      <div class="menu_section">
+          <h3>General</h3>
+          <ul class="nav side-menu">
+              <li>
+                  <a href="{{ url_for('public_blueprint.route_default') }}">
+                      <i class="fa fa-history"></i> România
+                  </a>
+              </li>
+              <li>
+                  <a href="{{ url_for('public_blueprint.europe') }}">
+                      <i class="fa fa-map-o"></i> Europe
+                  </a>
+              </li>
+              <li>
+                  <a href="{{ url_for('public_blueprint.global_map') }}">
+                      <i class="fa fa-globe"></i> Global
+                  </a>
+              </li>
+          </ul>
+      </div>
+
+  {% else %}
+    <div class="menu_section">
+      <h3>General</h3>
+      <ul class="nav side-menu">
+          {% with title="Home", icon="home", items=["index1", "index2", "index3"] %}
+            {% include "site_template/parts/sidebar_item.html" %}
+          {% endwith %}
+
+          {% with title="Forms", icon="edit", items=["form", "form_advanced", "form_validation", "form_wizards", "form_upload", "form_buttons"] %}
+              {% include "site_template/parts/sidebar_item.html" %}
+          {% endwith %}
+
+          {% with title="UI", icon="desktop", items=["general_elements", "media_gallery", "typography", "icons", "glyphicons", "widgets", "invoice", "inbox", "calendar"] %}
+              {% include "site_template/parts/sidebar_item.html" %}
+          {% endwith %}
+
+          {% with title="Tables", icon="table", items=["tables", "tables_dynamic"] %}
+            {% include "site_template/parts/sidebar_item.html" %}
+          {% endwith %}
+
+          {% with title="Data", icon="bar-chart-o", items=["chartjs", "chartjs2", "morisjs", "echarts", "other_charts"] %}
+            {% include "site_template/parts/sidebar_item.html" %}
+          {% endwith %}
+
+      </ul>
+    </div>
+    <div class="menu_section">
+      <h3>Live On</h3>
+      <ul class="nav side-menu">
+
+          {% with title="Additional", icon="bug", items=["ecommerce", "projects", "project_detail", "contacts", "profile", "pricing"] %}
+            {% include "site_template/parts/sidebar_item.html" %}
+          {% endwith %}
+
+        <li><a><i class="fa fa-windows"></i> Extras <span class="fa fa-chevron-down"></span></a>
+          <ul class="nav child_menu">
+            <li><a href="/page_403">403 Error</a></li>
+            <li><a href="/page_404">404 Error</a></li>
+            <li><a href="/page_500">500 Error</a></li>
+            <li><a href="/plain_page">Plain Page</a></li>
+          </ul>
+        </li>
+        <li><a><i class="fa fa-sitemap"></i> Multilevel Menu <span class="fa fa-chevron-down"></span></a>
+          <ul class="nav child_menu">
+              <li><a href="#level1_1">Level One</a>
+              <li><a>Level One<span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                  <li class="sub_menu"><a href="/level2">Level Two</a>
+                  </li>
+                  <li><a href="#level2_1">Level Two</a>
+                  </li>
+                  <li><a href="#level2_2">Level Two</a>
+                  </li>
+                </ul>
+              </li>
+              <li><a href="#level1_2">Level One</a>
+              </li>
+          </ul>
+        </li>
+        <li><a href="javascript:void(0)"><i class="fa fa-laptop"></i> Landing Page <span class="label label-success pull-right">Coming Soon</span></a></li>
+      </ul>
+    </div>
+  {% endif %}
+  </div>
+  <!-- /sidebar menu -->
+
+  <!-- /menu footer buttons -->
+  <div class="sidebar-footer hidden-small">
+    <a data-toggle="tooltip" data-placement="top" title="Settings">
+      <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+    </a>
+    <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+      <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+    </a>
+    <a data-toggle="tooltip" data-placement="top" title="Lock">
+      <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+    </a>
+    <a data-toggle="tooltip" data-placement="top" title="Logout" href="{{ url_for('base_blueprint.logout') }}">
+      <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+    </a>
+  </div>
+  <!-- /menu footer buttons -->
+</div>

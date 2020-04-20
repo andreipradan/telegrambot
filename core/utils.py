@@ -1,3 +1,5 @@
+from datetime import datetime
+import pytz
 import os
 
 import telegram
@@ -12,6 +14,13 @@ def chunks(lst, width):
             for j in range(width)
             if i + j * width < len(lst)
         ]
+
+
+def epoch_to_timezone(epoch):
+    utc_dt = datetime.utcfromtimestamp(epoch).replace(tzinfo=pytz.utc)
+    tz = pytz.timezone("Europe/Bucharest")
+    dt = utc_dt.astimezone(tz)
+    return dt
 
 
 def send_message(bot, text, chat_id=None):

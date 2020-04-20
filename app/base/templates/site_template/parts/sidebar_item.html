@@ -1,0 +1,11 @@
+<li>
+    <a>
+        <i class="fa fa-{{ icon }}"></i> {{ title }}
+        <span class="fa fa-chevron-down"></span>
+    </a>
+    <ul class="nav child_menu">
+        {% for item in items %}
+            <li><a href="/{{ title|lower }}/{{ item }}">{{ item|title }}</a></li>
+        {% endfor %}
+    </ul>
+</li>

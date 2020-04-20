@@ -1,6 +1,11 @@
 <h1 align="center">Welcome to telegrambot 👋</h1>
 <p>
   <img alt="cloud build status" src="https://storage.googleapis.com/telegrambot/build-status.svg" />
+  <img alt="coverage status" src="https://storage.googleapis.com/telegrambot/coverage.svg?" />
+  <a href="https://github.com/psf/black" target="_blank">
+    <img alt="black code style" src="https://img.shields.io/badge/code%20style-black-000000.svg" />
+  </a>
+
   <a href="https://github.com/andreipradan/telegrambot/blob/master/LICENCE.md" target="_blank">
     <img alt="License: LICENCE.md" src="https://img.shields.io/badge/License-LICENCE.md-yellow.svg" />
   </a>
@@ -13,13 +18,13 @@
 
 See it in action here: https://telegrambot.pradan.dev/channel/
 
-Or interact directly with it here: https://telegrambot.pradan.dev/
+Or interact directly with it here: https://telegrambot.pradan.dev/bot/</a>
 
 ## How to install
 
 #### Prerequisites:
 
-- Create a new telegram bot by typing `/newbot` to BotFather here: https://t.me/botfather
+- Create a new telegram bot by sending the `/newbot` command to BotFather [here](https://t.me/botfather)
 
     - give it a `name`: e.g. MyExtraordinaryBot (does not need to end in "Bot")
     - give it a `username`: e.g. my_extraordinary_bot (this one does need to end in "bot")
@@ -32,7 +37,7 @@ Or interact directly with it here: https://telegrambot.pradan.dev/
     ```
 2. [Ngrok](https://ngrok.com/)
 
-    Telegram bots need a **https URL** as a callback for sending update events. Details <a href="https://core.telegram.org/bots/api#getting-updates" target="_blank">here</a>
+    Telegram bots need a **https URL** as a callback for sending update events. Details [here](https://core.telegram.org/bots/api#getting-updates)
 
     Ngrok is a great utility used for exposing your localhost to a publicly accessible https URL
 
@@ -57,8 +62,8 @@ Or interact directly with it here: https://telegrambot.pradan.dev/
     The telegrambot pull all of its data from mongodb collections
 
     Configure a MongoDB database:
-    - Steps for setting up mongo db locally <a href="https://docs.mongodb.com/manual/installation/" target="_blank">here</a>
-    - Steps for setting up a remote mongo db cluster <a href="https://docs.atlas.mongodb.com/getting-started/" target="_blank">here</a>
+    - Steps for setting up mongo db locally [here](https://docs.mongodb.com/manual/installation/)
+    - Steps for setting up a remote mongo db cluster [here](https://docs.atlas.mongodb.com/getting-started/)
         - set the MONGO_DB_HOST env variable with the MongoDB Atlas connection string
         - set the DATABASE_NAME on the environment (optional => defaults to "telegrambot_db")
 
@@ -87,7 +92,7 @@ Or interact directly with it here: https://telegrambot.pradan.dev/
 ## Run tests
 
 ```sh
-TOKEN=foo pytest tests --cov .
+pytest tests --cov .
 ```
 - for html coverage report add `--cov-report=html`
 
@@ -99,17 +104,21 @@ TOKEN=foo pytest tests --cov .
 - Storing historical data for Global regions/countries (currently only today's statistics)
 - TBD: more google cloud commands
 
+## Frontend
+
+https://github.com/afourmy/flask-gentelella
+
 ## Author
 
 👤 **Andrei Prădan**
 
-* Website: <a href="https://pradan.dev/" target="_blank">pradan.dev</a>
-* Github: <a href="https://github.com/andreipradan" target="_blank">andreipradan</a>
-* LinkedIn: <a href="https://linkedin.com/in/andreipradan" target="_blank">andreipradan</a>
+* Website: [pradan.dev](https://pradan.dev/)
+* Github: [andreipradan](https://github.com/andreipradan)
+* LinkedIn: [andreipradan](https://linkedin.com/in/andreipradan)
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check <a href="https://github.com/andreipradan/telegrambot/issues" target="_blank">issues page</a>.
+Contributions, issues and feature requests are welcome!<br />Feel free to check the [issues page](https://github.com/andreipradan/telegrambot/issues)
 
 ## Show your support
 
@@ -117,11 +126,7 @@ Give a ⭐️ if this project helped you!
 
 <a href="https://www.buymeacoffee.com/andreipradan" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee"></a>
 
-
 <a href="https://pay.revolut.com/profile/eusebifsd" target="_blank"><img src="https://storage.googleapis.com/telegrambot/buttons/revolut.png" alt="Revolut"></a>
 
-
-
-
 ***
-_This README was generated with ❤️ by <a href="https://github.com/kefranabg/readme-md-generator" target="_blank">readme-md-generator</a>_
+_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_

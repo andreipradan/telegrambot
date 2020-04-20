@@ -110,11 +110,10 @@ class TestWebhook:
         assert response.data.decode("utf-8") == "inline_start_foo"
 
     @mock.patch("core.utils.send_message")
-    @mock.patch(
-        "core.views.webhook.analyze_sentiment", return_value="scrapers_foo"
-    )
+    @mock.patch("api.views.webhook.analyze_sentiment")
     @mock.patch("core.handlers.validate_components")
     def test_message_too_long(self, validate, scrape, msg, update, _, client):
+        scrape.return_value = "scrapers_foo"
         msg.side_effect = telegram.error.BadRequest("foo")
         validate.return_value = "analyze_sentiment", "valid-command"
         update.return_value.callback_query = None

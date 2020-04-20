@@ -1,17 +1,8 @@
 from collections import OrderedDict
-from datetime import datetime
-import pytz
 
 from core import database
 from core.constants import COLLECTION, SLUG
-
-
-def epoch_to_timezone(epoch):
-    utc_dt = datetime.utcfromtimestamp(epoch).replace(tzinfo=pytz.utc)
-    tz = pytz.timezone("Europe/Bucharest")
-    dt = utc_dt.astimezone(tz)
-
-    return dt.strftime("%H:%M, %d %b %Y")
+from core.utils import epoch_to_timezone
 
 
 class DLZSerializer:
@@ -52,7 +43,7 @@ class DLZSerializer:
     @classmethod
     def deserialize_field(cls, key, value):
         if key in cls.epoch_time_fields:
-            return epoch_to_timezone(value)
+            return epoch_to_timezone(value).strftime("%H:%M, %d %b %Y")
         return value
 
 

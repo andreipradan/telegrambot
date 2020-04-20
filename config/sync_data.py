@@ -82,6 +82,7 @@ if __name__ == "__main__":
         client.sync()
     if args.global_stats_archive:
         client.sync_archive()
+
     if args.news:
         client = StiriOficialeClient()
         client.sync()
