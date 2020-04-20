@@ -40,7 +40,7 @@
       "args": [
          "run",
          "deploy",
-         "telegrambot-$_ENV",
+         "telegrambot$_SERVICE_NAME",
          "--image",
          "gcr.io/$PROJECT_ID/telegrambot-image-$_ENV:$COMMIT_SHA",
          "--region",
