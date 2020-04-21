@@ -4,6 +4,10 @@
 
 {% block stylesheets %}
   {{ super() }}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+    <link href="{{ url_for('static', filename='vendors/bootstrap-select-country/dist/css/bootstrap-select-country.min.css') }}" rel="stylesheet">
+
+
 {% endblock stylesheets %}
 
 {% block body_class %}nav-sm{% endblock %}
@@ -22,10 +26,9 @@
             {% endwith %}
         {% endfor %}
     </div>
-
     <!-- /top tiles -->
 
-    {% with title="Evoluția numărului de cazuri în România", chart_id="chart_line_romania" %}
+      {% with title="Compară evolutia numărului de cazuri între țări", chart_id="chart_line_romania", include_search=True, search_default=search_default %}
         {% include "parts/line_graph.html" %}
     {% endwith %}
   </div>
@@ -34,6 +37,11 @@
 {% block javascripts %}
     {{ super()}}
     <script src="{{ url_for('static', filename='vendors/echarts/dist/echarts.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='build/js/home.js') }}"></script>
+    <script src="{{ url_for('static', filename='build/js/compare.js') }}"></script>
     <script type="text/javascript">init_e_chart_line('{{ archive|tojson }}', chart_id="chart_line_romania")</script>
+
+    {# select country #}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+    <script src="{{ url_for('static', filename='vendors/bootstrap-select-country/dist/js/bootstrap-select-country.min.js') }}"></script>
+
 {% endblock javascripts %}

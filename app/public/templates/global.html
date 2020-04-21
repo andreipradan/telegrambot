@@ -17,7 +17,7 @@
         {% for tile in top_stats %}
             {% with title=tile.name, count=tile.value, count_change=tile.change, icon=tile.icon, count_color=tile.count_color%}
                 <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
-                    {% include "sections/parts/top_tile.html" %}
+                    {% include "parts/top_tile.html" %}
                 </div>
             {% endwith %}
         {% endfor %}
@@ -26,7 +26,7 @@
     <!-- /top tiles -->
 
     {% with title="World Reported Cases", map_id="world-map-gdp" %}
-        {% include "sections/parts/map.html" %}
+        {% include "parts/map.html" %}
     {% endwith %}
 
   </div>
