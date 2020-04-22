@@ -88,9 +88,9 @@ def compare():
 def global_map():
     stats = database.get_stats(COLLECTION["global"], slug=SLUG["global"])
     stats = {
-        "Total Cases": stats["coronavirus_cases:"],
-        "Deaths": stats["deaths:"],
-        "Recovered": stats["recovered:"],
+        "Confirmați": stats["coronavirus_cases:"],
+        "Decedați": stats["deaths:"],
+        "Vindecați": stats["recovered:"],
     }
     countries = database.get_many(COLLECTION["country"], "total_cases")
 
@@ -111,9 +111,9 @@ def europe():
         0
     ]
     stats = {
-        "Total Cases": "{:,}".format(europe_stats["total_cases"]),
-        "Deaths": "{:,}".format(europe_stats["total_deaths"]),
-        "Recovered": "{:,}".format(europe_stats["total_recovered"]),
+        "Confirmați": "{:,}".format(europe_stats["total_cases"]),
+        "Decedați": "{:,}".format(europe_stats["total_deaths"]),
+        "Vindecati": "{:,}".format(europe_stats["total_recovered"]),
     }
 
     return render_template(

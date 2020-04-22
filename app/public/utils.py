@@ -98,12 +98,6 @@ def parse_countries(countries):
     return results
 
 
-def get_day_from_history(date, history):
-    for d in history:
-        if d["date"].strftime("%Y-%m-%d") == date:
-            return d
-
-
 def parse_countries_for_comparison(codes):
     """
     :param codes: country codes
