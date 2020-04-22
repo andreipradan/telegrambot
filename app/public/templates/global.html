@@ -25,7 +25,7 @@
 
     <!-- /top tiles -->
 
-    {% with title="World Reported Cases", map_id="world-map-gdp" %}
+    {% with title="Cazuri raportate în lume", map_id="world-map-gdp" %}
         {% include "parts/map.html" %}
     {% endwith %}
 
@@ -39,6 +39,6 @@
     <script src="{{ url_for('static', filename='vendors/jqvmap/dist/jquery.vmap.js') }}"></script>
 
     <script src="{{ url_for('static', filename='vendors/jqvmap/dist/maps/jquery.vmap.world.js') }}"></script>
-    <script src="{{ url_for('static', filename='build/js/global_maps.js') }}"></script>
+    <script src="{{ url_for('static', filename='build/js/maps.js') }}"></script>
     <script type="text/javascript">init_world_map('{{ countries|tojson }}')</script>
 {% endblock javascripts %}

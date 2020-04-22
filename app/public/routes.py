@@ -1,6 +1,5 @@
 from copy import deepcopy
 
-import pytz
 
 from app.public import blueprint
 from flask import render_template
@@ -62,16 +61,26 @@ def route_default():
 
 @blueprint.route("/compare", methods=["GET", "POST"])
 def compare():
+    available_countries = [
+        country["code"]
+        for country in database.get_collection("countries").find(
+            {"code": {"$ne": None}}
+        )
+    ]
     if request.method == "GET":
-        return render_template("compare.html", archive=[])
+        return render_template(
+            "compare.html",
+            archive=[],
+            data_countries=",".join(available_countries),
+        )
 
     selected_countries = request.form.getlist("country_selector")
-    countries = list(map(pytz.country_names.get, selected_countries))
-    parsed = parse_countries_for_comparison(countries)
+    parsed = parse_countries_for_comparison(selected_countries)
     return render_template(
         "compare.html",
         archive=parsed,
         search_default=",".join(selected_countries),
+        data_countries=",".join(available_countries),
     )
 
 
@@ -79,9 +88,9 @@ def compare():
 def global_map():
     stats = database.get_stats(COLLECTION["global"], slug=SLUG["global"])
     stats = {
-        "Total Cases": stats["coronavirus_cases:"],
-        "Deaths": stats["deaths:"],
-        "Recovered": stats["recovered:"],
+        "Confirmați": stats["coronavirus_cases:"],
+        "Decedați": stats["deaths:"],
+        "Vindecați": stats["recovered:"],
     }
     countries = database.get_many(COLLECTION["country"], "total_cases")
 
@@ -102,9 +111,9 @@ def europe():
         0
     ]
     stats = {
-        "Total Cases": "{:,}".format(europe_stats["total_cases"]),
-        "Deaths": "{:,}".format(europe_stats["total_deaths"]),
-        "Recovered": "{:,}".format(europe_stats["total_recovered"]),
+        "Confirmați": "{:,}".format(europe_stats["total_cases"]),
+        "Decedați": "{:,}".format(europe_stats["total_deaths"]),
+        "Vindecati": "{:,}".format(europe_stats["total_recovered"]),
     }
 
     return render_template(
