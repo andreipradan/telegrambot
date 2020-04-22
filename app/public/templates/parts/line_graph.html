@@ -1,0 +1,38 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>{{ title }}</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i
+                            class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+
+            </div>
+            <div class="x_content">
+                {% if include_search %}
+                  <form data-parsley-validate method="post" class="form-inline">
+                      <div class="top_search">
+                          <div class="title_left">
+                              <div class="col-md-5 col-sm-5 form-group top_search">
+                                  <div class="input-group">
+                                      <select name="country_selector" class="form-control selectpicker countrypicker" title="Selectați maxim 5 țări" data-max-options=5 data-flag="true" data-live-search="true" multiple data-default="{{ search_default }}"></select>
+                                      <span class="input-group-btn">
+                                          <button class="btn btn-secondary" type="submit">Go!</button>
+                                      </span>
+                                  </div>
+                              </div>
+                          </div>
+
+                      </div>
+                  </form>
+                {% endif %}
+                <div id="{{chart_id}}" style="height:450px"></div>
+            </div>
+        </div>
+    </div>
+</div>

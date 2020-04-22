@@ -73,6 +73,7 @@ def apply_themes(flask_app):
 def create_app():
     app = Flask(__name__, static_folder="app/base/static",)
     app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
+    app.config["LOGIN_DISABLED"] = os.getenv("LOGIN_DISABLED")
     login_manager.init_app(app)
     register_blueprints(app)
     apply_themes(app)

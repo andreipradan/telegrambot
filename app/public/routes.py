@@ -1,9 +1,13 @@
 from copy import deepcopy
 
+import pytz
+
 from app.public import blueprint
 from flask import render_template
+from flask import request
 
 from app.public.utils import parse_countries
+from app.public.utils import parse_countries_for_comparison
 from core import database
 from core.constants import SLUG, COLLECTION
 from core.utils import epoch_to_timezone
@@ -53,6 +57,21 @@ def route_default():
             for key, value in today.items()
             if key != "Actualizat la"
         ],
+    )
+
+
+@blueprint.route("/compare", methods=["GET", "POST"])
+def compare():
+    if request.method == "GET":
+        return render_template("compare.html", archive=[])
+
+    selected_countries = request.form.getlist("country_selector")
+    countries = list(map(pytz.country_names.get, selected_countries))
+    parsed = parse_countries_for_comparison(countries)
+    return render_template(
+        "compare.html",
+        archive=parsed,
+        search_default=",".join(selected_countries),
     )
 
 

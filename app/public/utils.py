@@ -1,5 +1,7 @@
 import pycountry
 
+from core import database
+
 
 def parse_countries(countries):
     results = {}
@@ -94,3 +96,40 @@ def parse_countries(countries):
         raise ValueError(invalid)
 
     return results
+
+
+def get_day_from_history(date, history):
+    for d in history:
+        if d["date"].strftime("%Y-%m-%d") == date:
+            return d
+
+
+def parse_countries_for_comparison(countries):
+    if not countries:
+        return []
+
+    first_country = database.get_stats("countries", country=countries[0])
+    if not first_country:
+        return []
+    results = [
+        {
+            "date": day["date"].strftime("%Y-%m-%d"),
+            countries[0]: day["confirmed"],
+        }
+        for day in first_country["history"]
+    ]
+
+    for country in countries[1:]:
+        country = database.get_stats("countries", country=country)
+        if not country:
+            continue
+        for i in results:
+            history = country["history"] if country else []
+            i[country["country"]] = get_day_from_history(i["date"], history)[
+                "confirmed"
+            ]
+    return [
+        country
+        for country in results
+        if any([int(val) for key, val in country.items() if key != "date"])
+    ]
