@@ -9,7 +9,6 @@ google-cloud-translate==2.0.0
 gunicorn==20.0.4
 pycountry==19.8.18
 pymongo==3.10.1
-python-dotenv==0.12.0
 python-telegram-bot==12.4.2
 requests==2.23.0
 sentry-sdk[flask]==0.14.2
