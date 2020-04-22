@@ -1,6 +1,5 @@
 from copy import deepcopy
 
-import pytz
 
 from app.public import blueprint
 from flask import render_template
@@ -62,16 +61,26 @@ def route_default():
 
 @blueprint.route("/compare", methods=["GET", "POST"])
 def compare():
+    available_countries = [
+        country["code"]
+        for country in database.get_collection("countries").find(
+            {"code": {"$ne": None}}
+        )
+    ]
     if request.method == "GET":
-        return render_template("compare.html", archive=[])
+        return render_template(
+            "compare.html",
+            archive=[],
+            data_countries=",".join(available_countries),
+        )
 
     selected_countries = request.form.getlist("country_selector")
-    countries = list(map(pytz.country_names.get, selected_countries))
-    parsed = parse_countries_for_comparison(countries)
+    parsed = parse_countries_for_comparison(selected_countries)
     return render_template(
         "compare.html",
         archive=parsed,
         search_default=",".join(selected_countries),
+        data_countries=",".join(available_countries),
     )
 
 

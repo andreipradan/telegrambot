@@ -104,32 +104,28 @@ def get_day_from_history(date, history):
             return d
 
 
-def parse_countries_for_comparison(countries):
-    if not countries:
+def parse_countries_for_comparison(codes):
+    """
+    :param codes: country codes
+    :return: [{"date": 2020-12-31, "Germany": 4, "Austria": 5}, {..}]
+    """
+
+    if not codes:
         return []
 
-    first_country = database.get_stats("countries", country=countries[0])
-    if not first_country:
-        return []
-    results = [
-        {
-            "date": day["date"].strftime("%Y-%m-%d"),
-            countries[0]: day["confirmed"],
-        }
-        for day in first_country["history"]
-    ]
+    codes = [code.lower() for code in codes]
+    countries = database.get_collection("countries").find(
+        {"code": {"$in": codes}}
+    )
 
-    for country in countries[1:]:
-        country = database.get_stats("countries", country=country)
-        if not country:
-            continue
-        for i in results:
-            history = country["history"] if country else []
-            i[country["country"]] = get_day_from_history(i["date"], history)[
+    results = {}
+    for country in countries:
+        for day in country["history"]:
+            results.setdefault(day["date"], {})[country["country"]] = day[
                 "confirmed"
             ]
     return [
-        country
-        for country in results
-        if any([int(val) for key, val in country.items() if key != "date"])
+        {"date": k, **results[k]}
+        for k in results
+        if any([int(x) for _, x in results[k].items()])
     ]
