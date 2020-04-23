@@ -59,7 +59,7 @@ def route_default():
     )
 
 
-@blueprint.route("/compare", methods=["GET", "POST"])
+@blueprint.route("/compare/", methods=["GET"])
 def compare():
     available_countries = [
         country["code"]
@@ -67,14 +67,8 @@ def compare():
             {"code": {"$ne": None}}
         )
     ]
-    if request.method == "GET":
-        return render_template(
-            "compare.html",
-            archive=[],
-            data_countries=",".join(available_countries),
-        )
 
-    selected_countries = request.form.getlist("country_selector")
+    selected_countries = request.args.getlist("country")
     parsed = parse_countries_for_comparison(selected_countries)
     return render_template(
         "compare.html",
