@@ -1,4 +1,5 @@
 import pycountry
+from flask import flash
 
 from core import database
 
@@ -113,11 +114,20 @@ def parse_countries_for_comparison(codes):
     )
 
     results = {}
+    no_info_countries = []
     for country in countries:
         for day in country["history"]:
-            results.setdefault(day["date"], {})[country["country"]] = day[
-                "confirmed"
-            ]
+            try:
+                results.setdefault(day["date"], {})[country["country"]] = day[
+                    "confirmed"
+                ]
+            except KeyError:
+                if country["country"] not in no_info_countries:
+                    no_info_countries.append(country["country"])
+    if no_info_countries:
+        flash(
+            f"Următoarele țări conțin date incomplete și nu au fost afișate: {', '.join(no_info_countries)}"
+        )
     return [
         {"date": k, **results[k]}
         for k in results

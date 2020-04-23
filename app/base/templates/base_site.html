@@ -34,7 +34,7 @@
     {% endblock head %}
   </head>
 
-  <body class="{% block body_class %}nav-md {% endblock body_class %}">
+  <body class="{% block body_class %}nav-md {% endblock body_class %}" {% block extra_body_attrs %}{% endblock %}>
     {% block body %}
       <div class="container body">
         <div class="main_container">

@@ -4,15 +4,16 @@
 
 {% block stylesheets %}
   {{ super() }}
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+    <link href="{{ url_for('static', filename='vendors/bootstrap-select/css/bootstrap-select.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='vendors/bootstrap-select-country/dist/css/bootstrap-select-country.min.css') }}" rel="stylesheet">
-
-
+    <link href="{{ url_for('static', filename='vendors/pnotify/dist/pnotify.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendors/pnotify/dist/pnotify.buttons.css') }}" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block body_class %}nav-sm{% endblock %}
 {% block sidebar_class %}menu_fixed{% endblock %}
 {% block top_navigation %}{% endblock %}
+{% block extra_body_attrs %}onload='show_alerts({{ get_flashed_messages()|tojson }})'{% endblock %}
 
 {% block content %}
   <div class="right_col" role="main">
@@ -27,8 +28,7 @@
         {% endfor %}
     </div>
     <!-- /top tiles -->
-
-      {% with title="Compară evolutia numărului de cazuri între țări", chart_id="chart_line_romania", include_search=True, search_default=search_default %}
+      {% with title="Compară evoluția cazurilor între diferite țări", chart_id="chart_line_romania", include_search=True, search_default=search_default %}
         {% include "parts/line_graph.html" %}
     {% endwith %}
   </div>
@@ -41,7 +41,24 @@
     <script type="text/javascript">init_e_chart_line('{{ archive|tojson }}', chart_id="chart_line_romania")</script>
 
     {# select country #}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+    <script src="{{ url_for('static', filename='vendors/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendors/bootstrap-select-country/dist/js/bootstrap-select-country.min.js') }}"></script>
+
+    {# notifications #}
+    <script src="{{ url_for('static', filename='vendors/pnotify/dist/pnotify.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='vendors/pnotify/dist/pnotify.buttons.js') }}" type="text/javascript"></script>
+    <script type="text/javascript">
+        function show_alerts(messages) {
+            if (messages.length !== 0) {
+                new PNotify({
+                    title: 'Atenție',
+                    text: messages.join(', '),
+                    styling: 'bootstrap3',
+                    addclass: 'yellow'
+                });
+                {#if (!window.__cfRLUnblockHandlers) return false; );#}
+            }
+        };
+    </script>
 
 {% endblock javascripts %}
