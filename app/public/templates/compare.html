@@ -37,12 +37,26 @@
 {% block javascripts %}
     {{ super()}}
     <script src="{{ url_for('static', filename='vendors/echarts/dist/echarts.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='build/js/compare.js') }}"></script>
+    <script src="{{ url_for('static', filename='build/js/line_graph.js') }}"></script>
     <script type="text/javascript">init_e_chart_line('{{ archive|tojson }}', chart_id="chart_line_romania")</script>
 
     {# select country #}
     <script src="{{ url_for('static', filename='vendors/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendors/bootstrap-select-country/dist/js/bootstrap-select-country.min.js') }}"></script>
+
+    <script>
+        const waitForEl = function(selector, callback) {
+          if (jQuery(selector).length) {
+            callback();
+          } else {
+            setTimeout(function() {
+              waitForEl(selector, callback);
+            }, 100);
+          }
+        };
+
+        waitForEl('.bs-select-all', function() {$('.bs-select-all').prop('disabled', true)});
+    </script>
 
     {# notifications #}
     <script src="{{ url_for('static', filename='vendors/pnotify/dist/pnotify.js') }}" type="text/javascript"></script>

@@ -1,5 +1,5 @@
 from copy import deepcopy
-
+from datetime import timedelta
 
 from app.public import blueprint
 from flask import render_template
@@ -12,6 +12,7 @@ from core.constants import SLUG, COLLECTION
 from core.utils import epoch_to_timezone
 from serializers import DLZArchiveSerializer
 
+DATE_FORMAT = "%Y-%m-%d"
 ICONS = {
     "Procent barbati": "male",
     "Procent femei": "female",
@@ -22,13 +23,7 @@ ICONS = {
 @blueprint.route("/")
 def route_default():
     today = database.get_stats(slug=SLUG["romania"])
-    today_date = epoch_to_timezone(today["Actualizat la"]).strftime("%Y-%m-%d")
-    archive = list(
-        database.get_many(
-            collection=COLLECTION["archive"], order_by="Data", how=1
-        )
-    )
-
+    today_date_time = epoch_to_timezone(today["Actualizat la"])
     today = {
         key: today[key]
         for key in [
@@ -40,21 +35,35 @@ def route_default():
             "Procent copii",
         ]
     }
+
     archive_today = deepcopy(today)
-    archive_today["Data"] = today_date
+    archive_today["Data"] = today_date_time.strftime(DATE_FORMAT)
+
+    archive = list(database.get_many(COLLECTION["archive"], "Data", how=1))
+    yesterday = today_date_time - timedelta(days=1)
+    yesterday = [
+        x for x in archive if x["Data"] == yesterday.strftime(DATE_FORMAT)
+    ]
+    archive = [
+        DLZArchiveSerializer.deserialize(
+            x, fields=["Confirmați", "Vindecați", "Decedați", "Data"]
+        )
+        for x in archive
+    ] + [archive_today]
     return render_template(
         "home.html",
-        archive=[DLZArchiveSerializer.deserialize(x) for x in archive]
-        + [archive_today],
+        today_stats_last_updated=today_date_time.strftime("%d.%m.%Y %H:%M"),
+        archive=archive,
         top_stats=[
             {
                 "name": key,
                 "value": value,
                 "icon": ICONS.get(key, "user"),
-                "change": (today[key] - archive[-1][key]) if archive else None,
+                "change": (today[key] - yesterday[0][key])
+                if yesterday
+                else None,
             }
             for key, value in today.items()
-            if key != "Actualizat la"
         ],
     )
 

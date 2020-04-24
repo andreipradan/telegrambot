@@ -34,9 +34,11 @@ class DLZSerializer:
         )
 
     @classmethod
-    def deserialize(cls, data):
+    def deserialize(cls, data, fields=None):
+        if not fields:
+            fields = cls.deserialize_fields
         results = OrderedDict()
-        for key in cls.deserialize_fields:
+        for key in fields:
             results[key] = cls.deserialize_field(key, data[key])
         return results
 

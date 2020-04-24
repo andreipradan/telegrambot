@@ -34,10 +34,7 @@
 
 {% block javascripts %}
     {{ super() }}
-    <script src="{{ url_for('static', filename='vendors/echarts/dist/echarts.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='build/js/home.js') }}"></script>
     <script src="{{ url_for('static', filename='vendors/jqvmap/dist/jquery.vmap.js') }}"></script>
-
     <script src="{{ url_for('static', filename='vendors/jqvmap/dist/maps/jquery.vmap.world.js') }}"></script>
     <script src="{{ url_for('static', filename='build/js/maps.js') }}"></script>
     <script type="text/javascript">init_world_map('{{ countries|tojson }}')</script>

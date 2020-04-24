@@ -31,7 +31,7 @@ def set_webhook(token):
     assert tunnel_url, "No HTTPS URL found!"
 
     bot = telegram.Bot(token=token)
-    bot.set_webhook(f"{tunnel_url}/{token}")
+    bot.set_webhook(f"{tunnel_url}/webhook/{token}")
     get_webhook(token)
 
 
