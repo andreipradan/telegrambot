@@ -5,8 +5,10 @@ from app.public import blueprint
 from flask import render_template
 from flask import request
 
+from app.public.utils import CHANGES
 from app.public.utils import parse_countries
 from app.public.utils import parse_countries_for_comparison
+from app.public.utils import parse_top_stats
 from core import database
 from core.constants import SLUG, COLLECTION
 from core.utils import epoch_to_timezone
@@ -78,30 +80,47 @@ def compare():
     ]
 
     selected_countries = request.args.getlist("country")
-    parsed = parse_countries_for_comparison(selected_countries)
+    etag = database.get_stats("etags", location="johns_hopkins")
+    stats = database.get_stats(COLLECTION["country"], country="World")
     return render_template(
         "compare.html",
-        archive=parsed,
-        search_default=",".join(selected_countries),
+        top_stats=[
+            {
+                "name": key,
+                "value": value,
+                "icon": ICONS.get(key, "user"),
+                "change": stats.get(CHANGES.get(key)),
+            }
+            for key, value in parse_top_stats(stats).items()
+        ],
+        archive=parse_countries_for_comparison(selected_countries),
         data_countries=",".join(available_countries),
+        search_default=",".join(selected_countries),
+        today_stats_last_updated=etag["last_updated"].strftime(
+            "%d.%m.%Y %H:%M"
+        )
+        if etag
+        else None,
     )
 
 
 @blueprint.route("/global")
 def global_map():
-    stats = database.get_stats(COLLECTION["global"], slug=SLUG["global"])
-    stats = {
-        "Confirmați": stats["coronavirus_cases:"],
-        "Decedați": stats["deaths:"],
-        "Vindecați": stats["recovered:"],
-    }
-    countries = database.get_many(COLLECTION["country"], "total_cases")
-
+    countries = list(database.get_many(COLLECTION["country"], "total_cases"))
+    stats = [c for c in countries if c["country"].strip() == "World"][0]
     return render_template(
         "global.html",
+        today_stats_last_updated=database.get_stats(
+            COLLECTION["global"], slug=SLUG["global"]
+        )["last_updated"].replace("Last updated: ", ""),
         top_stats=[
-            {"name": key, "value": value, "icon": ICONS.get(key, "user"),}
-            for key, value in stats.items()
+            {
+                "name": key,
+                "value": value,
+                "icon": ICONS.get(key, "user"),
+                "change": stats.get(CHANGES.get(key)),
+            }
+            for key, value in parse_top_stats(stats).items()
         ],
         countries=parse_countries(countries),
     )
@@ -113,17 +132,19 @@ def europe():
     europe_stats = [c for c in countries if c["country"].strip() == "Europe"][
         0
     ]
-    stats = {
-        "Confirmați": "{:,}".format(europe_stats["total_cases"]),
-        "Decedați": "{:,}".format(europe_stats["total_deaths"]),
-        "Vindecati": "{:,}".format(europe_stats["total_recovered"]),
-    }
-
     return render_template(
         "europe.html",
+        today_stats_last_updated=database.get_stats(
+            COLLECTION["global"], slug=SLUG["global"]
+        )["last_updated"].replace("Last updated: ", ""),
         top_stats=[
-            {"name": key, "value": value, "icon": ICONS.get(key, "user"),}
-            for key, value in stats.items()
+            {
+                "name": key,
+                "value": value,
+                "icon": ICONS.get(key, "user"),
+                "change": europe_stats.get(CHANGES.get(key)),
+            }
+            for key, value in parse_top_stats(europe_stats).items()
         ],
         countries=parse_countries(countries),
     )
