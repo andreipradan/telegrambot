@@ -16,7 +16,7 @@
     <div class="row tile_count">
         {% for tile in top_stats %}
             {% with title=tile.name, count=tile.value, count_change=tile.change, icon=tile.icon, count_color=tile.count_color%}
-                <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
+                <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
                     {% include "parts/top_tile.html" %}
                 </div>
             {% endwith %}
@@ -34,8 +34,6 @@
 
 {% block javascripts %}
     {{ super() }}
-    <script src="{{ url_for('static', filename='vendors/echarts/dist/echarts.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='build/js/home.js') }}"></script>
     <script src="{{ url_for('static', filename='vendors/jqvmap/dist/jquery.vmap.js') }}"></script>
     <script src="{{ url_for('static', filename='vendors/jqvmap/dist/maps/jquery.vmap.europe.js') }}"></script>
     <script src="{{ url_for('static', filename='build/js/maps.js') }}"></script>

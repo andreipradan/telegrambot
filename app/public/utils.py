@@ -3,6 +3,8 @@ from flask import flash
 
 from core import database
 
+CHANGES = {"Confirmați": "new_cases", "Decedați": "new_deaths"}
+
 
 def parse_countries(countries):
     results = {}
@@ -133,3 +135,13 @@ def parse_countries_for_comparison(codes):
         for k in results
         if any([int(x) for _, x in results[k].items()])
     ]
+
+
+def parse_top_stats(stats):
+    return {
+        "Confirmați": "{:,}".format(stats["total_cases"]),
+        "Decedați": "{:,}".format(stats["total_deaths"]),
+        "Vindecati": "{:,}".format(stats["total_recovered"]),
+        "Cazuri critice": "{:,}".format(stats["serious_critical"]),
+        "Cazuri active": "{:,}".format(stats["active_cases"]),
+    }

@@ -4,14 +4,14 @@
             <div class="x_title">
                 <h2>{{ title }}</h2>
                 <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i
-                            class="fa fa-chevron-up"></i></a>
+                    <li>
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                     </li>
                     <li><a class="close-link"><i class="fa fa-close"></i></a>
                     </li>
                 </ul>
                 <div class="clearfix"></div>
-
+                {% if today_stats_last_updated %}<i>Actualizat la: {{ today_stats_last_updated }}</i>{% endif %}
             </div>
             <div class="x_content">
                 {% if include_search %}
@@ -21,14 +21,18 @@
                               <select name="country"
                                       class="form-control selectpicker countrypicker"
                                       title="Selectați țările (5 max)"
-                                      data-max-options=5
-                                      data-flag="true"
-                                      data-live-search="true"
                                       multiple
-                                      data-size="15"
                                       data-actions-box="true"
+                                      data-actions-box-style="foooo"
                                       data-countries="{{ data_countries }}"
-                                      data-default="{{ search_default }}"></select>
+                                      data-default="{{ search_default }}"
+                                      data-flag="true"
+                                      data-max-options=5
+                                      data-live-search="true"
+                                      data-deselect-all-text="Șterge selecția"
+                                      data-size="15"
+                                      data-style="btn-secondary"
+                              ></select>
                               <span class="input-group-btn">
                                   <button class="btn btn-secondary" type="submit">Compară</button>
                               </span>

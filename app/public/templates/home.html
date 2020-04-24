@@ -34,6 +34,13 @@
 {% block javascripts %}
     {{ super()}}
     <script src="{{ url_for('static', filename='vendors/echarts/dist/echarts.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='build/js/home.js') }}"></script>
-    <script type="text/javascript">init_e_chart_line('{{ archive|tojson }}', chart_id="chart_line_romania")</script>
+    <script src="{{ url_for('static', filename='build/js/line_graph.js') }}"></script>
+    <script type="text/javascript">
+        init_e_chart_line(
+            '{{ archive|tojson }}',
+            chart_id="chart_line_romania",
+            for_homepage=true,
+            date_key='Data'
+        )
+    </script>
 {% endblock javascripts %}
