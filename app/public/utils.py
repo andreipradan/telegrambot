@@ -128,7 +128,8 @@ def parse_countries_for_comparison(codes):
                     no_info_countries.append(country["country"])
     if no_info_countries:
         flash(
-            f"Următoarele țări conțin date incomplete și nu au fost afișate: {', '.join(no_info_countries)}"
+            "Următoarele țări conțin date incomplete și nu au fost afișate: "
+            f"{', '.join(no_info_countries)}"
         )
     return [
         {"date": k, **results[k]}

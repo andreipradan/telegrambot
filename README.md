@@ -11,16 +11,18 @@
   </a>
 </p>
 
+> A Flask project to interactively check OFFICIAL COVID-19 stats for Romania and other countries.
 
-> A telegram bot to interactively check OFFICIAL COVID-19 stats for Romania and other countries.
+#### Web version: https://telegrambot.pradan.dev/
+>[![doc](https://storage.googleapis.com/telegrambot/static/images/website_preview.png)](https://telegrambot.pradan.dev/)
 
->![doc](docs/inline.png)
+#### Telegram channel: https://telegrambot.pradan.dev/channel/
+>[![doc](https://storage.googleapis.com/telegrambot/static/images/covid_updates_channel.png)](https://telegrambot.pradan.dev/channel/)
 
-See it in action here: https://telegrambot.pradan.dev/channel/
+#### Telegram bot: https://telegrambot.pradan.dev/bot/
+>[![doc](docs/inline.png)](https://telegrambot.pradan.dev/bot/)
 
-Or interact directly with it here: https://telegrambot.pradan.dev/bot/</a>
-
-## How to install
+## Setup
 
 #### Prerequisites:
 
@@ -107,6 +109,13 @@ pytest tests --cov .
 ## Frontend
 
 https://github.com/afourmy/flask-gentelella
+
+## Data sources
+
+- https://datelazi.ro/
+- https://stirioficiale.ro/
+- https://worldometers.info/
+- Johns Hopkins Covid-19 repository: https://github.com/CSSEGISandData/COVID-19
 
 ## Author
 
