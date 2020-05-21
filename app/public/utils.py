@@ -16,17 +16,19 @@ def parse_countries(countries):
         if not country_name:
             continue
         if country_name in [
-            "World",
-            "Europe",
-            "North America",
-            "Asia",
-            "South America",
             "Africa",
-            "Oceania",
-            "Diamond Princess",
-            "MS Zaandam",
+            "Asia",
             "Caribbean Netherlands",
             "Channel Islands",
+            "Diamond Princess",
+            "Europe",
+            "MS Zaandam",
+            "North America",
+            "Oceania",
+            "South America",
+            "Total",
+            "Total:",
+            "World",
         ]:
             continue
         if country_name == "USA":
