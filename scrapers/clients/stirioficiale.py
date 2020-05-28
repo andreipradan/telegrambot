@@ -1,5 +1,6 @@
 import logging
 
+import feedparser
 import requests
 from bs4 import BeautifulSoup
 
@@ -31,51 +32,54 @@ def parse_header(time_and_who):
 
 
 class StiriOficialeClient:
+    base_url = "https://stirioficiale.ro/"
     slug = SLUG["stiri-oficiale"]
-    url = "https://stirioficiale.ro/informatii"
+    url = base_url + "feeds/informatii.xml"
 
-    def _fetch(self):
-        resp = requests.get(self.url)
-        resp.raise_for_status()
-        soup = BeautifulSoup(resp.text, features="html.parser")
+    @classmethod
+    def _fetch_feed(cls):
+        feed = feedparser.parse(cls.url)
+        if not feed.entries:
+            logger.error("Stiri: No entries on the feed")
+            return
+        latest = feed.entries[0]
+        return {
+            "autor": latest["author"],
+            "data": latest["published"][5:22],
+            "titlu": latest["title"],
+            "descriere": BeautifulSoup(
+                latest["summary"], features="html.parser"
+            ).text.strip(),
+            "url": latest["link"],
+        }
 
-        stats = {}
-        children = get_children(soup.article.div)
-        if len(children) == 4:
-            header, title, desc, link = children
-        elif len(children) == 5:
-            header, sub_header, title, desc, link = children
-            key, value = parse_sub_header(sub_header)
-            stats[key] = value
-        else:
-            raise ValueError(
-                f"Invalid number of elements in article: {children}"
-            )
+    @classmethod
+    def _get_new_etag(cls):
+        local_etag = database.get_stats("etags", location="stiri-oficiale")
+        etag_response = requests.head(cls.base_url)
+        etag_response.raise_for_status()
+        etag = etag_response.headers["ETag"]
+        if not local_etag or local_etag["value"] != etag:
+            return etag
 
-        date_time, author = parse_header(header)
-
-        stats.update(
-            {
-                "autor": author,
-                "data": date_time,
-                "titlu": parse_text(title),
-                "descriere": parse_text(desc),
-                "url": link.a["href"],
-            }
-        )
-        return stats
-
-    def sync(self):
-        data = self._fetch()
-        db_stats = database.get_stats(slug=SLUG["stiri-oficiale"])
-        if db_stats and data.items() <= db_stats.items():
-            logger.info("Stiri: No updates")
+    @classmethod
+    def sync(cls):
+        new_etag = cls._get_new_etag()
+        if not new_etag:
+            logger.info("Stiri: No updates (same etag)")
             return
 
+        data = cls._fetch_feed()
+        if not data:
+            logger.info("Stiri: No entries on the feed")
+            return
         database.set_stats(
             stats=data,
             collection=COLLECTION["romania"],
             slug=SLUG["stiri-oficiale"],
+        )
+        database.set_stats(
+            {"value": new_etag}, "etags", location="stiri-oficiale"
         )
         logger.info("Stiri: Completed")
         return data
