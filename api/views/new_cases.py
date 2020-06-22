@@ -118,11 +118,15 @@ def check_quick_stats():
 @header_auth
 def yesterdays_summary():
     today = datetime.now().astimezone(pytz.timezone("Europe/Bucharest"))
-    yesterday = (today - timedelta(days=1)).strftime("%Y-%m-%d")
-    dby = (today - timedelta(days=2)).strftime("%Y-%m-%d")
+    yesterday = today - timedelta(days=1)
+    dby = today - timedelta(days=2)
 
-    yesterday_stats = database.get_stats(COLLECTION["archive"], Data=yesterday)
-    dby_stats = database.get_stats(COLLECTION["archive"], Data=dby)
+    yesterday_stats = database.get_stats(
+        COLLECTION["archive"], Data=yesterday.strftime("%Y-%m-%d")
+    )
+    dby_stats = database.get_stats(
+        COLLECTION["archive"], Data=dby.strftime("%Y-%m-%d")
+    )
 
     if yesterday_stats and dby_stats:
         yesterday_stats = DLZSerializer.deserialize(yesterday_stats)
@@ -133,7 +137,9 @@ def yesterdays_summary():
         return send_message(
             telegram.Bot(token=os.environ["TOKEN"]),
             text=parse_global(
-                title=f"🟡 Sumarul zilei de {yesterday}", stats=diff, items={}
+                title=f"🟡 Sumarul zilei: {yesterday.strftime('%d.%m.%Y')}",
+                stats=diff,
+                items={},
             ),
             chat_id=os.environ["CHAT_ID"],
         )
