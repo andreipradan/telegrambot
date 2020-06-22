@@ -1,6 +1,9 @@
 import logging
 import os
+from datetime import datetime
+from datetime import timedelta
 
+import pytz
 import telegram
 from flask import Blueprint
 from flask import abort
@@ -109,3 +112,30 @@ def check_quick_stats():
     msg = "Quick stats updated"
     logger.info(msg)
     return msg
+
+
+@new_cases_views.route("/yesterdays-summary/", methods=["POST"])
+@header_auth
+def yesterdays_summary():
+    today = datetime.now().astimezone(pytz.timezone("Europe/Bucharest"))
+    yesterday = (today - timedelta(days=1)).strftime("%Y-%m-%d")
+    dby = (today - timedelta(days=2)).strftime("%Y-%m-%d")
+
+    yesterday_stats = database.get_stats(COLLECTION["archive"], Data=yesterday)
+    dby_stats = database.get_stats(COLLECTION["archive"], Data=dby)
+
+    if yesterday_stats and dby_stats:
+        yesterday_stats = DLZSerializer.deserialize(yesterday_stats)
+        dby_stats = DLZSerializer.deserialize(dby_stats)
+        yesterday_stats.pop("Actualizat la")
+        dby_stats.pop("Actualizat la")
+        diff = parse_diff(yesterday_stats, dby_stats)
+        return send_message(
+            telegram.Bot(token=os.environ["TOKEN"]),
+            text=parse_global(
+                title=f"🟡 Sumarul zilei de {yesterday}", stats=diff, items={}
+            ),
+            chat_id=os.environ["CHAT_ID"],
+        )
+    logger.error("No stats for one or both of the past two days!")
+    return "Nope"
