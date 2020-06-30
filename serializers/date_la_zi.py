@@ -24,7 +24,7 @@ class DLZSerializer:
     def __init__(self, response):
         self.data = OrderedDict()
         for field, api_field in self.mapped_fields.items():
-            self.data[field] = response[api_field]
+            self.data[field] = response.get(api_field)
 
     def save(self):
         database.set_stats(
