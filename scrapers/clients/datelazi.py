@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class DateLaZiClient:
     slug = SLUG["romania"]
-    url = "https://api1.datelazi.ro/api/v2/data/"
+    url = "https://datelazi.ro/latestData.json"
 
     def __init__(self):
         self._local_data = None
