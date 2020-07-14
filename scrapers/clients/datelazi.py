@@ -42,12 +42,15 @@ class DateLaZiClient:
 
     def sync_archive(self):
         if not self._remote_data:
+            logger.info("No remote data, fetching...")
             self._fetch_remote()
+            logger.info("Done.")
 
         historical_data = self._remote_data["historicalData"]
         updated = False
         for day in [date for date in historical_data if is_valid_date(date)]:
             serializer = DLZArchiveSerializer(historical_data[day])
+            # TODO: 1 query to get all dates
             db_stats = database.get_stats(COLLECTION["archive"], Data=day)
             if db_stats and serializer.data.items() <= db_stats.items():
                 continue
@@ -57,3 +60,5 @@ class DateLaZiClient:
             updated = True
 
         logger.info(f"Archive: {'Completed' if updated else 'No updates'}")
+        if not updated:
+            logger.warning(f"Last 3 dates (API): {list(historical_data)[:3]}")
