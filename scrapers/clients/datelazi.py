@@ -5,6 +5,7 @@ import requests
 from core import database
 from core.constants import SLUG, COLLECTION
 from core.validators import is_valid_date
+from scrapers.clients.utils import get_date_from_archive
 from serializers import DLZSerializer, DLZArchiveSerializer
 
 logger = logging.getLogger(__name__)
@@ -16,14 +17,24 @@ class DateLaZiClient:
 
     def __init__(self):
         self._local_data = None
-        self._remote_data = None
         self.serialized_data = None
+
+    @staticmethod
+    def _fetch_archive(days):
+        return list(
+            database.get_collection(COLLECTION["archive"]).find(
+                {"Data": {"$in": days}}, sort=[("Data", -1)],
+            )
+        )
+
+    def _fetch_local(self):
+        self._local_data = database.get_stats(slug=self.slug)
+        return self._local_data
 
     def _fetch_remote(self):
         response = requests.get(url=self.url)
         response.raise_for_status()
-        self._remote_data = response.json()
-        return self._remote_data
+        return response.json()
 
     def sync(self):
         remote_data = self._fetch_remote()
@@ -31,7 +42,8 @@ class DateLaZiClient:
 
         data = serializer.data
         self.serialized_data = data
-        self._local_data = database.get_stats(slug=self.slug)
+
+        self._fetch_local()
         if self._local_data and data.items() <= self._local_data.items():
             msg = "Today: No updates"
             logger.info(msg)
@@ -41,17 +53,26 @@ class DateLaZiClient:
         logger.info("Today: Completed")
 
     def sync_archive(self):
-        if not self._remote_data:
-            logger.info("No remote data, fetching...")
-            self._fetch_remote()
-            logger.info("Done.")
+        logger.info("Archive: No remote data, fetching...")
+        data = self._fetch_remote()
+        logger.info("Archive: Fetching completed")
 
-        historical_data = self._remote_data["historicalData"]
+        historical_data = data["historicalData"]
+
+        valid_days = [d for d in historical_data if is_valid_date(d)]
+        if not valid_days:
+            logger.warning("Archive: No valid dates found in the API.")
+            logger.info("Archive: Done")
+            return
+
+        logger.info("Archive: Fetching days from db...")
+        archive = self._fetch_archive(list(valid_days))
+        logger.info("Archive: Fetched")
+
         updated = False
-        for day in [date for date in historical_data if is_valid_date(date)]:
+        for day in valid_days:
             serializer = DLZArchiveSerializer(historical_data[day])
-            # TODO: 1 query to get all dates
-            db_stats = database.get_stats(COLLECTION["archive"], Data=day)
+            db_stats = get_date_from_archive(day, archive)
             if db_stats and serializer.data.items() <= db_stats.items():
                 continue
 
