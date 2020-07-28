@@ -1,47 +1,22 @@
 import logging
 import os
-from datetime import datetime
-from datetime import timedelta
 
-import pytz
 import telegram
 from flask import Blueprint
 from flask import abort
 
 from core import database
 from core.auth import header_auth
-from core.constants import COLLECTION
 from core.parsers import parse_diff
 from core.utils import send_message
-from core.validators import is_valid_date
 from scrapers.clients.datelazi import DateLaZiClient
 from scrapers.clients.stirioficiale import StiriOficialeClient
 from scrapers.formatters import parse_global
 from serializers import DLZSerializer
-from serializers import DLZArchiveSerializer
 
 logger = logging.getLogger(__name__)
 
 new_cases_views = Blueprint("new_cases_views", __name__)
-
-
-def store_yesterdays_stats(today, historical_data):
-    past_days = sorted(
-        [d for d in historical_data if d != today and is_valid_date(d)]
-    )
-    if not past_days:
-        logger.error("No data for past days!")
-        return
-
-    yesterday = past_days[-1]
-    serializer = DLZArchiveSerializer(historical_data[yesterday])
-    db_stats = database.get_stats(COLLECTION["archive"], Data=yesterday)
-    if db_stats and serializer.data.items() <= db_stats.items():
-        logger.info(f"No updates for archive.")
-        return
-
-    serializer.save()
-    logger.info(f"Updated archive stats for {yesterday}")
 
 
 def get_latest_news():
@@ -89,9 +64,6 @@ def check_quick_stats():
     client = DateLaZiClient()
     client.sync()
 
-    # TODO: add sync_archive (or separate endpoint to check less often
-    #  e.g. only once a day)
-
     quick_stats = DLZSerializer.deserialize(client.serialized_data)
     last_updated = quick_stats.pop("Actualizat la")
 
@@ -112,36 +84,3 @@ def check_quick_stats():
     msg = "Quick stats updated"
     logger.info(msg)
     return msg
-
-
-@new_cases_views.route("/yesterdays-summary/", methods=["POST"])
-@header_auth
-def yesterdays_summary():
-    today = datetime.now().astimezone(pytz.timezone("Europe/Bucharest"))
-    yesterday = today - timedelta(days=1)
-    dby = today - timedelta(days=2)
-
-    yesterday_stats = database.get_stats(
-        COLLECTION["archive"], Data=yesterday.strftime("%Y-%m-%d")
-    )
-    dby_stats = database.get_stats(
-        COLLECTION["archive"], Data=dby.strftime("%Y-%m-%d")
-    )
-
-    if yesterday_stats and dby_stats:
-        yesterday_stats = DLZSerializer.deserialize(yesterday_stats)
-        dby_stats = DLZSerializer.deserialize(dby_stats)
-        yesterday_stats.pop("Actualizat la")
-        dby_stats.pop("Actualizat la")
-        diff = parse_diff(yesterday_stats, dby_stats)
-        return send_message(
-            telegram.Bot(token=os.environ["TOKEN"]),
-            text=parse_global(
-                title=f"🟡 Sumarul zilei: {yesterday.strftime('%d.%m.%Y')}",
-                stats=diff,
-                items={},
-            ),
-            chat_id=os.environ["CHAT_ID"],
-        )
-    logger.error("No stats for one or both of the past two days!")
-    return "Nope"
