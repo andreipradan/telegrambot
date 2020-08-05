@@ -1,4 +1,5 @@
 import logging
+import os
 
 import requests
 
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class DateLaZiClient:
     slug = SLUG["romania"]
-    url = "https://datelazi.ro/latestData.json"
+    url = os.environ["DATELAZI_DATA_URL"]
 
     def __init__(self):
         self._local_data = None
