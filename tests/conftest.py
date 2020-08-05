@@ -3,6 +3,7 @@ import pytest
 
 os.environ["SECRET_KEY"] = "test_secret_key"
 os.environ["TOKEN"] = "test_token"
+os.environ["DATELAZI_DATA_URL"] = "http://foodatelazi.dev"
 
 
 @pytest.fixture(scope="module")
