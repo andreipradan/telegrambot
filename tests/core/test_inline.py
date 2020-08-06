@@ -4,7 +4,8 @@ from unittest.mock import MagicMock
 import pytest
 import telegram
 
-from core import inline
+from inlines import inline
+from inlines import markups
 
 
 class InlineMixin:
@@ -48,7 +49,7 @@ class TestEnd(InlineMixin):
 
 class TestMore(InlineMixin):
     func = "more"
-    edit_kwargs = {"reply_markup": inline.MORE_MARKUP}
+    edit_kwargs = {"reply_markup": markups.MORE}
     kwargs = {}
     text = "Choose an option"
 
@@ -56,18 +57,18 @@ class TestMore(InlineMixin):
 class TestRefreshData(InlineMixin):
     func = "refresh_data"
     edit_kwargs = {"disable_web_page_preview": True, "parse_mode": "Markdown"}
-    kwargs = {"command": "foo"}
+    kwargs = {"text": "foo"}
     text = "foo\n" + "\t" * 50
 
 
 class TestBack(InlineMixin):
     func = "back"
-    edit_kwargs = {"reply_markup": inline.START_MARKUP}
+    edit_kwargs = {"reply_markup": markups.COVID}
     kwargs = {}
     text = "Hello! Choose an option"
 
 
-@mock.patch("core.inline.logger.info")
+@mock.patch("inlines.inline.logger.info")
 def test_start(logger):
     update = MagicMock()
     update.message.from_user.first_name = "first_foo"
@@ -79,5 +80,5 @@ def test_start(logger):
         "User %s started the conversation.", "first_foo"
     )
     update.message.reply_text.assert_called_once_with(
-        "Hello! Choose an option", reply_markup=inline.START_MARKUP
+        "Hello! Choose an option", reply_markup=markups.COVID
     )

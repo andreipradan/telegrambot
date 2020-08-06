@@ -5,7 +5,7 @@ import telegram
 from flask import url_for
 
 from core import constants
-from core import inline
+from inlines import markups
 
 
 @mock.patch("telegram.Bot", return_value="Bot_foo")
@@ -28,7 +28,7 @@ class TestWebhook:
     def test_callback_query_end(self, json_mock, _, client, inline_func):
         json_mock.return_value.callback_query.data = inline_func
 
-        with mock.patch(f"core.inline.{inline_func}") as inline_mock:
+        with mock.patch(f"inlines.inline.{inline_func}") as inline_mock:
             inline_mock.return_value = f"inline_{inline_func}_foo"
             response = client.post(url_for(self.view_name), json={"1": 2})
 
@@ -40,11 +40,11 @@ class TestWebhook:
         "local_data_func",
         [
             x.callback_data
-            for x in inline.START_MARKUP.inline_keyboard[0]
+            for x in markups.COVID.inline_keyboard[0]
             if x.callback_data not in ["end", "back", "more"]
         ],
     )
-    @mock.patch("core.inline.refresh_data", return_value="refresh_data")
+    @mock.patch("inlines.inline.refresh_data", return_value="refresh_data")
     def test_refresh_data(self, _, de_json, ___, client, local_data_func):
         de_json.return_value.callback_query.data = local_data_func
 
@@ -95,7 +95,7 @@ class TestWebhook:
         assert response.status_code == 200
         assert response.data.decode("utf-8") == "send_foo"
 
-    @mock.patch("core.inline.start", return_value="inline_start_foo")
+    @mock.patch("inlines.inline.start", return_value="inline_start_foo")
     @mock.patch("core.handlers.validate_components")
     def test_start(self, validate, start, update, _, client):
         validate.return_value = "start", "valid-command"

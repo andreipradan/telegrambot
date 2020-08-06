@@ -12,8 +12,8 @@ class Games:
     def does_not_exist(self):
         return self.respond(
             [
-                f"Game '{self.name.title()}' does not exist.",
-                f"Type '/games <game_name> new' to create a new game",
+                f"Game '{self.name.title()}' not found ",
+                f"Type '/games {self.name} new' to create a new game",
             ]
         )
 
@@ -21,7 +21,7 @@ class Games:
         stats = database.get_stats(collection=self.COLLECTION, name=self.name)
         if stats:
             stats.pop("name")
-        return self.respond(stats)
+        return self.respond(stats or ["No available players"])
 
     @classmethod
     def get_list(cls):
@@ -42,7 +42,7 @@ class Games:
 
     def new_player(self, player):
         stats = database.get_stats(collection=self.COLLECTION, name=self.name)
-        if player in stats:
+        if stats and player in stats:
             return self.respond(
                 [f"Player {player.title()} already exists"],
                 title=self.name.title(),

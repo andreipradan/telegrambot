@@ -5,13 +5,13 @@ import telegram
 from flask import Blueprint
 from flask import request
 
-from core import inline
 from core import handlers
 from core import local_data
 from core import utils
 from core.constants import GAME_COMMANDS
 from core.constants import GOOGLE_CLOUD_COMMANDS
 from core.constants import GOOGLE_CLOUD_WHITELIST
+from inlines import inline
 from powers.analyze_sentiment import analyze_sentiment
 from powers.games import Games
 from powers.translate import translate_text
@@ -36,6 +36,9 @@ def webhook():
     if command_text == "inline":
         if status_code in ["more", "back", "end"]:
             return getattr(inline, status_code)(update)
+        if status_code.startswith("games_"):
+            status_code = status_code.replace("games_", "")
+            return inline.refresh_data(update, Games(status_code).get())
         return inline.refresh_data(update, getattr(local_data, status_code)())
 
     if status_code == 1337:
@@ -50,6 +53,9 @@ def webhook():
 
     if command_text == "start":
         return inline.start(update)
+
+    if command_text == "games" and not update.message.text.split(" ")[1:]:
+        return inline.start(update, games=True)
 
     if command_text in GOOGLE_CLOUD_COMMANDS:
         chat_type = update.message.chat.type
@@ -69,19 +75,16 @@ def webhook():
 
         if command_text == "games":
             args = update.message.text.split(" ")[1:]
-            if not args:
-                return utils.send_message(bot, Games.get_list(), chat_id)
-            if len(args) not in (1, 2, 3) or args[0] == "help":
+            if len(args) not in (2, 3) or len(args) == 2 and args[1] != "new":
                 return utils.send_message(
                     bot,
                     parse_global(
                         title="Syntax",
                         stats=[
-                            "/games",
-                            "/games <game_name> => shows score of <game_name>",
-                            "/games <game_name> new => creates a new game",
+                            "/games => scores",
+                            "/games <game_name> new => new game",
                             "/games <game_name> new_player <player_name>"
-                            " => add new player",
+                            " => new player",
                             "/games <game_name> + <player_name>"
                             " => increase <player_name>'s score by 1",
                             "/games <game_name> - <player_name>"
@@ -93,8 +96,6 @@ def webhook():
                 )
             name, *args = args
             games = Games(name)
-            if not args:
-                return utils.send_message(bot, games.get(), chat_id)
             if len(args) == 1:
                 return utils.send_message(bot, games.new_game(), chat_id)
             return utils.send_message(bot, games.update(*args), chat_id)
