@@ -19,14 +19,17 @@ class Games:
 
     def get(self):
         stats = database.get_stats(collection=self.COLLECTION, name=self.name)
-        stats.pop("name")
+        if stats:
+            stats.pop("name")
         return self.respond(stats)
 
     @classmethod
     def get_list(cls):
         games = [x["name"].title() for x in database.get_many(cls.COLLECTION)]
         return parse_global(
-            title="Available games", stats=games or [], items={}
+            title="Available games",
+            stats=games or ["No available games"],
+            items={},
         )
 
     def new_game(self):
@@ -35,7 +38,7 @@ class Games:
         database.set_stats(
             {"name": self.name}, collection=self.COLLECTION, name=self.name,
         )
-        return self.get()
+        return self.get_list()
 
     def new_player(self, player):
         stats = database.get_stats(collection=self.COLLECTION, name=self.name)
@@ -91,4 +94,6 @@ class Games:
         database.set_stats(
             stats, collection=self.COLLECTION, name=self.name,
         )
+        if stats:
+            stats.pop("name")
         return self.respond(stats=stats)
