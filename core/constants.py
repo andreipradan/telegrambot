@@ -4,6 +4,10 @@ ALLOWED_COMMANDS = [
     "analyze_sentiment",
     "start",
     "translate",
+    "games",
+]
+GAME_COMMANDS = [
+    "games",
 ]
 GOOGLE_CLOUD_COMMANDS = [
     "analyze_sentiment",

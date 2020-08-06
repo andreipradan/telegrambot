@@ -24,6 +24,7 @@ def epoch_to_timezone(epoch):
 
 
 def send_message(bot, text, chat_id=None):
+    text = text.replace("_", "\\_")
     try:
         return bot.send_message(
             chat_id=chat_id or os.getenv("DEBUG_CHAT_ID"),

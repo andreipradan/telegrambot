@@ -144,7 +144,7 @@ class TestValidateComponents:
         assert validate_components(update) == (
             'Unknown command: "command_foo".\n'
             "Available commands: \n• /analyze\\_sentiment\n• "
-            "/start\n• /translate",
+            "/start\n• /translate\n• /games",
             400,
         )
 
