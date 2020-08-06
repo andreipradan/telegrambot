@@ -143,7 +143,7 @@ class TestValidateComponents:
         update.message.chat_id = constants.GOOGLE_CLOUD_WHITELIST["private"][0]
         assert validate_components(update) == (
             'Unknown command: "command_foo".\n'
-            "Available commands: \n• /analyze\\_sentiment\n• "
+            "Available commands: \n• /analyze_sentiment\n• "
             "/start\n• /translate\n• /games",
             400,
         )

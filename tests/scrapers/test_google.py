@@ -27,7 +27,7 @@ class TestAnalyzeSentiment:
 
     def test_with_no_text(self):
         assert analyze_sentiment("") == (
-            "Syntax: /analyze\\_sentiment <your text here>"
+            "Syntax: /analyze_sentiment <your text here>"
         )
 
     @mock.patch("google.cloud.language_v1.LanguageServiceClient")
