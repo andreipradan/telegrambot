@@ -63,8 +63,8 @@ def webhook():
             return utils.send_message(bot, analyze_sentiment(arg), chat_id)
 
     if command_text in GAME_COMMANDS:
-        user_id = str(update.message.from_user.id)
-        if user_id not in GOOGLE_CLOUD_WHITELIST["private"]:
+        chat_type = update.message.chat.type
+        if str(chat_id) not in GOOGLE_CLOUD_WHITELIST[chat_type]:
             return utils.send_message(bot, "Unauthorized", chat_id)
 
         if command_text == "games":

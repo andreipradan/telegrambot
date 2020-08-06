@@ -20,7 +20,7 @@ EXAMPLES = {
 HELP_TEXT = {
     "Usage": [
         "/translate <insert text here>",
-        "/translate target=<language\\_code> <insert text here>",
+        "/translate target=<language_code> <insert text here>",
         "/translate languages",
     ],
     **EXAMPLES,

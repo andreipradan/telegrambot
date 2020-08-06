@@ -49,7 +49,6 @@ def validate_components(update):
                 not in GOOGLE_CLOUD_WHITELIST[message.chat.type]
             ):
                 continue
-            command = command.replace("_", "\\_")
             allowed_text += f"\n• /{command}"
         return (
             f'Unknown command: "{command_text}".\n'

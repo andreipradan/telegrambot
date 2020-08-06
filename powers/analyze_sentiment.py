@@ -25,7 +25,7 @@ def analyze_sentiment(text, **kwargs):
     """
 
     if not text:
-        return "Syntax: /analyze\\_sentiment <your text here>"
+        return "Syntax: /analyze_sentiment <your text here>"
 
     client = language_v1.LanguageServiceClient()
 
