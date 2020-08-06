@@ -25,7 +25,7 @@ def get_stats(collection=COLLECTION["romania"], **kwargs):
 def set_stats(stats, collection=COLLECTION["romania"], **filter_kwargs):
     if not filter_kwargs:
         raise ValueError("filter kwargs required")
-    get_collection(collection).update_one(
+    return get_collection(collection).update_one(
         filter_kwargs, update={"$set": stats}, upsert=True,
     )
 

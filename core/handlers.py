@@ -1,4 +1,5 @@
 from core.constants import ALLOWED_COMMANDS
+from core.constants import GAME_COMMANDS
 from core.constants import GOOGLE_CLOUD_COMMANDS
 from core.constants import GOOGLE_CLOUD_WHITELIST
 from core.parsers import parse_name
@@ -43,7 +44,7 @@ def validate_components(update):
         allowed_text = ""
         for command in ALLOWED_COMMANDS:
             if (
-                command in GOOGLE_CLOUD_COMMANDS
+                command in GOOGLE_CLOUD_COMMANDS + GAME_COMMANDS
                 and str(message.chat_id)
                 not in GOOGLE_CLOUD_WHITELIST[message.chat.type]
             ):
