@@ -101,6 +101,7 @@ class TestValidateComponents:
                 left_chat_member=None,
                 new_chat_title=None,
                 new_chat_members=None,
+                new_chat_photo=None,
                 pinned_message=None,
                 photo=None,
             ),
