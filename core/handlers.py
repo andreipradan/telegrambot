@@ -26,7 +26,14 @@ def validate_components(update):
         if message.new_chat_members:
             new_members = [parse_name(u) for u in message.new_chat_members]
             return f"Welcome {', '.join(new_members)}!", 400
-        if message.photo or message.pinned_message or message.new_chat_photo:
+        if (
+            message.photo
+            or message.pinned_message
+            or message.new_chat_photo
+            or message.group_chat_created
+            or message.supergroup_chat_created
+            or message.channel_chat_created
+        ):
             return "skip-debug", 1337
         raise ValueError(f"No message text. Update: {update.to_dict()}")
 
