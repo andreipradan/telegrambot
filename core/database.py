@@ -30,8 +30,8 @@ def set_stats(stats, collection=COLLECTION["romania"], **filter_kwargs):
     )
 
 
-def get_many(collection, order_by=None, how=-1):
-    result = get_collection(collection).find()
+def get_many(collection, order_by=None, how=-1, **kwargs):
+    result = get_collection(collection).find(kwargs)
     if order_by:
         return result.sort(order_by, how)
     return result

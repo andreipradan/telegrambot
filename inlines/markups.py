@@ -3,6 +3,7 @@ from telegram import InlineKeyboardMarkup
 
 from core import database
 from core.utils import chunks
+from powers.games import Games
 
 COVID = InlineKeyboardMarkup(
     [
@@ -27,7 +28,8 @@ MORE = InlineKeyboardMarkup(
 )
 
 
-def get_game_markup():
+def get_game_markup(chat_id):
+    games = Games.get_list(chat_id=chat_id)
     return InlineKeyboardMarkup(
         [
             [
@@ -36,9 +38,7 @@ def get_game_markup():
                 )
                 for game in chunk
             ]
-            for chunk in chunks(
-                list(database.get_many(collection="games", order_by="name")), 5
-            )
+            for chunk in chunks(list(games), 5)
         ]
         + [[InlineKeyboardButton("✅", callback_data="end")]]
     )

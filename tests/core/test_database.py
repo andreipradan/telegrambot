@@ -1,9 +1,9 @@
-import os
 from unittest import mock
 
 import pytest
 
-from core import database, constants
+from core import constants
+from core import database
 
 
 class TestDatabase:
@@ -52,7 +52,7 @@ class TestDatabase:
         assert database.get_stats(slug=1) == {"foo": "bar"}
 
     @mock.patch("core.database.get_collection")
-    def test_set_stats_with_no_filter_kwargs(self, collection):
+    def test_set_stats_with_no_filter_kwargs(self, _):
         with pytest.raises(ValueError) as e:
             database.set_stats({"foo": "bar"})
         assert e.value.args[0] == "filter kwargs required"
@@ -70,12 +70,12 @@ class TestDatabase:
         collection_mock.return_value.find.return_value = "find_foo"
         assert database.get_many("foo") == "find_foo"
         collection_mock.assert_called_once_with("foo")
-        collection_mock().find.assert_called_once_with()
+        collection_mock().find.assert_called_once_with({})
 
     @mock.patch("core.database.get_collection")
     def test_get_many_order_by(self, collection_mock):
         collection_mock.return_value.find.return_value.sort.return_value = "fs"
-        assert database.get_many("foo", order_by="foo_order") == "fs"
+        assert database.get_many("foo", order_by="foo_order", fo="bar") == "fs"
         collection_mock.assert_called_once_with("foo")
-        collection_mock().find.assert_called_once_with()
+        collection_mock().find.assert_called_once_with({"fo": "bar"})
         collection_mock().find().sort.assert_called_once_with("foo_order", -1)

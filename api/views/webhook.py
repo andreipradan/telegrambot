@@ -34,11 +34,14 @@ def webhook():
     command_text, status_code = handlers.validate_components(update)
 
     if command_text == "inline":
+        chat_id = update.callback_query.message.chat_id
         if status_code in ["more", "back", "end"]:
             return getattr(inline, status_code)(update)
         if status_code.startswith("games_"):
             status_code = status_code.replace("games_", "")
-            return inline.refresh_data(update, Games(status_code).get())
+            return inline.refresh_data(
+                update, Games(chat_id, status_code).get()
+            )
         return inline.refresh_data(update, getattr(local_data, status_code)())
 
     if status_code == 1337:
@@ -95,7 +98,7 @@ def webhook():
                     chat_id,
                 )
             name, *args = args
-            games = Games(name)
+            games = Games(chat_id, name)
             if len(args) == 1:
                 return utils.send_message(bot, games.new_game(), chat_id)
             return utils.send_message(bot, games.update(*args), chat_id)

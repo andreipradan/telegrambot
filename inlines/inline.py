@@ -83,5 +83,7 @@ def start(update, games=False):
 
     return update.message.reply_text(
         "Hello! Choose an option",
-        reply_markup=markups.COVID if not games else markups.get_game_markup(),
+        reply_markup=markups.COVID
+        if not games
+        else markups.get_game_markup(update.message.chat_id),
     ).to_json()
