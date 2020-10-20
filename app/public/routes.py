@@ -25,6 +25,11 @@ ICONS = {
 @blueprint.route("/")
 def route_default():
     today = database.get_stats(slug=SLUG["romania"])
+    if not today:
+        return render_template(
+            "home.html", archive=[], stats_last_updated="N/A"
+        )
+
     today_date_time = epoch_to_timezone(today["Actualizat la"])
     today = {
         key: today[key]
@@ -54,7 +59,7 @@ def route_default():
     ] + [archive_today]
     return render_template(
         "home.html",
-        today_stats_last_updated=today_date_time.strftime("%d.%m.%Y %H:%M"),
+        stats_last_updated=today_date_time.strftime("%d.%m.%Y %H:%M"),
         archive=archive,
         top_stats=[
             {
@@ -82,6 +87,10 @@ def compare():
     selected_countries = request.args.getlist("country")
     etag = database.get_stats("etags", location="johns_hopkins")
     stats = database.get_stats(COLLECTION["country"], country="World")
+    if not stats:
+        return render_template(
+            "compare.html", archive=[], stats_last_updated="N/A"
+        )
     return render_template(
         "compare.html",
         top_stats=[
@@ -96,9 +105,7 @@ def compare():
         archive=parse_countries_for_comparison(selected_countries),
         data_countries=",".join(available_countries),
         search_default=",".join(selected_countries),
-        today_stats_last_updated=etag["last_updated"].strftime(
-            "%d.%m.%Y %H:%M"
-        )
+        stats_last_updated=etag["last_updated"].strftime("%d.%m.%Y %H:%M")
         if etag
         else None,
     )
@@ -107,10 +114,14 @@ def compare():
 @blueprint.route("/global")
 def global_map():
     countries = list(database.get_many(COLLECTION["country"], "total_cases"))
+    if not countries:
+        return render_template(
+            "global.html", countries=[], stats_last_updated="N/A"
+        )
     stats = [c for c in countries if c["country"].strip() == "World"][0]
     return render_template(
         "global.html",
-        today_stats_last_updated=database.get_stats(
+        stats_last_updated=database.get_stats(
             COLLECTION["global"], slug=SLUG["global"]
         )["last_updated"].replace("Last updated: ", ""),
         top_stats=[
@@ -129,12 +140,16 @@ def global_map():
 @blueprint.route("/europe")
 def europe():
     countries = list(database.get_many(COLLECTION["country"], "total_cases"))
+    if not countries:
+        return render_template(
+            "europe.html", countries=[], stats_last_updated="N/A"
+        )
     europe_stats = [c for c in countries if c["country"].strip() == "Europe"][
         0
     ]
     return render_template(
         "europe.html",
-        today_stats_last_updated=database.get_stats(
+        stats_last_updated=database.get_stats(
             COLLECTION["global"], slug=SLUG["global"]
         )["last_updated"].replace("Last updated: ", ""),
         top_stats=[
