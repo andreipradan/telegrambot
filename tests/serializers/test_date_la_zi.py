@@ -71,10 +71,7 @@ API_PAYLOAD = {
         "VN": 79,
         "B": 552,
     },
-    "incidence": {
-        "AB": 1.6,
-        "BN": 2.1,
-    },
+    "incidence": {"AB": 1.6, "BN": 2.1},
 }
 
 
