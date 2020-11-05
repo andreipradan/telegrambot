@@ -44,3 +44,26 @@ def send_message(bot, text, chat_id=None):
             return str(e)
     except Unauthorized as e:
         return str(e)
+
+
+def split_in_chunks(dct, chunk_size=15, limit=None):
+    if not isinstance(dct, dict):
+        raise ValueError("Must be instance of dict")
+    if not dct:
+        return
+    if limit and limit < chunk_size:
+        chunk_size = limit
+    if len(dct) < chunk_size:
+        chunk_size = len(dct)
+    keys = list(reversed(sorted(dct, key=dct.get)))[:limit]
+    max_key_len = len(keys[0])
+    max_val_len = len(str(dct[keys[0]]))
+    return [
+        "  ".join(
+            [
+                f"`{name:<{max_key_len}}: {dct[name]:<{max_val_len}}`"
+                for name in chunk
+            ]
+        )
+        for chunk in chunks(keys, chunk_size)
+    ]
