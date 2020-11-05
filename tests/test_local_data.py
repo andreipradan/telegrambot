@@ -57,7 +57,7 @@ class TestLocalLatestArticle(NoStatsMxin):
 
 
 def test_datelazi():
-    assert local_data.datelazi() == "https://datelazi.ro"
+    assert local_data.datelazi() == "https://telegrambot.pradan.dev/"
 
 
 class TestLocalGlobalStats(NoStatsMxin):
