@@ -11,6 +11,10 @@
 {% block top_navigation %}{% endblock %}
 
 {% block content %}
+    <div class="pull-right">
+        Datasource: <a target="_blank" href="https://datelazi.ro/">datelazi.ro</a>
+    </div>
+
   <div class="right_col" role="main">
     <!-- top tiles -->
     <div class="row tile_count">
@@ -28,19 +32,42 @@
     {% with title="Evoluția numărului de cazuri în România", chart_id="chart_line_romania" %}
         {% include "parts/line_graph.html" %}
     {% endwith %}
+    {% if incidence %}
+        {% with title="Incidența cazurilor pe județe", chart_id="bar_chart_incidence" %}
+            {% include "parts/bar_chart_group.html" %}
+        {% endwith %}
+    {% endif %}
+    {% if infections %}
+        {% with title="Numărul infectărilor pe județe", chart_id="bar_chart_infections" %}
+            {% include "parts/bar_chart_group.html" %}
+        {% endwith %}
+    {% endif %}
   </div>
 {% endblock content %}
 
 {% block javascripts %}
     {{ super()}}
     <script src="{{ url_for('static', filename='vendors/echarts/dist/echarts.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendors/raphael/raphael.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendors/morris.js/morris.min.js') }}"></script>
     <script src="{{ url_for('static', filename='build/js/line_graph.js') }}"></script>
+    <script src="{{ url_for('static', filename='build/js/bar_chart.js') }}"></script>
     <script type="text/javascript">
         init_e_chart_line(
             '{{ archive|tojson }}',
             chart_id="chart_line_romania",
             for_homepage=true,
             date_key='Data'
+        )
+        init_bar_chart (
+            '{{ incidence|tojson }}',
+            chart_id="bar_chart_incidence",
+            y_key="incidence",
+        )
+        init_bar_chart (
+            '{{ infections|tojson }}',
+            chart_id="bar_chart_infections",
+            y_key="infections",
         )
     </script>
 {% endblock javascripts %}

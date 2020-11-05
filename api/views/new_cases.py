@@ -9,6 +9,7 @@ from core import database
 from core.auth import header_auth
 from core.parsers import parse_diff
 from core.utils import send_message
+from core.utils import split_in_chunks
 from scrapers.clients.datelazi import DateLaZiClient
 from scrapers.clients.stirioficiale import StiriOficialeClient
 from scrapers.formatters import parse_global
@@ -76,9 +77,21 @@ def check_quick_stats():
     diff = parse_diff(quick_stats, db_stats)
     diff["Actualizat la"] = last_updated
 
+    incidence = client.serialized_data["Incidență"]
+    infections = client.serialized_data["Judete"]
+    items = {
+        "*Incidențe*": split_in_chunks(incidence, limit=5),
+        "*Infectări*": split_in_chunks(infections, limit=5),
+    }
     send_message(
         bot=telegram.Bot(token=os.environ["TOKEN"]),
-        text=parse_global(title="🔴 Cazuri noi", stats=diff, items={}),
+        text=parse_global(
+            title="🔴 Cazuri noi",
+            stats=diff,
+            items=items,
+            footer="Detalii: https://telegrambot.pradan.dev/",
+            emoji="🔸",
+        ),
         chat_id=os.environ["CHAT_ID"],
     )
     msg = "Quick stats updated"

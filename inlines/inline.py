@@ -69,7 +69,7 @@ def refresh_data(update, text):
             message_id=message.message_id,
             text=text + "\n" + "\t" * 50,
             reply_markup=message.reply_markup,
-            disable_web_page_preview=text != "https://datelazi.ro",
+            disable_web_page_preview=text != "https://telegrambot.pradan.dev/",
             parse_mode=telegram.ParseMode.MARKDOWN,
         ).to_json()
     except telegram.error.BadRequest as e:

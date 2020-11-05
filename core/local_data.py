@@ -19,9 +19,7 @@ def local_quick_stats():
     if not stats:
         return "Nu sunt statistici salvate pentru ziua de azi"
     stats = DLZSerializer.deserialize(stats)
-    return formatters.parse_global(
-        title="🔴 Cazuri noi", stats=stats, items={},
-    )
+    return formatters.parse_global(title="🔴 Cazuri noi", stats=stats, items={})
 
 
 def local_latest_article():
@@ -35,12 +33,12 @@ def local_latest_article():
 
 
 def datelazi():
-    return "https://datelazi.ro"
+    return "https://telegrambot.pradan.dev/"
 
 
 def local_global_stats():
     top_stats = database.get_stats(
-        collection=COLLECTION["global"], slug=SLUG["global"],
+        collection=COLLECTION["global"], slug=SLUG["global"]
     )
     if not top_stats:
         return "Nu sunt statistici globale pentru ziua de azi"
