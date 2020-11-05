@@ -71,6 +71,10 @@ API_PAYLOAD = {
         "VN": 79,
         "B": 552,
     },
+    "incidence": {
+        "AB": 1.6,
+        "BN": 2.1,
+    },
 }
 
 
@@ -86,6 +90,7 @@ DB_PAYLOAD = {
     "Procent copii": 4,
     "Categorii de vârstă": API_PAYLOAD["distributionByAge"],
     "Judete": API_PAYLOAD["countyInfectionsNumbers"],
+    "Incidență": API_PAYLOAD["incidence"],
 }
 
 
@@ -102,6 +107,7 @@ class TestDLZSerializer:
             "Vârstă medie": "46",
             "Categorii de vârstă": DB_PAYLOAD["Categorii de vârstă"],
             "Judete": DB_PAYLOAD["Judete"],
+            "Incidență": DB_PAYLOAD["Incidență"],
         }
     )
     deserialized = {
@@ -122,6 +128,7 @@ class TestDLZSerializer:
         "Vârstă medie": "averageAge",
         "Categorii de vârstă": "distributionByAge",
         "Judete": "countyInfectionsNumbers",
+        "Incidență": "incidence",
     }
 
     def test_fields(self):
@@ -162,6 +169,7 @@ class TestDLZArchiveSerializer(TestDLZSerializer):
         "Procent copii": 4,
         "Categorii de vârstă": DB_PAYLOAD["Categorii de vârstă"],
         "Judete": DB_PAYLOAD["Judete"],
+        "Incidență": DB_PAYLOAD["Incidență"],
     }
     deserialized = {
         "Data": "2020-04-03",
@@ -175,6 +183,7 @@ class TestDLZArchiveSerializer(TestDLZSerializer):
         "Procent copii": 4,
         "Categorii de vârstă": DB_PAYLOAD["Categorii de vârstă"],
         "Judete": DB_PAYLOAD["Judete"],
+        "Incidență": DB_PAYLOAD["Incidență"],
     }
     serializer = DLZArchiveSerializer
     mapped_fields = {
@@ -189,4 +198,5 @@ class TestDLZArchiveSerializer(TestDLZSerializer):
         "Procent barbati": "percentageOfMen",
         "Procent copii": "percentageOfChildren",
         "Judete": "countyInfectionsNumbers",
+        "Incidență": "incidence",
     }
