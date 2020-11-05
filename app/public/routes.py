@@ -29,7 +29,8 @@ def route_default():
         return render_template(
             "home.html", archive=[], stats_last_updated="N/A"
         )
-
+    incidence = today.get("Incidență", {})
+    infections = today.get("Judete", {})
     today_date_time = epoch_to_timezone(today["Actualizat la"])
     today = {
         key: today[key]
@@ -71,6 +72,13 @@ def route_default():
                 else None,
             }
             for key, value in today.items()
+        ],
+        incidence=[
+            {"county": c, "incidence": incidence[c]} for c in incidence.keys()
+        ],
+        infections=[
+            {"county": c, "infections": infections[c]}
+            for c in infections.keys()
         ],
     )
 

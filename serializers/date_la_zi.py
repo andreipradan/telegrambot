@@ -18,6 +18,7 @@ class DLZSerializer:
         "Vârstă medie": "averageAge",
         "Categorii de vârstă": "distributionByAge",
         "Judete": "countyInfectionsNumbers",
+        "Incidență": "incidence",
     }
     deserialize_fields = "Confirmați", "Vindecați", "Decedați", "Actualizat la"
 
@@ -62,6 +63,7 @@ class DLZArchiveSerializer(DLZSerializer):
         "Vârstă medie": "averageAge",
         "Categorii de vârstă": "distributionByAge",
         "Judete": "countyInfectionsNumbers",
+        "Incidență": "incidence",
     }
     deserialize_fields = list(mapped_fields)
 
