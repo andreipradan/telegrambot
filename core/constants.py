@@ -5,9 +5,11 @@ ALLOWED_COMMANDS = [
     "start",
     "translate",
     "games",
+    "randomize",
 ]
 GAME_COMMANDS = [
     "games",
+    "randomize",
 ]
 GOOGLE_CLOUD_COMMANDS = [
     "analyze_sentiment",
