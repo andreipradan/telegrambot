@@ -1,4 +1,5 @@
 import os
+import random
 
 import telegram
 
@@ -103,4 +104,18 @@ def webhook():
                 return utils.send_message(bot, games.new_game(), chat_id)
             return utils.send_message(bot, games.update(*args), chat_id)
 
+        if command_text == "randomize":
+            args = update.message.text.split(" ")[1:]
+            if len(args) not in range(2, 51):
+                return utils.send_message(
+                    bot,
+                    "Must contain a list of 2-50 items separated by space",
+                    chat_id,
+                )
+            random.shuffle(args)
+            return utils.send_message(
+                bot,
+                "\n".join(f"{i+1}. {item}" for i, item in enumerate(args)),
+                chat_id,
+            )
     raise ValueError(f"Unhandled command: {command_text}, {status_code}")
