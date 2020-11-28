@@ -89,7 +89,7 @@ def check_quick_stats():
             title="🔴 Cazuri noi",
             stats=diff,
             items=items,
-            footer="Detalii: https://telegrambot.pradan.dev/",
+            footer="Detalii: https://coronavirus.pradan.dev/",
             emoji="🔸",
         ),
         chat_id=os.environ["CHAT_ID"],
