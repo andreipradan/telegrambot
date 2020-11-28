@@ -33,6 +33,8 @@ def validate_components(update):
             or message.group_chat_created
             or message.supergroup_chat_created
             or message.channel_chat_created
+            or message.document
+            or message.animation
         ):
             return "skip-debug", 1337
         raise ValueError(f"No message text. Update: {update.to_dict()}")
