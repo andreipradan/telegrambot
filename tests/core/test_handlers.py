@@ -107,6 +107,8 @@ class TestValidateComponents:
                 channel_chat_created=None,
                 pinned_message=None,
                 photo=None,
+                document=None,
+                animation=None,
             ),
         )
         with pytest.raises(ValueError) as e:
