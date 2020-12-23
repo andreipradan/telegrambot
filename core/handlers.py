@@ -43,6 +43,8 @@ def validate_components(update):
         return "skip-debug", 1337
 
     if not message_text.startswith("/"):
+        if "Voice Chat" in message_text.strip():
+            return "skip-debug", 1337
         return (
             f'Invalid command: "{message_text}".\nCommands start with "/".',
             "send-message",
