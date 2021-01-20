@@ -72,6 +72,8 @@ API_PAYLOAD = {
         "B": 552,
     },
     "incidence": {"AB": 1.6, "BN": 2.1},
+    "vaccines": {"comp1": {"total_administered": 12, "immunized": 23}},
+    "numberTotalDosesAdministered": 991,
 }
 
 
@@ -105,6 +107,10 @@ class TestDLZSerializer:
             "Categorii de vârstă": DB_PAYLOAD["Categorii de vârstă"],
             "Judete": DB_PAYLOAD["Judete"],
             "Incidență": DB_PAYLOAD["Incidență"],
+            "Vaccinări": {
+                "comp1": {"total_administered": 12, "immunized": 23}
+            },
+            "Total doze administrate": 991,
         }
     )
     deserialized = {
@@ -126,6 +132,8 @@ class TestDLZSerializer:
         "Categorii de vârstă": "distributionByAge",
         "Judete": "countyInfectionsNumbers",
         "Incidență": "incidence",
+        "Vaccinări": "vaccines",
+        "Total doze administrate": "numberTotalDosesAdministered",
     }
 
     def test_fields(self):
