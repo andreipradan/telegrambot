@@ -19,6 +19,8 @@ class DLZSerializer:
         "Categorii de vârstă": "distributionByAge",
         "Judete": "countyInfectionsNumbers",
         "Incidență": "incidence",
+        "Vaccinări": "vaccines",
+        "Total doze administrate": "numberTotalDosesAdministered",
     }
     deserialize_fields = "Confirmați", "Vindecați", "Decedați", "Actualizat la"
 

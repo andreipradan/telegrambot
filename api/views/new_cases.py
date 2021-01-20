@@ -82,6 +82,19 @@ def check_quick_stats():
     items = {
         "*Incidențe*": split_in_chunks(incidence, limit=5),
         "*Infectări*": split_in_chunks(infections, limit=5),
+        "*Vaccinări*": [
+            f"`Total: {client.serialized_data['Total doze administrate']}`",
+        ],
+        **{
+            f"*{company.title()} (24h)*": {
+                "Total": f'+{data["total_administered"]}',
+                "Rapel": f'+{data["immunized"]}',
+            }
+            for company, data in client.serialized_data.get(
+                "Vaccinări", {}
+            ).items()
+            if data["total_administered"] or data["immunized"]
+        },
     }
     send_message(
         bot=telegram.Bot(token=os.environ["TOKEN"]),
@@ -89,7 +102,7 @@ def check_quick_stats():
             title="🔴 Cazuri noi",
             stats=diff,
             items=items,
-            footer="Detalii: https://coronavirus.pradan.dev/",
+            footer="\nDetalii: https://coronavirus.pradan.dev/",
             emoji="🔸",
         ),
         chat_id=os.environ["CHAT_ID"],
