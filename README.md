@@ -13,14 +13,14 @@
 
 > A Flask project to interactively check OFFICIAL COVID-19 stats for Romania and other countries.
 
-#### Web version: https://telegrambot.pradan.dev/
->[![doc](https://storage.googleapis.com/telegrambot/static/images/website_preview.png)](https://telegrambot.pradan.dev/)
+#### Web version: https://coronavirus.pradan.dev/
+>[![doc](https://storage.googleapis.com/telegrambot/static/images/website_preview.png)](https://coronavirus.pradan.dev/)
 
-#### Telegram channel: https://telegrambot.pradan.dev/channel/
->[![doc](https://storage.googleapis.com/telegrambot/static/images/covid_updates_channel.png)](https://telegrambot.pradan.dev/channel/)
+#### Telegram channel: https://coronavirus.pradan.dev/channel/
+>[![doc](https://storage.googleapis.com/telegrambot/static/images/covid_updates_channel.png)](https://coronavirus.pradan.dev/channel/)
 
-#### Telegram bot: https://telegrambot.pradan.dev/bot/
->[![doc](docs/inline.png)](https://telegrambot.pradan.dev/bot/)
+#### Telegram bot: https://coronavirus.pradan.dev/bot/
+>[![doc](docs/inline.png)](https://coronavirus.pradan.dev/bot/)
 
 ## Setup
 
