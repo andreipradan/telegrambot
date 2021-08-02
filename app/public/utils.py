@@ -91,6 +91,8 @@ def parse_countries(countries):
             country_name = "Virgin Islands, British"
         if country_name == "Micronesia":
             country_name = "Micronesia, Federated States of"
+        if country_name == "Saint Helena":
+            country_name = "Saint Helena, Ascension and Tristan da Cunha"
 
         country.pop("_id")
         try:
