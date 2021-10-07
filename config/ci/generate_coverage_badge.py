@@ -43,7 +43,10 @@ if __name__ == "__main__":
     ) as coverage_template, open("/app/coverage.svg", "w+") as coverage_file:
         coverage_file.write(
             coverage_template.read()
-            .replace("%total_coverage_goes_here%", f"{badge_coverage}%",)
+            .replace(
+                "%total_coverage_goes_here%",
+                f"{badge_coverage}%",
+            )
             .replace("%coverage_colour_goes_here%", badge_colour)
         )
     logger.info("Completed")

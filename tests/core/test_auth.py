@@ -43,7 +43,9 @@ class TestAuthenticate:
         self.set_auth_env_vars(monkeypatch)
         assert _authenticate("foo") is False
         verify_mock.assert_called_once_with(
-            id_token="foo", request=request_mock(), certs_url="foo_certs_url",
+            id_token="foo",
+            request=request_mock(),
+            certs_url="foo_certs_url",
         )
 
     @mock.patch("core.auth.Request")

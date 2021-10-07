@@ -24,13 +24,14 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     from scrapers.clients.datelazi import DateLaZiClient
-    from scrapers.clients.stirioficiale import StiriOficialeClient
     from scrapers.clients.worldometers import WorldometersClient
 
     parser = argparse.ArgumentParser(description="Sync data from remotes")
     parser.add_argument("--all", action="store_true", help="Sync everything")
     parser.add_argument(
-        "--romania", action="store_true", help="Sync today's data for romania",
+        "--romania",
+        action="store_true",
+        help="Sync today's data for romania",
     )
     parser.add_argument(
         "--romania-archive",
@@ -84,6 +85,5 @@ if __name__ == "__main__":
         client.sync_archive()
 
     if args.news:
-        client = StiriOficialeClient()
-        client.sync()
+        raise NotImplementedError
     logger.info("Done")

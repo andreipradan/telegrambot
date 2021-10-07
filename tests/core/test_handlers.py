@@ -27,34 +27,6 @@ class TestValidateComponents:
         )
         assert validate_components(update) == ("skip-debug", 1337)
 
-    def test_missing_message_raises_value_error(self):
-        update = MagicMock(
-            callback_query=None, edited_message=None, channel_post=None
-        )
-        update.message = None
-        with pytest.raises(ValueError) as e:
-            validate_components(update)
-
-        assert e.value.args[0] == self.missing_error.format(update.to_dict())
-
-    def test_missing_chat_raises_value_error(self):
-        update = MagicMock(
-            callback_query=None, edited_message=None, channel_post=None
-        )
-        update.message.chat = None
-        with pytest.raises(ValueError) as e:
-            validate_components(update)
-        assert e.value.args[0] == self.missing_error.format(update.to_dict())
-
-    def test_missing_chat_id_raises_value_error(self):
-        update = MagicMock(
-            callback_query=None, edited_message=None, channel_post=None
-        )
-        update.message.chat.id = None
-        with pytest.raises(ValueError) as e:
-            validate_components(update)
-        assert e.value.args[0] == self.missing_error.format(update.to_dict())
-
     def test_left_chat_member(self):
         update = MagicMock(callback_query=None)
         update.message.text = None

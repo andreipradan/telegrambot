@@ -6,7 +6,8 @@ import telegram
 
 
 logging.basicConfig(
-    level=logging.INFO, format="[%(asctime)s] %(levelname)s - %(message)s",
+    level=logging.INFO,
+    format="[%(asctime)s] %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
 
@@ -14,9 +15,19 @@ logger = logging.getLogger(__name__)
 def get_webhook(token):
     current_url = telegram.Bot(token=token).get_webhook_info()["url"]
     logging.info(f'Current webhook url: {current_url or "is not set up"}')
+    return current_url
 
 
-def set_webhook(token):
+def set_webhook(token, url):
+    bot = telegram.Bot(token=token)
+    if url:
+        if not url.startswith("https://"):
+            return logger.error(f"URL '{url}' is not https!")
+        url = f"{url}/webhook/{token}"
+        logger.info(f"Setting up custom URL : {url}")
+        bot.set_webhook(url)
+        return bot.get_webhook_info()
+
     try:
         json = requests.get("http://localhost:4040/api/tunnels").json()
     except requests.exceptions.ConnectionError:
@@ -30,9 +41,10 @@ def set_webhook(token):
 
     assert tunnel_url, "No HTTPS URL found!"
 
-    bot = telegram.Bot(token=token)
-    bot.set_webhook(f"{tunnel_url}/webhook/{token}")
-    get_webhook(token)
+    url = f"{tunnel_url}/webhook/{token}"
+    logger.info(f"Setting up local ngrok url: {url}")
+    bot.set_webhook(url)
+    return get_webhook(token)
 
 
 if __name__ == "__main__":
@@ -44,12 +56,17 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--set",
-        action="store_true",
-        help="Set HTTPS Host from running ngrok tunnel",
+        const="local",
+        help="Set HTTPS Host. Defaults to running ngrok tunnel",
+        nargs="?",
+        type=str,
     )
     args = parser.parse_args()
-    if not args.set:
-        get_webhook(args.token)
+    if args.set:
+        set_webhook(
+            token=args.token, url=args.set if args.set != "local" else None
+        )
     else:
-        set_webhook(token=args.token)
-    logging.info("Complete.")
+        logger.info("Getting webhook url...")
+        get_webhook(args.token)
+    logging.info("Done")

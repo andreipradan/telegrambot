@@ -1,6 +1,13 @@
+import logging
 import os
 import random
 
+from google.api_core.exceptions import GoogleAPICallError
+from google.auth.exceptions import DefaultCredentialsError
+from google.cloud import exceptions
+from google.cloud import translate_v2 as translate
+
+import six
 import telegram
 
 from flask import Blueprint
@@ -21,6 +28,15 @@ from scrapers.formatters import parse_global
 webhook_views = Blueprint("webhook_views", __name__)
 
 TOKEN = os.environ["TOKEN"]
+TRANSLATE_BOT_TOKEN = os.environ["TRANSLATE_BOT_TOKEN"]
+TRANSLATE_BOT_WHITELIST = os.environ["TRANSLATE_BOT_WHITELIST"].split(",")
+TRANSLATE_BOT_WHITELIST.append("andreierdna")
+try:
+    TRANSLATE_BOT_TEXT_MAX_SIZE = int(
+        os.getenv("TRANSLATE_BOT_TEXT_MAX_SIZE", 800)
+    )
+except (TypeError, ValueError):
+    TRANSLATE_BOT_TEXT_MAX_SIZE = 800
 
 
 @webhook_views.route(f"/webhook/{TOKEN}", methods=["POST"])
@@ -119,3 +135,75 @@ def webhook():
                 chat_id,
             )
     raise ValueError(f"Unhandled command: {command_text}, {status_code}")
+
+
+@webhook_views.route(f"/translate-bot/{TRANSLATE_BOT_TOKEN}", methods=["POST"])
+def translate_bot():
+    if request.method != "POST":
+        logging.warning(f"Got {request.method} request!")
+        return ""
+
+    json = request.get_json()
+
+    if not json:
+        logging.warning("Got no json")
+        return ""
+
+    bot = telegram.Bot(token=TRANSLATE_BOT_TOKEN)
+
+    update = telegram.Update.de_json(json, bot)
+    message = update.message
+
+    if not hasattr(message, "text"):
+        logging.warning(f"got no text")
+        return "No message text"
+
+    text = message.text
+    if text and message.from_user.username not in TRANSLATE_BOT_WHITELIST:
+        logging.error(f"Ignoring message from: {message.from_user.username}")
+        return ""
+
+    if not message.forward_date:
+        logging.warning("Ignoring message, not a forward")
+        return ""
+
+    text = text or update.message.caption
+    if not text:
+        logging.warning("No text nor caption provided")
+        return ""
+
+    text_size = len(text)
+    if text_size > TRANSLATE_BOT_TEXT_MAX_SIZE:
+        logging.warning(
+            f"Exceeded {TRANSLATE_BOT_TEXT_MAX_SIZE} characters: {text_size}"
+        )
+        return bot.send_message(
+            chat_id=message.chat_id,
+            text=f"Too many characters. Try sending less than {TRANSLATE_BOT_TEXT_MAX_SIZE} characters",
+        ).to_json()
+
+    if not text.strip():
+        logging.warning(f"No text after stripping: {text}")
+        return ""
+
+    if isinstance(text, six.binary_type):
+        text = text.decode("utf-8")
+
+    try:
+        translate_client = translate.Client()
+    except DefaultCredentialsError as e:
+        logging.error(e)
+        return ""
+    try:
+        result = translate_client.translate(
+            text, target_language="en", format_="text"
+        )
+    except (GoogleAPICallError, exceptions.BadRequest) as e:
+        logging.error(e)
+        return "Something went wrong. For usage and examples type '/translate help'."
+
+    detected_language = result["detectedSourceLanguage"] or ""
+    return bot.send_message(
+        chat_id=message.chat_id,
+        text=f"[{detected_language}] {result['translatedText']}",
+    ).to_json()

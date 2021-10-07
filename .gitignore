@@ -79,3 +79,4 @@ venv/
 venv.bak/
 wheels/
 app/base/static/
+config/translate_key.json

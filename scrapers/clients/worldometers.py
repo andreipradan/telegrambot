@@ -91,7 +91,8 @@ class WorldometersClient:
                 countries.append({ths[i]: data[i] for i in range(len(ths))})
 
         result = set_multiple(
-            countries=countries, collection=COLLECTION["country"],
+            countries=countries,
+            collection=COLLECTION["country"],
         )
         if not result.upserted_count and not result.modified_count:
             return logger.info("Countries: No updates")

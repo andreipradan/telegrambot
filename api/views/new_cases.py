@@ -11,7 +11,6 @@ from core.parsers import parse_diff
 from core.utils import send_message
 from core.utils import split_in_chunks
 from scrapers.clients.datelazi import DateLaZiClient
-from scrapers.clients.stirioficiale import StiriOficialeClient
 from scrapers.formatters import parse_global
 from serializers import DLZSerializer
 
@@ -20,27 +19,12 @@ logger = logging.getLogger(__name__)
 new_cases_views = Blueprint("new_cases_views", __name__)
 
 
-def get_latest_news():
-    client = StiriOficialeClient()
-    stats = client.sync()
-    if not stats:
-        return
-
-    items = {stats.pop("descriere"): [stats.pop("url")]}
-    return parse_global(
-        title=f"🔵 {stats.pop('titlu')}", stats=stats, items=items, emoji="❗"
-    )
-
-
-@new_cases_views.route("/check-<what>/<token>/", methods=["POST"])
-def check_new_cases(what, token):
+@new_cases_views.route("/check-sync-archive/<token>/", methods=["POST"])
+def check_new_cases(token):
     if not database.get_collection("oicd_auth").find_one({"bearer": token}):
         raise abort(403)
 
-    if what not in FUNCS:
-        raise abort(404)
-
-    text = FUNCS[what]()
+    text = DateLaZiClient().sync_archive()
     if not text:
         return "No changes"
 
@@ -51,12 +35,6 @@ def check_new_cases(what, token):
         disable_notification=True,
         parse_mode=telegram.ParseMode.MARKDOWN,
     ).to_json()
-
-
-FUNCS = {
-    "stiri-oficiale": get_latest_news,
-    "sync-archive": DateLaZiClient().sync_archive,
-}
 
 
 @new_cases_views.route("/check-new-cases/", methods=["POST"])

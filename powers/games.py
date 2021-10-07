@@ -66,7 +66,9 @@ class Games:
     def respond(self, stats, title=None):
         return (
             parse_global(
-                title=title or self.name.capitalize(), stats=stats, items={},
+                title=title or self.name.capitalize(),
+                stats=stats,
+                items={},
             )
             if stats
             else self.does_not_exist
