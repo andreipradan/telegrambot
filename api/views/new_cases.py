@@ -66,7 +66,7 @@ def check_quick_stats():
     client.sync()
 
     quick_stats = DLZSerializer.deserialize(client.serialized_data)
-    last_updated = quick_stats.pop("Actualizat la")
+    last_updated = quick_stats.pop("Data")
 
     db_stats = client._local_data
     if db_stats and quick_stats.items() <= db_stats.items():
