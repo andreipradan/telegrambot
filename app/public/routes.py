@@ -33,7 +33,7 @@ def route_default():
     today_date = datetime.strptime(today["Data"], DATE_FORMAT)
 
     today_keys = ["Confirmați", "Decedați", "Vindecați"]
-    if os.environ["DATELAZI_DATA_URL"].endswith("smallData.json"):
+    if not os.environ["DATELAZI_DATA_URL"].endswith("smallData.json"):
         today_keys.extend(
             ["Procent barbati", "Procent femei", "Procent copii"]
         )
