@@ -26,11 +26,9 @@ class DateLaZiClient:
         self.serialized_data = None
 
     def _fetch_archive(self, days):
-        archive_collection = (
-            f"archive{'-small' if self.small_archive  else ''}"
-        )
+        collection = f"archive{'-small' if self.small_archive  else ''}"
         return list(
-            database.get_collection(COLLECTION[archive_collection]).find(
+            database.get_collection(COLLECTION[collection]).find(
                 {"Data": {"$in": days}},
                 sort=[("Data", -1)],
             )
