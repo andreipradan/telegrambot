@@ -7,6 +7,7 @@ ALLOWED_COMMANDS = [
     "games",
     "randomize",
 ]
+DATE_FORMAT = "%Y-%m-%d"
 GAME_COMMANDS = [
     "games",
     "randomize",
@@ -24,6 +25,7 @@ GOOGLE_CLOUD_WHITELIST = {
 
 COLLECTION = {
     "archive": "romania-archive",
+    "archive-small": "romania-archive-small",
     "country": "country-collection",
     "global": "global-collection",
     "romania": "romania-collection",

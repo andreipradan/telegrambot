@@ -1,5 +1,6 @@
+import os
 from copy import deepcopy
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from app.public import blueprint
 from flask import render_template
@@ -10,11 +11,9 @@ from app.public.utils import parse_countries
 from app.public.utils import parse_countries_for_comparison
 from app.public.utils import parse_top_stats
 from core import database
-from core.constants import SLUG, COLLECTION
-from core.utils import epoch_to_timezone
+from core.constants import SLUG, COLLECTION, DATE_FORMAT
 from serializers import DLZArchiveSerializer
 
-DATE_FORMAT = "%Y-%m-%d"
 ICONS = {
     "Procent barbati": "male",
     "Procent femei": "female",
@@ -31,24 +30,20 @@ def route_default():
         )
     incidence = today.get("Incidență", {})
     infections = today.get("Judete", {})
-    today_date_time = epoch_to_timezone(today["Actualizat la"])
-    today = {
-        key: today[key]
-        for key in [
-            "Confirmați",
-            "Decedați",
-            "Vindecați",
-            "Procent barbati",
-            "Procent femei",
-            "Procent copii",
-        ]
-    }
+    today_date = datetime.strptime(today["Data"], DATE_FORMAT)
+
+    today_keys = ["Confirmați", "Decedați", "Vindecați"]
+    if os.environ["DATELAZI_DATA_URL"].endswith("smallData.json"):
+        today_keys.extend(
+            ["Procent barbati", "Procent femei", "Procent copii"]
+        )
+    today = {key: today[key] for key in today_keys}
 
     archive_today = deepcopy(today)
-    archive_today["Data"] = today_date_time.strftime(DATE_FORMAT)
+    archive_today["Data"] = today_date
 
     archive = list(database.get_many(COLLECTION["archive"], "Data", how=1))
-    yesterday = today_date_time - timedelta(days=1)
+    yesterday = today_date - timedelta(days=1)
     yesterday = [
         x for x in archive if x["Data"] == yesterday.strftime(DATE_FORMAT)
     ]
@@ -60,7 +55,7 @@ def route_default():
     ] + [archive_today]
     return render_template(
         "home.html",
-        stats_last_updated=today_date_time.strftime("%d.%m.%Y %H:%M"),
+        stats_last_updated=today_date.strftime("%d.%m.%Y"),
         archive=archive,
         top_stats=[
             {

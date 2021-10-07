@@ -96,10 +96,10 @@ DB_PAYLOAD = {
 class TestDLZSerializer:
     db_payload = OrderedDict(
         {
+            "Data": "2020-04-03",
             "Confirmați": 3183,
             "Vindecați": 283,
             "Decedați": 133,
-            "Actualizat la": 1585923720,
             "Procent barbati": 41,
             "Procent femei": 55,
             "Procent copii": 4,
@@ -117,14 +117,14 @@ class TestDLZSerializer:
         "Confirmați": 3183,
         "Vindecați": 283,
         "Decedați": 133,
-        "Actualizat la": "17:22, 03 Apr 2020",
+        "Data": "03 Apr 2020",
     }
     serializer = DLZSerializer
     mapped_fields = {
         "Confirmați": "numberInfected",
         "Vindecați": "numberCured",
         "Decedați": "numberDeceased",
-        "Actualizat la": "parsedOn",
+        "Data": "parsedOnString",
         "Procent barbati": "percentageOfMen",
         "Procent femei": "percentageOfWomen",
         "Procent copii": "percentageOfChildren",
@@ -158,14 +158,13 @@ class TestDLZSerializer:
             stats_kwargs["collection"] = "romania-collection"
             stats_kwargs["slug"] = "romania-slug"
         serializer.save()
-        set_stats.assert_called_once_with(**stats_kwargs)
+        set_stats.assert_called_once_with(commit=True, **stats_kwargs)
 
 
 class TestDLZArchiveSerializer(TestDLZSerializer):
     db_payload = {
         "Data": "2020-04-03",
         "Vârstă medie": "46",
-        "Actualizat la": 1585923720,
         "Confirmați": 3183,
         "Vindecați": 283,
         "Decedați": 133,
@@ -177,9 +176,8 @@ class TestDLZArchiveSerializer(TestDLZSerializer):
         "Incidență": DB_PAYLOAD["Incidență"],
     }
     deserialized = {
-        "Data": "2020-04-03",
+        "Data": "03 Apr 2020",
         "Vârstă medie": "46",
-        "Actualizat la": "17:22, 03 Apr 2020",
         "Confirmați": 3183,
         "Vindecați": 283,
         "Decedați": 133,
@@ -198,7 +196,6 @@ class TestDLZArchiveSerializer(TestDLZSerializer):
         "Vindecați": "numberCured",
         "Decedați": "numberDeceased",
         "Confirmați": "numberInfected",
-        "Actualizat la": "parsedOn",
         "Procent femei": "percentageOfWomen",
         "Procent barbati": "percentageOfMen",
         "Procent copii": "percentageOfChildren",
