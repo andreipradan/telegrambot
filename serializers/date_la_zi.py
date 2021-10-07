@@ -60,7 +60,6 @@ class DLZArchiveSerializer(DLZSerializer):
         "Confirmați": "numberInfected",
         "Vindecați": "numberCured",
         "Decedați": "numberDeceased",
-        "Actualizat la": "parsedOn",
         "Data": "parsedOnString",
         "Procent barbati": "percentageOfMen",
         "Procent femei": "percentageOfWomen",

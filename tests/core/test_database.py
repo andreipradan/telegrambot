@@ -62,7 +62,9 @@ class TestDatabase:
         database.set_stats({"foo": "bar"}, filter_id=1)
         collection.assert_called_once_with(constants.COLLECTION["romania"])
         collection.return_value.update_one.assert_called_once_with(
-            {"filter_id": 1}, update={"$set": {"foo": "bar"}}, upsert=True,
+            filter={"filter_id": 1},
+            update={"$set": {"foo": "bar"}},
+            upsert=True,
         )
 
     @mock.patch("core.database.get_collection")
