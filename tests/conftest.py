@@ -4,8 +4,6 @@ import pytest
 os.environ["DATELAZI_DATA_URL"] = "http://foodatelazi.dev"
 os.environ["SECRET_KEY"] = "test_secret_key"
 os.environ["TOKEN"] = "test_token"
-os.environ["TRANSLATE_BOT_TOKEN"] = "test_token"
-os.environ["TRANSLATE_BOT_WHITELIST"] = "test_token"
 
 
 @pytest.fixture(scope="module")
