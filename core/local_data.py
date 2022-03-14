@@ -95,10 +95,6 @@ def local_age():
     stats = database.get_stats(slug=SLUG["romania"])
     if not stats:
         return "Nu sunt statistici de vârstă pentru ziua de azi"
-    serializer = DLZArchiveSerializer
-    serializer.deserialize_fields = [
-        f for f in serializer.deserialize_fields if f != "Data"
-    ]
     deserialized = DLZArchiveSerializer.deserialize(stats)
     stats = deserialized["Categorii de vârstă"]
     categories = list(reversed(sorted(stats)))
