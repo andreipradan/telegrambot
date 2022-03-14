@@ -1,7 +1,6 @@
 from telegram import InlineKeyboardButton
 from telegram import InlineKeyboardMarkup
 
-from core import database
 from core.utils import chunks
 from powers.games import Games
 

@@ -61,10 +61,6 @@ def local_counties():
     stats = database.get_stats(slug=SLUG["romania"])
     if not stats or not stats.get("Judete"):
         return "Nu sunt date despre județe pentru ziua de azi"
-    serializer = DLZArchiveSerializer
-    serializer.deserialize_fields = [
-        f for f in serializer.deserialize_fields if f != "Data"
-    ]
     deserialized = DLZArchiveSerializer.deserialize(stats)
     stats = deserialized["Judete"]
     counties = list(reversed(sorted(stats, key=stats.get)))
