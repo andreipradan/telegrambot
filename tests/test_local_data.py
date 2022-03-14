@@ -95,7 +95,7 @@ class TestLocalCounties(NoStatsMxin):
     def test_with_stats(self, parse_mock, ser, get_mock):
         ser.deserialize.return_value = {
             "Judete": {"AB": 1},
-            "Actualizat la": "la",
+            "Data": "la",
         }
         parse_mock.return_value = "foo"
         assert local_data.local_counties() == "foo"
@@ -120,7 +120,7 @@ class TestLocalAge(NoStatsMxin):
     def test_with_stats(self, parse_mock, ser, get_mock):
         ser.deserialize.return_value = {
             "Categorii de vârstă": {"0-1": 1},
-            "Actualizat la": "la",
+            "Data": "la",
         }
         parse_mock.return_value = "foo"
         assert local_data.local_age() == "foo"

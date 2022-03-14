@@ -91,7 +91,7 @@ def local_counties():
             for judete in chunks(remaining, 15)
         ],
         emoji="🦠",
-        footer=f"\n`Actualizat la: {deserialized['Actualizat la']}`",
+        footer=f"\n`Actualizat la: {deserialized['Data']}`",
     )
 
 
@@ -116,5 +116,5 @@ def local_age():
         ],
         items=[],
         emoji="🦠",
-        footer=f"\n`Actualizat la: {deserialized['Actualizat la']}`",
+        footer=f"\n`Actualizat la: {deserialized['Data']}`",
     )
