@@ -3,9 +3,7 @@ import os
 
 import telegram
 from flask import Blueprint
-from flask import abort
 
-from core import database
 from core.auth import header_auth
 from core.parsers import parse_diff
 from core.utils import send_message
@@ -19,11 +17,9 @@ logger = logging.getLogger(__name__)
 new_cases_views = Blueprint("new_cases_views", __name__)
 
 
-@new_cases_views.route("/check-sync-archive/<token>/", methods=["POST"])
-def check_new_cases(token):
-    if not database.get_collection("oicd_auth").find_one({"bearer": token}):
-        raise abort(403)
-
+@new_cases_views.route("/sync-archive/", methods=["POST"])
+@header_auth
+def sync_archive():
     text = DateLaZiClient().sync_archive()
     if not text:
         return "No changes"
