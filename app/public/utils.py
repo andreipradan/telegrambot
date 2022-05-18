@@ -15,7 +15,7 @@ def parse_countries(countries):
         country_name = country["country"].strip()
         if not country_name:
             continue
-        if country_name in [
+        elif country_name in [
             "Africa",
             "Asia",
             "Caribbean Netherlands",
@@ -31,68 +31,70 @@ def parse_countries(countries):
             "World",
         ]:
             continue
-        if country_name == "USA":
+        elif country_name == "USA":
             country_name = "United States"
-        if country_name == "UK":
+        elif country_name == "UK":
             country_name = "United Kingdom"
-        if country_name == "Russia":
+        elif country_name == "Russia":
             country_name = "Russian Federation"
-        if country_name == "S. Korea":
+        elif country_name == "S. Korea":
             country_name = "Korea, Republic of"
-        if country_name == "Iran":
+        elif country_name == "Iran":
             country_name = "Iran, Islamic Republic of"
-        if country_name == "UAE":
+        elif country_name == "UAE":
             country_name = "United Arab Emirates"
-        if country_name == "Moldova":
+        elif country_name == "Moldova":
             country_name = "Moldova, Republic of"
-        if country_name == "Ivory Coast":
+        elif country_name == "Ivory Coast":
             country_name = "Côte d'Ivoire"
-        if country_name == "Palestine":
+        elif country_name == "Palestine":
             country_name = "Palestine, State of"
-        if country_name == "Taiwan":
+        elif country_name == "Taiwan":
             country_name = "Taiwan, Province of China"
-        if country_name == "Laos":
+        elif country_name == "Laos":
             country_name = "Lao People's Democratic Republic"
-        if country_name == "St. Barth":
+        elif country_name == "St. Barth":
             country_name = "Saint Barthélemy"
-        if country_name == "Vatican City":
+        elif country_name == "Vatican City":
             country_name = "Holy See (Vatican City State)"
-        if country_name == "Tanzania":
+        elif country_name == "Tanzania":
             country_name = "Tanzania, United Republic of"
-        if country_name == "Vietnam":
+        elif country_name == "Vietnam":
             country_name = "Viet Nam"
-        if country_name == "Bolivia":
+        elif country_name == "Bolivia":
             country_name = "Bolivia, Plurinational State of"
-        if country_name == "Venezuela":
+        elif country_name == "Venezuela":
             country_name = "Venezuela, Bolivarian Republic of"
-        if country_name == "Faeroe Islands":
+        elif country_name == "Faeroe Islands":
             country_name = "Faroe Islands"
-        if country_name == "Brunei":
+        elif country_name == "Brunei":
             country_name = "Brunei Darussalam"
-        if country_name == "Syria":
+        elif country_name == "Syria":
             country_name = "Syrian Arab Republic"
-        if country_name == "DRC":
+        elif country_name == "DRC":
             country_name = "Congo, The Democratic Republic of the"
-        if country_name == "Saint Martin":
+        elif country_name == "Saint Martin":
             country_name = "Saint Martin (French part)"
-        if country_name == "CAR":
+        elif country_name == "CAR":
             country_name = "Central African Republic"
-        if country_name == "St. Vincent Grenadines":
+        elif country_name == "St. Vincent Grenadines":
             country_name = "Saint Vincent and the Grenadines"
-        if country_name == "Turks and Caicos":
+        elif country_name == "Turks and Caicos":
             country_name = "Turks and Caicos Islands"
-        if country_name == "Falkland Islands":
+        elif country_name == "Falkland Islands":
             country_name = "Falkland Islands (Malvinas)"
-        if country_name == "Sint Maarten":
+        elif country_name == "Sint Maarten":
             country_name = "Sint Maarten (Dutch part)"
-        if country_name == "Saint Pierre Miquelon":
+        elif country_name == "Saint Pierre Miquelon":
             country_name = "Saint Pierre and Miquelon"
-        if country_name == "British Virgin Islands":
+        elif country_name == "British Virgin Islands":
             country_name = "Virgin Islands, British"
-        if country_name == "Micronesia":
+        elif country_name == "Micronesia":
             country_name = "Micronesia, Federated States of"
-        if country_name == "Saint Helena":
+        elif country_name == "Saint Helena":
             country_name = "Saint Helena, Ascension and Tristan da Cunha"
+        elif country_name == "DPRK":
+            country_name = "Korea, Democratic People's Republic of"
 
         country.pop("_id")
         try:
