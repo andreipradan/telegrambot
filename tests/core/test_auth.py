@@ -2,6 +2,7 @@ import time
 from unittest import mock
 
 import pytest
+from flask import Flask
 
 from core.auth import _authenticate
 from core.auth import _is_authorized
@@ -9,6 +10,8 @@ from core.auth import _get_client_ip
 from core.auth import header_auth
 from core.auth import whitelist_auth
 from core.constants import WEBHOOK_WHITELIST
+
+from flask_testing import TestCase
 
 
 class TestAuthenticate:
@@ -109,35 +112,42 @@ class TestIsAuthorized:
 
 
 class TestGetClientIP:
-    @mock.patch("core.auth.request")
+    @mock.patch("core.auth.request", spec={})
     def test_with_one_ip_in_access_route(self, req):
         req.access_route = ["foo_ip"]
         assert _get_client_ip() == "foo_ip"
 
-    @mock.patch("core.auth.request")
+    @mock.patch("core.auth.request", spec={})
     def test_with_multiple_invalid_ips_in_access_route(self, req):
         req.access_route = ["foo_ip", "bar_ip"]
         assert _get_client_ip() is None
 
-    @mock.patch("core.auth.request")
+    @mock.patch("core.auth.request", spec={})
     def test_with_empty_and_invalid_ips_in_access_route(self, req):
         req.access_route = ["", "bar_ip"]
         assert _get_client_ip() is None
 
-    @mock.patch("core.auth.request")
+    @mock.patch("core.auth.request", spec={})
     def test_with_first_ip_empty_and_matched_expression(self, req):
         req.access_route = ["", "192.168.1.1"]
         assert _get_client_ip() is None
 
-    @mock.patch("core.auth.request")
+    @mock.patch("core.auth.request", spec={})
     def test_with_first_ip_empty_and_valid_other_one(self, req):
         req.access_route = ["", "86.14.11.2"]
         assert _get_client_ip() == "86.14.11.2"
 
 
-class TestHeaderAuth:
-    def test_with_disabled_header_auth(self, monkeypatch):
-        monkeypatch.setenv("DISABLE_HEADER_AUTH", "True")
+@pytest.mark.usefixtures("monkeypatch_class")
+class TestHeaderAuth(TestCase):
+    def create_app(self):
+        app = Flask(__name__)
+        app.config["SERVER_NAME"] = "example.com"
+        app.config["TESTING"] = True
+        return app
+
+    def test_with_disabled_header_auth(self):
+        self.monkeypatch.setenv("DISABLE_HEADER_AUTH", True)
         func = mock.Mock(return_value="foo response")
         decorated_func = header_auth(func)
         response = decorated_func("foo_arg", foo=1, bar=2)
@@ -147,7 +157,7 @@ class TestHeaderAuth:
     @mock.patch("core.auth.abort")
     @mock.patch("core.auth.request")
     def test_with_no_auth_header(self, request_mock, abort_mock):
-        request_mock.headers.get.return_value = None
+        request_mock.headers.get = mock.Mock(return_value=None)
         func = mock.Mock()
         decorated_func = header_auth(func)
         response = decorated_func("foo_arg", foo=1, bar=2)
@@ -208,7 +218,7 @@ class TestWhitelistAuth:
     @mock.patch("core.auth.abort")
     @mock.patch("core.auth._is_authorized")
     @mock.patch("core.auth._get_client_ip")
-    @mock.patch("core.auth.request")
+    @mock.patch("core.auth.request", spec={})
     def test_with_authorized_ip(self, req, get_ip, is_authorized, abort_mock):
         get_ip.return_value = "ip_foo"
         is_authorized.return_value = True

@@ -25,3 +25,8 @@ def no_requests(monkeypatch):
     """Remove requests.sessions.Session.request for all tests."""
     monkeypatch.delattr("requests.sessions.Session.request")
     monkeypatch.delattr("pymongo.MongoClient")
+
+
+@pytest.fixture
+def monkeypatch_class(request, monkeypatch):
+    request.cls.monkeypatch = monkeypatch

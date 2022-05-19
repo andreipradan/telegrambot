@@ -1,7 +1,6 @@
 from collections import OrderedDict
 
 from google.cloud import language_v1
-from google.cloud.language_v1 import enums
 from google.api_core.exceptions import InvalidArgument
 
 from scrapers.formatters import parse_global
@@ -30,8 +29,8 @@ def analyze_sentiment(text, **kwargs):
     client = language_v1.LanguageServiceClient()
 
     # Available types: PLAIN_TEXT, HTML
-    doc = {"content": text, "type": enums.Document.Type.PLAIN_TEXT}
-    encoding_type = enums.EncodingType.UTF8
+    doc = {"content": text, "type": language_v1.Document.Type.PLAIN_TEXT}
+    encoding_type = language_v1.EncodingType.UTF8
     try:
         response = client.analyze_sentiment(doc, encoding_type=encoding_type)
     except InvalidArgument as error:
