@@ -128,6 +128,13 @@ def webhook():
                     disable_web_page_preview=True,
                     parse_mode=telegram.ParseMode.HTML,
                 ).to_json()
+            if not update.message.reply_to_message.text:
+                return update.message.reply_text(
+                    text="No text found to save.",
+                    disable_notification=True,
+                    disable_web_page_preview=True,
+                    parse_mode=telegram.ParseMode.HTML,
+                ).to_json()
 
             message = update.message.reply_to_message
             author = message.from_user.to_dict()
@@ -151,11 +158,18 @@ def webhook():
                 disable_notification=True,
             ).to_json()
         if command_text == "saved":
-            items = database.get_many(
-                collection="saved-messages",
-                order_by="date",
-                chat_id=chat_id,
+            items = list(
+                database.get_many(
+                    collection="saved-messages",
+                    order_by="date",
+                    chat_id=chat_id,
+                )
             )
+            if not items:
+                return update.message.reply_text(
+                    text="No saved messages in this chat.",
+                    disable_notification=True,
+                ).to_json()
 
             def link(item):
                 return (
