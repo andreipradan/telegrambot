@@ -6,6 +6,8 @@ ALLOWED_COMMANDS = [
     "translate",
     "games",
     "randomize",
+    "save",
+    "saved",
 ]
 DATE_FORMAT = "%Y-%m-%d"
 GAME_COMMANDS = [

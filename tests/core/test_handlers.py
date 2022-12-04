@@ -90,12 +90,6 @@ class TestValidateComponents:
             e.value.args[0] == f"No message text. Update: {update.to_dict()}"
         )
 
-    def test_reply_to_message(self):
-        update = MagicMock(
-            callback_query=None, message=MagicMock(text="reply_foo")
-        )
-        assert validate_components(update) == ("skip-debug", 1337)
-
     def test_invalid_command(self):
         message = MagicMock(reply_to_message=None, text="reply_foo")
         update = MagicMock(callback_query=None, message=message)
@@ -110,7 +104,7 @@ class TestValidateComponents:
         update.message.chat.type = "private"
         assert validate_components(update) == (
             f'Unknown command: "command_foo".\n'
-            f"Available commands: \n• /start",
+            f"Available commands: \n• /start\n• /save\n• /saved",
             400,
         )
 
@@ -122,7 +116,8 @@ class TestValidateComponents:
         assert validate_components(update) == (
             'Unknown command: "command_foo".\n'
             "Available commands: \n• /analyze_sentiment\n• "
-            "/start\n• /translate\n• /games\n• /randomize",
+            "/start\n• /translate\n• /games\n• /randomize"
+            "\n• /save\n• /saved",
             400,
         )
 

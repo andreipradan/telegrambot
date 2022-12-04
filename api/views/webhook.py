@@ -6,7 +6,7 @@ import telegram
 from flask import Blueprint
 from flask import request
 
-from core import handlers
+from core import handlers, database
 from core import local_data
 from core import utils
 from core.constants import GAME_COMMANDS
@@ -117,5 +117,56 @@ def webhook():
                 bot,
                 "\n".join(f"{i+1}. {item}" for i, item in enumerate(args)),
                 chat_id,
+            )
+    if command_text.startswith("save"):
+        if command_text == "save":
+            if not update.message.reply_to_message:
+                return update.message.reply_text(
+                    text="This command must be sent "
+                    "as a reply to the message you want to save",
+                    disable_notification=True,
+                    disable_web_page_preview=True,
+                    parse_mode=telegram.ParseMode.HTML,
+                ).to_json()
+
+            message = update.message.reply_to_message
+            author = message.from_user.to_dict()
+            author["full_name"] = message.from_user.full_name
+            database.get_collection("saved-messages").insert_one(
+                {
+                    "author": author,
+                    "chat_id": message.chat_id,
+                    "chat_name": message.chat.title,
+                    "date": message.date,
+                    "message": {
+                        "id": message.message_id,
+                        "text": message.text,
+                    },
+                    "saved_at": update.message.date.utcnow(),
+                    "saved_by": update.message.from_user.to_dict(),
+                }
+            )
+            return update.message.reply_text(
+                text="Saved ✔",
+                disable_notification=True,
+            ).to_json()
+        if command_text == "saved":
+            items = database.get_many(
+                collection="saved-messages",
+                order_by="date",
+                chat_id=chat_id,
+            )
+
+            def link(item):
+                return (
+                    f"{item['author']['full_name']}: "
+                    f"{item['message']['text']} ([link]"
+                    f"(https://t.me/c/{str(chat_id)[3:]}/{item['message']['id']}))"
+                )
+
+            return utils.send_message(
+                bot,
+                text="".join(f"\n\n{link(item)}" for item in items),
+                chat_id=chat_id,
             )
     raise ValueError(f"Unhandled command: {command_text}, {status_code}")

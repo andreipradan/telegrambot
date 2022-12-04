@@ -35,9 +35,6 @@ def validate_components(update):
             return "skip-debug", 1337
         raise ValueError(f"No message text. Update: {update.to_dict()}")
 
-    if message.reply_to_message:
-        return "skip-debug", 1337
-
     if not message_text.startswith("/"):
         if "Voice Chat" in message_text.strip():
             return "skip-debug", 1337
