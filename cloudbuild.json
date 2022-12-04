@@ -5,6 +5,8 @@
          "build",
          "-t",
          "gcr.io/$PROJECT_ID/telegrambot-image-$_ENV:$COMMIT_SHA",
+         "-t",
+         "gcr.io/$PROJECT_ID/telegrambot-image-$_ENV:latest",
          "."
       ]
    },
@@ -29,7 +31,7 @@
          "gcr.io/$PROJECT_ID/telegrambot-image-$_ENV:$COMMIT_SHA",
          "/app/config/ci/run_ci.sh",
          "."
-      ],
+      ]
    },
    {
       "name": "gcr.io/cloud-builders/docker",
