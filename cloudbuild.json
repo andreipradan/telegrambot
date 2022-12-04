@@ -33,7 +33,7 @@
    },
    {
       "name": "gcr.io/cloud-builders/docker",
-      "args": ["push", "gcr.io/$PROJECT_ID/telegrambot-image-$_ENV"]
+      "args": ["push", "gcr.io/$PROJECT_ID/telegrambot-image-$_ENV:$COMMIT_SHA"]
    },
    {
       "name": "gcr.io/cloud-builders/gcloud",
