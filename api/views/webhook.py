@@ -158,7 +158,10 @@ def webhook():
                     disable_web_page_preview=True,
                     parse_mode=telegram.ParseMode.HTML,
                 ).to_json()
-            if not update.message.reply_to_message.text:
+            if not (
+                update.message.reply_to_message.text
+                or update.message.reply_to_message.new_chat_title
+            ):
                 return update.message.reply_text(
                     text="No text found to save.",
                     disable_notification=True,
@@ -166,7 +169,13 @@ def webhook():
                     parse_mode=telegram.ParseMode.HTML,
                 ).to_json()
 
-            save_to_db(update.message.reply_to_message)
+            save_to_db(
+                update.message.reply_to_message,
+                text_override=f"{update.message.reply_to_message.new_chat_title} - "
+                f"{bot.get_chat(update.message.chat_id).description}"
+                if update.message.reply_to_message.new_chat_title
+                else None,
+            )
             return update.message.reply_text(
                 text="Saved ✔",
                 disable_notification=True,
