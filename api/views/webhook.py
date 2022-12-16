@@ -119,6 +119,36 @@ def webhook():
                 chat_id,
             )
     if command_text.startswith("save"):
+
+        def save_to_db(message, text_override=None):
+            author = message.from_user.to_dict()
+            author["full_name"] = message.from_user.full_name
+            database.get_collection("saved-messages").insert_one(
+                {
+                    "author": author,
+                    "chat_id": message.chat_id,
+                    "chat_name": message.chat.title,
+                    "date": message.date,
+                    "message": {
+                        "id": message.message_id,
+                        "text": text_override or message.text,
+                    },
+                    "saved_at": update.message.date.utcnow(),
+                    "saved_by": update.message.from_user.to_dict(),
+                }
+            )
+
+        if command_text == "save-group-name":
+            chat_title = update.message.new_chat_title
+            chat_description = bot.get_chat(update.message.chat_id).description
+            save_to_db(
+                update.message,
+                text_override=f"{chat_title} - {chat_description}",
+            )
+            return update.message.reply_text(
+                text="Saved ✔",
+                disable_notification=True,
+            ).to_json()
         if command_text == "save":
             if not update.message.reply_to_message:
                 return update.message.reply_text(
@@ -136,23 +166,7 @@ def webhook():
                     parse_mode=telegram.ParseMode.HTML,
                 ).to_json()
 
-            message = update.message.reply_to_message
-            author = message.from_user.to_dict()
-            author["full_name"] = message.from_user.full_name
-            database.get_collection("saved-messages").insert_one(
-                {
-                    "author": author,
-                    "chat_id": message.chat_id,
-                    "chat_name": message.chat.title,
-                    "date": message.date,
-                    "message": {
-                        "id": message.message_id,
-                        "text": message.text,
-                    },
-                    "saved_at": update.message.date.utcnow(),
-                    "saved_by": update.message.from_user.to_dict(),
-                }
-            )
+            save_to_db(update.message.reply_to_message)
             return update.message.reply_text(
                 text="Saved ✔",
                 disable_notification=True,
@@ -162,6 +176,7 @@ def webhook():
                 database.get_many(
                     collection="saved-messages",
                     order_by="date",
+                    how=1,
                     chat_id=chat_id,
                 )
             )
@@ -173,7 +188,7 @@ def webhook():
 
             def link(item):
                 return (
-                    f"{item['author']['full_name']}: "
+                    f"{item['date']} {item['author']['full_name']}: "
                     f"{item['message']['text']} ([link]"
                     f"(https://t.me/c/{str(chat_id)[3:]}/{item['message']['id']}))"
                 )

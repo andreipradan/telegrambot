@@ -18,7 +18,7 @@ def validate_components(update):
         if message.left_chat_member:
             return "😢", 400
         if message.new_chat_title:
-            return "🎉", 400
+            return "save-group-name", "valid-command"
         if message.new_chat_members:
             new_members = [parse_name(u) for u in message.new_chat_members]
             return f"Welcome {', '.join(new_members)}!", 400

@@ -37,7 +37,10 @@ class TestValidateComponents:
             callback_query=None,
             message=MagicMock(text=None, left_chat_member=None),
         )
-        assert validate_components(update) == ("🎉", 400)
+        assert validate_components(update) == (
+            "save-group-name",
+            "valid-command",
+        )
 
     def test_new_chat_members(self):
         update = MagicMock(
