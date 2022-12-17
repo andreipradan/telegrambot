@@ -107,7 +107,7 @@ class TestValidateComponents:
         update.message.chat.type = "private"
         assert validate_components(update) == (
             f'Unknown command: "command_foo".\n'
-            f"Available commands: \n• /start\n• /save\n• /saved",
+            f"Available commands: \n• /get_chat_id\n• /save\n• /saved\n• /start",
             400,
         )
 
@@ -116,11 +116,21 @@ class TestValidateComponents:
         update = MagicMock(callback_query=None, message=message)
         update.message.chat.type = "private"
         update.message.chat_id = constants.GOOGLE_CLOUD_WHITELIST["private"][0]
+        available = "\n• /".join(
+            [
+                "analyze_sentiment",
+                "games",
+                "get_chat_id",
+                "randomize",
+                "save",
+                "saved",
+                "start",
+                "translate",
+            ]
+        )
         assert validate_components(update) == (
             'Unknown command: "command_foo".\n'
-            "Available commands: \n• /analyze_sentiment\n• "
-            "/start\n• /translate\n• /games\n• /randomize"
-            "\n• /save\n• /saved",
+            f"Available commands: \n• /{available}",
             400,
         )
 

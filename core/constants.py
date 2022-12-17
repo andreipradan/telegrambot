@@ -2,12 +2,13 @@ import os
 
 ALLOWED_COMMANDS = [
     "analyze_sentiment",
-    "start",
-    "translate",
     "games",
+    "get_chat_id",
     "randomize",
     "save",
     "saved",
+    "start",
+    "translate",
 ]
 DATE_FORMAT = "%Y-%m-%d"
 GAME_COMMANDS = [

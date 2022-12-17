@@ -202,4 +202,11 @@ def webhook():
                 text="".join(f"\n\n{link(item)}" for item in items),
                 chat_id=chat_id,
             )
+
+    if command_text == "get_chat_id":
+        return update.message.reply_text(
+            text=f"Chat ID: {update.message.chat_id}",
+            disable_notification=True,
+        ).to_json()
+
     raise ValueError(f"Unhandled command: {command_text}, {status_code}")
