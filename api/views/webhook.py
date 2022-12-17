@@ -7,6 +7,7 @@ import telegram
 
 from flask import Blueprint
 from flask import request
+from telegram import error
 
 from core import handlers, database
 from core import local_data
@@ -224,9 +225,25 @@ def webhook():
                 prompt=update.message.text,
                 max_tokens=1024,
             )
-            return update.message.reply_text(
-                response.choices[0].text, disable_notification=True
-            ).to_json()
+            text = response.choices[0].text
+            try:
+                return update.message.reply_text(
+                    text, disable_notification=True
+                ).to_json()
+            except error.BadRequest as e:
+                logging.warning(
+                    f"Bad request: {e}. Trying to split the message"
+                )
+                half = int(len(text) / 2)
+                update.message.reply_text(
+                    text=text[:half] + " [[1/2 - continued below..]]",
+                    disable_notification=True,
+                )
+                return update.message.reply_text(
+                    text="[[2/2]] " + text[half:], disable_notification=True
+                )
+
         except Exception as e:
+            logging.exception(e)
             return update.message.reply_text(str(e)).to_json()
     raise ValueError(f"Unhandled command: {command_text}, {status_code}")
