@@ -7,6 +7,7 @@ flask_wtf==1.0.1
 google-cloud-language==2.6.1
 google-cloud-translate==3.8.4
 gunicorn==20.1.0
+openapi==1.1.0
 pycountry==22.3.5
 pymongo==4.3.3
 python-telegram-bot==13.14
