@@ -1,3 +1,4 @@
+import os
 from unittest import mock
 
 import pytest
@@ -85,6 +86,8 @@ class TestWebhook:
     def test_invalid_command(self, validate, message, update, _, client):
         validate.return_value = "command_text_foo", "foo_command"
         update.return_value.callback_query = None
+        update.return_value.message.from_user.username = "foo"
+        os.environ["WHITELIST"] = "foo"
 
         response = client.post(url_for(self.view_name), json={"1": 2})
         validate.assert_called_once_with(update())
@@ -101,7 +104,8 @@ class TestWebhook:
     def test_start(self, validate, start, update, _, client):
         validate.return_value = "start", "valid-command"
         update.return_value.callback_query = None
-
+        update.return_value.message.from_user.username = "foo"
+        os.environ["WHITELIST"] = "foo"
         response = client.post(url_for(self.view_name), json={"1": 2})
 
         start.assert_called_once_with(update())
@@ -122,7 +126,8 @@ class TestWebhook:
         update().message.chat.id = constants.GOOGLE_CLOUD_WHITELIST["private"][
             0
         ]
-
+        update.return_value.message.from_user.username = "foo"
+        os.environ["WHITELIST"] = "foo"
         with pytest.raises(telegram.error.BadRequest) as e:
             client.post(url_for(self.view_name), json={"1": 2})
 

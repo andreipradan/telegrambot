@@ -1,3 +1,4 @@
+import logging
 import os
 import random
 
@@ -50,6 +51,11 @@ def webhook():
             return "ok"
         text = f"{command_text}.\nUpdate: {update.to_dict()}"
         return utils.send_message(bot, text=text)
+
+    who = update.message.from_user.username or update.message.from_user.id
+    if who not in os.getenv("WHITELIST", "").split(","):
+        logging.error(f"Ignoring message from: {who}")
+        return ""
 
     chat_id = update.message.chat.id
     if status_code != "valid-command":
