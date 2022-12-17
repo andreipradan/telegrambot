@@ -139,12 +139,8 @@ def webhook():
             )
 
         if command_text == "save-group-name":
-            chat_title = update.message.new_chat_title
             chat_description = bot.get_chat(update.message.chat_id).description
-            save_to_db(
-                update.message,
-                text_override=f"{chat_title} - {chat_description}",
-            )
+            save_to_db(update.message, text_override=chat_description)
             return update.message.reply_text(
                 text="Saved ✔",
                 disable_notification=True,
@@ -171,8 +167,7 @@ def webhook():
 
             save_to_db(
                 update.message.reply_to_message,
-                text_override=f"{update.message.reply_to_message.new_chat_title} - "
-                f"{bot.get_chat(update.message.chat_id).description}"
+                text_override=bot.get_chat(update.message.chat_id).description
                 if update.message.reply_to_message.new_chat_title
                 else None,
             )
@@ -196,11 +191,11 @@ def webhook():
                 ).to_json()
 
             def link(item):
-                return (
-                    f"{item['date']} {item['author']['full_name']}: "
-                    f"{item['message']['text']} ([link]"
-                    f"(https://t.me/c/{str(chat_id)[3:]}/{item['message']['id']}))"
-                )
+                return f"""
+*{item['chat_name']}*
+- de {item['author']['full_name']}, {item['date'].strftime("%d %b %Y %H:%M")}
+
+{item['message']['text']} ([link](https://t.me/c/{str(chat_id)[3:]}/{item['message']['id']}))"""
 
             return utils.send_message(
                 bot,
