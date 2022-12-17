@@ -2,6 +2,7 @@ import os
 
 ALLOWED_COMMANDS = [
     "analyze_sentiment",
+    "chatgpt",
     "games",
     "get_chat_id",
     "randomize",

@@ -2,6 +2,7 @@ import logging
 import os
 import random
 
+import openai
 import telegram
 
 from flask import Blueprint
@@ -215,4 +216,17 @@ def webhook():
             disable_notification=True,
         ).to_json()
 
+    if command_text == "chatgpt":
+        openai.api_key = os.environ["GPT3_API_KEY"]
+        try:
+            response = openai.Completion.create(
+                engine="text-davinci-002",
+                prompt=update.message.text,
+                max_tokens=1024,
+            )
+            return update.message.reply_text(
+                response.choices[0].text, disable_notification=True
+            ).to_json()
+        except Exception as e:
+            return update.message.reply_text(str(e)).to_json()
     raise ValueError(f"Unhandled command: {command_text}, {status_code}")
