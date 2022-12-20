@@ -55,7 +55,7 @@ def webhook():
         return utils.send_message(bot, text=text)
 
     who = update.message.from_user.username or update.message.from_user.id
-    if who not in os.getenv("WHITELIST", "").split(","):
+    if str(who) not in os.getenv("WHITELIST", "").split(","):
         logging.error(f"Ignoring message from: {who}")
         return ""
 
