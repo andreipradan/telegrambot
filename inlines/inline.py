@@ -77,7 +77,6 @@ def refresh_data(update, text):
 
 
 def start(update, games=False):
-    """Send message on `/start`."""
     user = update.message.from_user
     logger.info("User %s started the conversation.", user.first_name)
 
