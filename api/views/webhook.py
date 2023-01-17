@@ -1,6 +1,7 @@
 import logging
 import os
 import random
+from time import sleep
 
 import openai
 import telegram
@@ -227,6 +228,7 @@ def webhook():
 
             logger.debug(f"Sending {len(messages)} telegram messages")
             for msg in messages:
+                sleep(1)
                 return utils.send_message(
                     bot,
                     text=msg,
