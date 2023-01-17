@@ -222,6 +222,9 @@ def webhook():
                     message = ""
                 message += current_item
 
+            if message not in messages:
+                messages.append(message)
+
             logger.debug(f"Sending {len(messages)} telegram messages")
             for msg in messages:
                 return utils.send_message(
