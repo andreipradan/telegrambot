@@ -26,7 +26,9 @@ webhook_views = Blueprint("webhook_views", __name__)
 TOKEN = os.environ["TOKEN"]
 
 
-logging.basicConfig(format="%(asctime)s - %(levelname)s:%(name)s - %(message)s")
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s:%(name)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
@@ -222,7 +224,11 @@ def webhook():
 
             logger.debug(f"Sending {len(messages)} telegram messages")
             for msg in messages:
-                return utils.send_message(bot, text=msg, chat_id=chat_id,)
+                return utils.send_message(
+                    bot,
+                    text=msg,
+                    chat_id=chat_id,
+                )
             logger.debug("Done")
 
     if command_text == "get_chat_id":
