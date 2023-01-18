@@ -106,7 +106,7 @@ class TestValidateComponents:
         update = MagicMock(callback_query=None, message=message)
         update.message.chat.type = "private"
         available = "\n• /".join(
-            ["chatgpt", "get_chat_id", "save", "saved", "start"]
+            ["chatgpt", "get_bus", "get_chat_id", "save", "saved", "start"]
         )
         assert validate_components(update) == (
             f'Unknown command: "command_foo".\n'
@@ -124,6 +124,7 @@ class TestValidateComponents:
                 "analyze_sentiment",
                 "chatgpt",
                 "games",
+                "get_bus",
                 "get_chat_id",
                 "randomize",
                 "save",
