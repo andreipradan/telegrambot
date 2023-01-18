@@ -283,9 +283,9 @@ def webhook():
                 f"Only 1 bus number allowed, got: {len(args)}"
             ).to_json()
 
-        if not isinstance(args[0], int):
+        if not args[0].isnumeric():
             return update.message.reply_text(
-                f"Invalid number: {len(args[0])}"
+                f"Invalid number: {args[0]}"
             ).to_json()
 
         return update.message.reply_text(
