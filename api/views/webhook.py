@@ -279,10 +279,14 @@ def webhook():
             return update.message.reply_text(f"Error: {e.args}").to_json()
 
         if len(args) != 1:
-            return update.message.reply_text(f"Only 1 bus number allowed, got: {len(args)}").to_json()
+            return update.message.reply_text(
+                f"Only 1 bus number allowed, got: {len(args)}"
+            ).to_json()
 
         if not isinstance(args[0], int):
-            return update.message.reply_text(f"Invalid number: {len(args[0])}").to_json()
+            return update.message.reply_text(
+                f"Invalid number: {len(args[0])}"
+            ).to_json()
 
         return update.message.reply_text(
             text=f"https://ctpcj.ro/index.php/ro/orare-linii/linii-urbane/linia-{args[0]}"
