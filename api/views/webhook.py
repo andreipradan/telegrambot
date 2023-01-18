@@ -329,10 +329,11 @@ def webhook():
                 current_bus = i
                 break
 
-        lines = (
-            lines[current_bus - 3 : current_bus]
-            + lines[current_bus : current_bus + 3]
-        )
+        if current_bus:
+            lines = (
+                lines[current_bus - 3 : current_bus]
+                + lines[current_bus : current_bus + 3]
+            )
 
         all_rides = "\n".join(lines)
         text = f"Next {bus_number} {route} at {'TBA'}\n\nAll {days_of_week} departures:\n(Available from: {date_start}) \n{all_rides}"
