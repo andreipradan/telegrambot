@@ -321,6 +321,19 @@ def webhook():
         lines.pop(0)  # start station
         lines.pop(0)  # stop station
 
+        current_bus = None
+        for i, bus in enumerate(lines):
+            start, stop = bus.split(",")
+            now_time = now.strftime("%H:%M")
+            if start > now_time or stop > now_time:
+                current_bus = i
+                break
+
+        lines = (
+            lines[current_bus - 3 : current_bus]
+            + lines[current_bus : current_bus + 3]
+        )
+
         all_rides = "\n".join(lines)
         text = f"Next {bus_number} {route} at {'TBA'}\n\nAll {days_of_week} departures:\n(Available from: {date_start}) \n{all_rides}"
         return update.message.reply_text(text=text).to_json()
