@@ -1,9 +1,12 @@
 import logging
 import os
 import random
+from datetime import datetime
 from time import sleep
 
 import openai
+import pytz
+import requests
 import telegram
 
 from flask import Blueprint
@@ -283,12 +286,37 @@ def webhook():
                 f"Only 1 bus number allowed, got: {len(args)}"
             ).to_json()
 
-        if not args[0].isnumeric():
+        bus_number = args[0]
+        if not bus_number.isnumeric():
             return update.message.reply_text(
-                f"Invalid number: {args[0]}"
+                f"Invalid number: {bus_number}"
             ).to_json()
 
-        return update.message.reply_text(
-            text=f"https://ctpcj.ro/index.php/ro/orare-linii/linii-urbane/linia-{args[0]}"
-        ).to_json()
+        now = datetime.now(pytz.timezone("Europe/Bucharest"))
+        weekday = now.weekday()
+        if weekday in range(5):
+            day = "lv"
+        elif weekday == 5:
+            day = "s"
+        elif weekday == 6:
+            day = "d"
+        else:
+            logger.error("This shouldn't happen, like ever")
+            return ""
+
+        headers = {"Referer": "https://ctpcj.ro/"}
+        resp = requests.get(f"https://ctpcj.ro/orare/csv/orar_{bus_number}_{day}.csv", headers=headers)
+        if resp.status_code != 200:
+            return update.message.reply_text(f"Invalid status code returned: {resp.status_code}")
+
+        lines = resp.text.split("\r\n")
+        route = lines.pop(0).split(",")[1]
+        days_of_week = lines.pop(0).split(",")[1]
+        date_start = lines.pop(0).split(",")[1]
+        lines.pop(0)  # start station
+        lines.pop(0)  # stop station
+
+        all_rides = "\n".join(lines)
+        text = f"Next {bus_number} {route} at {'TBA'}\n\nAll {days_of_week} departures:\n(Available from: {date_start}) \n{all_rides}"
+        return update.message.reply_text(text=text).to_json()
     raise ValueError(f"Unhandled command: {command_text}, {status_code}")
