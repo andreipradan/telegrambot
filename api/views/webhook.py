@@ -305,9 +305,14 @@ def webhook():
             return ""
 
         headers = {"Referer": "https://ctpcj.ro/"}
-        resp = requests.get(f"https://ctpcj.ro/orare/csv/orar_{bus_number}_{day}.csv", headers=headers)
+        resp = requests.get(
+            f"https://ctpcj.ro/orare/csv/orar_{bus_number}_{day}.csv",
+            headers=headers,
+        )
         if resp.status_code != 200:
-            return update.message.reply_text(f"Invalid status code returned: {resp.status_code}")
+            return update.message.reply_text(
+                f"Invalid status code returned: {resp.status_code}"
+            )
 
         lines = resp.text.split("\r\n")
         route = lines.pop(0).split(",")[1]
