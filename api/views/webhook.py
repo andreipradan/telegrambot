@@ -331,22 +331,24 @@ def webhook():
         lines.pop(0)  # start station
         lines.pop(0)  # stop station
 
-        current_bus = None
+        current_bus_index = None
+        current_bus = lines[0]
         for i, bus in enumerate(lines):
             start, *stop = bus.split(",")
             now_time = now.strftime("%H:%M")
             if start > now_time or (stop and stop[0] > now_time):
-                current_bus = i
+                current_bus_index = i
+                current_bus = lines[i]
                 break
 
-        if current_bus:
+        if current_bus_index:
             lines = (
-                lines[current_bus - 3 : current_bus]
-                + lines[current_bus : current_bus + 3]
+                lines[current_bus_index - 3 : current_bus_index]
+                + lines[current_bus_index : current_bus_index + 3]
             )
 
         all_rides = "\n".join(lines)
-        text = f"Next <b>{bus_number}</b> at {lines[current_bus] if current_bus else lines[0]}\n\n{route}\n{days_of_week}:\n(Available from: {date_start}) \n{all_rides}"
+        text = f"Next <b>{bus_number}</b> at {current_bus}\n\n{route}\n{days_of_week}:\n(Available from: {date_start}) \n{all_rides}"
         return update.message.reply_text(
             text=text,
             parse_mode=telegram.ParseMode.HTML,
