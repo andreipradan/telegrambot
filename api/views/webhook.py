@@ -275,21 +275,29 @@ def webhook():
             logging.exception(e)
             return update.message.reply_text(str(e)).to_json()
 
-    if command_text == "get_bus":
+    if command_text == "bus":
         try:
             args = update.message.text.split(" ")[1:]
         except Exception as e:
-            return update.message.reply_text(f"Error: {e.args}").to_json()
+            return update.message.reply_text(
+                f"Error: {e.args}",
+                parse_mode=telegram.ParseMode.HTML,
+                disable_notification=True,
+            ).to_json()
 
         if len(args) != 1:
             return update.message.reply_text(
-                f"Only 1 bus number allowed, got: {len(args)}"
+                f"Only 1 bus number allowed, got: {len(args)}",
+                parse_mode=telegram.ParseMode.HTML,
+                disable_notification=True,
             ).to_json()
 
         bus_number = args[0]
         if not bus_number.isnumeric():
             return update.message.reply_text(
-                f"Invalid number: {bus_number}"
+                f"Invalid number: {bus_number}",
+                parse_mode=telegram.ParseMode.HTML,
+                disable_notification=True,
             ).to_json()
 
         now = datetime.now(pytz.timezone("Europe/Bucharest"))
@@ -311,8 +319,10 @@ def webhook():
         )
         if resp.status_code != 200:
             return update.message.reply_text(
-                f"Invalid status code returned: {resp.status_code}"
-            )
+                text=f"Invalid status code returned: {resp.status_code}",
+                parse_mode=telegram.ParseMode.HTML,
+                disable_notification=True,
+            ).to_json()
 
         lines = resp.text.split("\r\n")
         route = lines.pop(0).split(",")[1]
@@ -336,6 +346,10 @@ def webhook():
             )
 
         all_rides = "\n".join(lines)
-        text = f"Next {bus_number} {route} at {'TBA'}\n\nAll {days_of_week} departures:\n(Available from: {date_start}) \n{all_rides}"
-        return update.message.reply_text(text=text).to_json()
+        text = f"Next <b>{bus_number}</b> at {lines[current_bus] if current_bus else lines[0]}\n\n{route}\n{days_of_week}:\n(Available from: {date_start}) \n{all_rides}"
+        return update.message.reply_text(
+            text=text,
+            parse_mode=telegram.ParseMode.HTML,
+            disable_notification=True,
+        ).to_json()
     raise ValueError(f"Unhandled command: {command_text}, {status_code}")

@@ -4,7 +4,7 @@ ALLOWED_COMMANDS = [
     "analyze_sentiment",
     "chatgpt",
     "games",
-    "get_bus",
+    "bus",
     "get_chat_id",
     "randomize",
     "save",
