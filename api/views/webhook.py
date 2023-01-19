@@ -324,7 +324,7 @@ def webhook():
                 disable_notification=True,
             ).to_json()
 
-        lines = resp.text.split("\r\n")
+        lines = [l.strip() for l in resp.text.split("\n")]
         route = lines.pop(0).split(",")[1]
         days_of_week = lines.pop(0).split(",")[1]
         date_start = lines.pop(0).split(",")[1]
