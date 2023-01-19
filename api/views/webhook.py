@@ -317,9 +317,9 @@ def webhook():
             f"https://ctpcj.ro/orare/csv/orar_{bus_number}_{day}.csv",
             headers=headers,
         )
-        if resp.status_code != 200:
+        if resp.status_code != 200 or "EROARE" in resp.text:
             return update.message.reply_text(
-                text=f"Invalid status code returned: {resp.status_code}",
+                text=f"Bus {bus_number} not found",
                 parse_mode=telegram.ParseMode.HTML,
                 disable_notification=True,
             ).to_json()
