@@ -333,9 +333,9 @@ def webhook():
 
         current_bus = None
         for i, bus in enumerate(lines):
-            start, stop = bus.split(",")
+            start, *stop = bus.split(",")
             now_time = now.strftime("%H:%M")
-            if start > now_time or stop > now_time:
+            if start > now_time or (stop and stop[0] > now_time):
                 current_bus = i
                 break
 
