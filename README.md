@@ -135,7 +135,5 @@ Give a ⭐️ if this project helped you!
 
 <a href="https://www.buymeacoffee.com/andreipradan" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee"></a>
 
-<a href="https://pay.revolut.com/profile/eusebifsd" target="_blank"><img src="https://storage.googleapis.com/telegrambot/buttons/revolut.png" alt="Revolut"></a>
-
 ***
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
