@@ -1,6 +1,6 @@
 bcrypt==4.0.1
 beautifulsoup4==4.11.1
-black==22.10.0
+black==24.3.0
 dnspython==2.2.1
 flask==2.2.5
 flask-login==0.6.2
