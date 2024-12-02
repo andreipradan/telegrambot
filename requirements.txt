@@ -13,5 +13,5 @@ pycountry==22.3.5
 pymongo==4.3.3
 python-telegram-bot==13.14
 requests==2.32.0
-sentry-sdk[flask]==1.39.2
+sentry-sdk==2.8.0
 werkzeug==2.3.8
